@@ -3,18 +3,19 @@
   (:import [com.mongodb Mongo DB DBCollection BasicDBObject
             DBObject DBCursor DBAddress MongoOptions
             ObjectId]))
+
 (defn has-option? [options k]
   (boolean (some #{k} options)))
 
-(defn db-object [#^clojure.lang.IPersistentMap m]
+(defn db-object [m]
   (let [to-s #(if (keyword? %) (name %) (str %))
         to-v #(if (map? %) (db-object %) %)
-        r (BasicDBObject.)]
+        dbo  (BasicDBObject.)]
     (doseq [[k v] m]
-      (.put r #^String (to-s k) #^Object (to-v v)))
-    r))
+      (.put dbo (to-s k) (to-v v)))
+    dbo))
 
-(defn clojure-object [#^DBObject dbo]
+(defn clojure-object [dbo]
   (apply merge (map (fn [#^java.util.Map$Entry e]
                        (let [k (.getKey e)
                              v (.getValue e)]
@@ -24,16 +25,16 @@
                             v)}))
                     (seq dbo))))
 
-(defn connect [host & [port]]
-  (Mongo. #^String host (or port 27017)))
+(defn connect [#^String host & [port]]
+  (Mongo. host (int (or port 27017))))
 
-(defn mongo-db [connection name]
+(defn mongo-db [#^Mongo connection #^String name]
   (.getDB connection name))
 
 (defn collection
-  ([db collection-name]
+  ([#^DB db collection-name]
      (.getCollection db collection-name))
-  ([mongo db-name collection-name]
+  ([#^Mongo mongo db-name collection-name]
      (collection (.getDB mongo db-name) collection-name)))
 
 (defn drop-collection [#^DBCollection collection]
@@ -46,18 +47,19 @@
     (map clojure-object
          (.insert collection #^java.util.List (map db-object objs)))))
 
-(defn update [#^DBCollection collection query obj & [upsert? multi?]]
-  (clojure-object (.update collection
-                           #^DBObject (db-object query)
-                           #^DBObject (db-object obj)
-                           (boolean upsert?)
-                           (boolean multi?))))
+(defn update [#^DBCollection collection query obj & options]
+  (let [o? #(has-option? options %)]
+    (clojure-object (.update collection
+                             (db-object query)
+                             (db-object obj)
+                             (o? :upsert)
+                             (o? :multi)))))
 
-(defn upsert [#^DBCollection collection query obj]
-  (update collection query obj true))
+(defn upsert [collection query obj]
+  (update collection query obj :upsert))
 
-(defn update-all [#^DBCollection collection query obj]
-  (update collection query obj false true))
+(defn update-all [collection query obj]
+  (update collection query obj :multi))
 
 (defn include-keys [& keys]
   (apply merge (map (fn [k] {k 1}) (remove nil? keys))))
@@ -77,7 +79,7 @@
         cursor (if count? (.count cursor) cursor)]
     (map clojure-object cursor)))
 
-(defnk fetch [#^DBCollection collection query :limit nil :skip nil :include nil :exclude nil :order-by nil :count false]
+(defnk fetch [collection query :limit nil :skip nil :include nil :exclude nil :order-by nil :count false]
   (search* collection
            query
            (merge (apply include-keys include) (apply exclude-keys exclude))
@@ -86,7 +88,7 @@
            order-by
            count))
 
-(defnk fetch-all [#^DBCollection collection :limit nil :skip nil :order-by nil :count false]
+(defnk fetch-all [collection :limit nil :skip nil :order-by nil :count false]
   (search* collection
            nil
            nil
@@ -99,7 +101,7 @@
   (.findOne collection (ObjectId. s)))
 
 (defn distinct-values [#^DBCollection collection s]
-  (seq (.distinct collection #^String (name s))))
+  (seq (.distinct collection (name s))))
 
 (defn delete [#^DBCollection collection obj]
   (.remove collection (db-object obj)))
@@ -142,8 +144,10 @@
 (defn ensure-index
   [#^DBCollection collection fields & options]
   (let [o? #(has-option? options %)]
-    (.ensureIndex collection (db-object fields)
-                  (o? :force) (o? :unique))))
+    (.ensureIndex collection #^DBObject
+                  (db-object fields)
+                  (boolean (o? :force))
+                  (boolean (o? :unique)))))
 
 (defn drop-index [#^DBCollection collection o]
   (.dropIndex collection #^DBObject (db-object o)))
