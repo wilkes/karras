@@ -36,6 +36,9 @@
   ([mongo db-name collection-name]
      (collection (.getDB mongo db-name) collection-name)))
 
+(defn drop-collection [#^DBCollection collection]
+  (.drop collection))
+
 (defn insert [#^DBCollection collection & objs]
   (if (= 1 (count objs))
     (clojure-object
