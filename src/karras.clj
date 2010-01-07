@@ -142,6 +142,12 @@
 (defn ensure-index
   [#^DBCollection collection fields & options]
   (let [o? #(has-option? options %)]
-    (prn (o? :unique))
     (.ensureIndex collection (db-object fields)
                   (o? :force) (o? :unique))))
+
+(defn drop-index [#^DBCollection collection o]
+  (.dropIndex collection #^DBObject (db-object o)))
+
+(defn drop-index-named [#^DBCollection collection #^String s]
+  (.dropIndex collection s))
+
