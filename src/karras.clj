@@ -3,6 +3,8 @@
   (:import [com.mongodb Mongo DB DBCollection BasicDBObject
             DBObject DBCursor DBAddress MongoOptions
             ObjectId]))
+(defn has-option? [options k]
+  (boolean (some #{k} options)))
 
 (defn db-object [#^clojure.lang.IPersistentMap m]
   (let [to-s #(if (keyword? %) (name %) (str %))
@@ -134,3 +136,9 @@
 (defn pull       [field value]      {:$pull    {field value}})
 (defn pull-all   [field & values]   {:$pullAll {field values}})
 
+(defn ensure-index
+  [#^DBCollection collection fields & options]
+  (let [o? #(has-option? options %)]
+    (prn (o? :unique))
+    (.ensureIndex collection (db-object fields)
+                  (o? :force) (o? :unique))))
