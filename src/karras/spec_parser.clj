@@ -6,8 +6,10 @@
 (defn filter-spec [f spec]
   (filter f (partition 2 spec)))
 
-(defn contains-option? [attr kw]
-  (contains? (attr-options attr) kw))
+(defn contains-options? [attr & keywords]
+  (let [options (attr-options attr)]
+    (reduce #(and %1 (contains? options %2))
+            keywords)))
 
 (defn required-attrs [spec]
   (filter-spec #(= :required (:type (attr-options %)))
@@ -18,23 +20,22 @@
                spec))
 
 (defn pair-attrs [spec]
-  (filter-spec #(and (not (contains-option? % :enums))
-                     (not (contains-option? % :type)))
+  (filter-spec #(not (contains-options? % :enums :type))
                spec))
 
 (defn attrs-with-defaults [spec]
-  (filter-spec #(contains-option? % :default)
+  (filter-spec #(contains-options? % :default)
               spec))
 
-(defn pair-field? [spec token]
+(defn pair-field [spec token]
   (some #(if (= token (attr-name %)) %) (pair-attrs spec)))
 
-(defn enum-field? [spec token]
+(defn enum-field [spec token]
   (some #(if (contains? (:enums (attr-options %)) token) %)
         (enum-attrs spec)))
 
 (defn enum-name [spec val]
-  (attr-name (get-enum val spec)))
+  (attr-name (enum-field spec val)))
 
 (defn parse-pair [spec parsed key [value & tail]]
   [(assoc parsed key value) tail])
@@ -47,8 +48,8 @@
   [parsed tail])
 
 (defn choose-parser [spec token]
-  (cond (pair-field? spec token) parse-pair
-        (enum-field? spec token) parse-enum
+  (cond (pair-field spec token) parse-pair
+        (enum-field spec token) parse-enum
         :default parse-ignore))
 
 (defn parse-options [spec item init-results init-unparsed]
@@ -82,20 +83,19 @@
 (defn parse-items [spec items]
   (map #(parse-item spec %) items))
 
-(comment
-  (def demographic-spec
-       [:name {:type :required}
-        :age  {:type :required}
-        :gender {:enums #{:male :female}}])
+(def demographic-spec
+     [:name {:type :required}
+      :age  {:type :required}
+      :gender {:enums #{:male :female}}])
 
-  (def dick ["dick" 1 :male  ])
-  (def jane ["jane" 1 :female])
+(def dick ["dick" 1 :male  ])
+(def jane ["jane" 1 :female])
 
-  (asert (= (parse-item demographic-spec dick)
-            {:gender :male, :age 1, :name "dick"}))
+(assert (= (parse-item demographic-spec dick)
+           {:gender :male, :age 1, :name "dick"}))
 
-  (assert (= (parse-items demographic-spec [dick jane])
-             [{:gender :male, :age 1, :name "dick"}
-              {:gender :female, :age 1, :name "jane"}])))
+(assert (= (parse-items demographic-spec [dick jane])
+           [{:gender :male, :age 1, :name "dick"}
+            {:gender :female, :age 1, :name "jane"}]))
 
 
