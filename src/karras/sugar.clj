@@ -46,10 +46,10 @@
 (defn eq         [field y]   {field y})
 (defn within     [field y z] {field {:$gt y :$lt z}})
 (defn ne         [field y]   {field {:$ne y}})
-(defn in         [field & y] {field {:$in y}})
-(defn not-in     [field & y] {field {:$nin y}})
+(defn in         [field ys]  {field {:$in ys}})
+(defn not-in     [field ys]  {field {:$nin ys}})
 (defn eq-mod     [field m v] {field {:$mod [m v]}})
-(defn all        [field & y] {field {:$all y}})
+(defn all        [field y]   {field {:$all y}})
 (defn size       [field y]   {field {:$size y}})
 (defn exist?     [field]     {field {:$exists true}})
 (defn not-exist? [field]     {field {:$exists false}})
@@ -67,11 +67,10 @@
 (defn set-fields [& pairs]          {:$set (apply hash-map pairs)})
 (defn unset      [field]            {:$unset {field 1}})
 (defn push       [field value]      {:$push {field value}})
-(defn push-all   [field & values]   {:$push {field values}})
 (defn pop-last   [field]            {:$pop {field 1}})
 (defn pop-first  [field]            {:$pop {field -1}})
 (defn pull       [field value]      {:$pull {field value}})
-(defn pull-all   [field & values]   {:$pullAll {field values}})
+(defn pull-all   [field values]   {:$pullAll {field values}})
 
 (defn date
   "A convenience constructor for making a java.util.Date.  Takes zero or more 
