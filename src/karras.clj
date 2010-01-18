@@ -98,7 +98,7 @@
            count))
 
 (defn fetch-by-id [#^DBCollection collection #^String s]
-  (.findOne collection (ObjectId. s)))
+  (clojure-object (.findOne collection (ObjectId. s))))
 
 (defn distinct-values [#^DBCollection collection s]
   (seq (.distinct collection (name s))))
