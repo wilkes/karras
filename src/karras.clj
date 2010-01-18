@@ -246,3 +246,5 @@
   [#^DBCollection collection kw]
   (.dropIndex collection (name kw)))
 
+(defn list-indexes [#^DBCollection collection]
+  (map to-clj (.getIndexInfo collection)))
