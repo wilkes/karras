@@ -68,9 +68,11 @@
 
 (defn collection
   "Returns a DBCollection."
-  [#^Mongo mongo db-name collection-name]
-     (.getCollection (.getDB mongo (keyword-str db-name))
-                     (keyword-str collection-name)))
+  ([#^DB db collection-name]
+     (.getCollection db (keyword-str collection-name)))
+  ([#^Mongo mongo db-name collection-name]
+     (collection (.getDB mongo (keyword-str db-name))
+                 collection-name)))
 
 (defn drop-collection [#^DBCollection collection]
   (.drop collection))
@@ -248,3 +250,4 @@
 
 (defn list-indexes [#^DBCollection collection]
   (map to-clj (.getIndexInfo collection)))
+
