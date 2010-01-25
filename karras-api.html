@@ -1,0 +1,384 @@
+<html>
+  <head>
+    <title>karras API reference (karras)</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">karras</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="karras-api.html" class="wiki_link">karras</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#toc0">Overview</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/collection">collection</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/connect">connect</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/count-docs">count-docs</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/delete">delete</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/distinct-values">distinct-values</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/ensure-index">ensure-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/fetch">fetch</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/fetch-all">fetch-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/fetch-by-id">fetch-by-id</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/fetch-one">fetch-one</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/group">group</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/insert">insert</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/save">save</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/to-clj">to-clj</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/to-dbo">to-dbo</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/update">update</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/update-all">update-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras/upsert">upsert</a>
+    </div>
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.sugar">karras.sugar</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/asc">asc</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/compound-index">compound-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/date">date</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/desc">desc</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/modify">modify</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/query">query</a>
+    </div>
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras</span></h1>
+by <span id="author">Unknown</span><br />
+<br />Usage:
+<pre>
+(ns your-namespace
+  (:require <span id="long-name">karras</span>))
+</pre><pre>
+</pre><h2>Overview</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<h2>Public Variables and Functions</h2>
+<div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/collection">collection</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (collection db collection-name)
+       (collection mongo db-name collection-name)
+</pre>
+  <pre id="var-docstr">Returns a DBCollection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/connect">connect</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (connect)
+       (connect host)
+       (connect host port)
+</pre>
+  <pre id="var-docstr">Returns a single server connection. Defaults to host 127.0.0.1 port 27017</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/count-docs">count-docs</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (count-docs collection)
+       (count-docs collection query)
+</pre>
+  <pre id="var-docstr">Returns the count of documents, optionally, matching a query</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/delete">delete</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (delete collection obj)
+</pre>
+  <pre id="var-docstr">Remove a document from a collection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/distinct-values">distinct-values</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (distinct-values collection kw)
+</pre>
+  <pre id="var-docstr">Fetch a seq of the distinct values of a given collection for a key.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/ensure-index">ensure-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ensure-index collection fields &amp; options)
+</pre>
+  <pre id="var-docstr">Ensure an index exist on a collection
+Options:
+  :force, force index creation, even if one exists
+  :unique, require unique values for a field</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/fetch">fetch</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch collection query &amp; options__538__auto__)
+</pre>
+  <pre id="var-docstr">Fetch a seq of documents that match a given query.
+Accepts the following keywords:
+    :limit, maximum number of documents to return
+    :skip, where in the result set the seq will begin, i.e. paging
+    :include, which keys to include in the result set, can not be combined with :exclude
+    :exclude, which keys to exclude from the result set, can not be combined with :include
+    :sort, which keys to order by
+    :count, if true return the count of the result set, defaults to false</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/fetch-all">fetch-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-all collection &amp; options__538__auto__)
+</pre>
+  <pre id="var-docstr">Fetch all the documents of a collection. Same options as fetch.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/fetch-by-id">fetch-by-id</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-by-id collection s)
+</pre>
+  <pre id="var-docstr">Fetch a document by :_id</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/fetch-one">fetch-one</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-one collection query &amp; options__538__auto__)
+</pre>
+  <pre id="var-docstr">Fetch one document of a collection. Supports same options as fetch exceept :limit and :count</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/group">group</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (group collection keys cond initial reduce)
+</pre>
+  <pre id="var-docstr">Fetch a seq of grouped items.
+Example:
+  SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
+  Karras: (group coll
+                 [:a :b] 
+                 {:active 1}
+                 {:csum 0}
+                 "function(obj,prev) { prev.csum += obj.c; }")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/insert">insert</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (insert collection &amp; objs)
+</pre>
+  <pre id="var-docstr">Inserts one or more documents into a collection</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/save">save</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (save collection &amp; objs)
+</pre>
+  <pre id="var-docstr">Saves a document to a colection, does an upsert behind the scenes</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/to-clj">to-clj</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (to-clj dbo)
+</pre>
+  <pre id="var-docstr">Converts a clojure map to acom.mongodb.DBObject</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/to-dbo">to-dbo</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (to-dbo m)
+</pre>
+  <pre id="var-docstr">Converts a com.mongodb.DBObject to a clojure map</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/update">update</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (update collection query obj &amp; options)
+</pre>
+  <pre id="var-docstr">Updates one or more documents in a collection that match the query with the document 
+provided.
+  :upsert, performs an insert if the document doesn't have :_id
+  :multi, update all documents that match the query</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/update-all">update-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (update-all collection obj)
+       (update-all collection query obj)
+</pre>
+  <pre id="var-docstr">Shortcut for (update collection query obj :multi)</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras/upsert">upsert</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (upsert collection query obj)
+</pre>
+  <pre id="var-docstr">Shortcut for (update collection query obj :upsert)</pre>
+  
+</div>
+<h2 id="namespace-name">karras.sugar</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/asc">asc</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (asc k)
+</pre>
+  <pre id="var-docstr">Sugar for order by and index.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/compound-index">compound-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (compound-index &amp; asc-or-descs)
+</pre>
+  <pre id="var-docstr">Sugar to create compound index</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/date">date</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (date &amp; [year month date hour minute second milli])
+</pre>
+  <pre id="var-docstr">A convenience constructor for making a java.util.Date.  Takes zero or more 
+args. Zero args return the current time. One or more args returns a date 
+values provided and all other values zeroed out.
+Args are year, month, date, hour, minute, second, and  milliseconds</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/desc">desc</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (desc k)
+</pre>
+  <pre id="var-docstr">Sugar for order by and index.</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/modify">modify</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (modify &amp; clauses)
+</pre>
+  <pre id="var-docstr">Sugar to create update documents
+  (modify (incr :j) (push :k 3))
+produces:
+  {:$inc :j :$push {:k 3}}</pre>
+  
+</div><div id="var-entry">
+  <hr />
+  <h2 id="karras.sugar/query">query</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (query &amp; clauses)
+</pre>
+  <pre id="var-docstr">Sugar to create a query document. Example:
+  (query (ne :j 3) (gt k 10))
+produces:
+  {:j {:$ne 3} :k {:$gt 10}}</pre>
+  
+</div>
+
+
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">No copyright info </div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>
