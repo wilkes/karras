@@ -35,7 +35,7 @@
   (boolean (some #{k} options)))
 
 (defn to-dbo
-  "Converts a com.mongodb.DBObject to a clojure map"
+  "Converts a clojure map to acom.mongodb.DBObject"
   [m]
   (let [to-v #(if (map? %) (to-dbo %) %)
         dbo  (BasicDBObject.)]
@@ -44,7 +44,7 @@
     dbo))
 
 (defn to-clj
-  "Converts a clojure map to acom.mongodb.DBObject"
+  "Converts a com.mongodb.DBObject to a clojure map"
   [dbo]
   (apply merge (map (fn [#^java.util.Map$Entry e]
                        (let [k (.getKey e)
