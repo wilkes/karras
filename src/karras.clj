@@ -35,7 +35,7 @@
   (boolean (some #{k} options)))
 
 (defn to-dbo
-  "Converts a clojure map to acom.mongodb.DBObject"
+  "Converts a clojure map to a com.mongodb.DBObject"
   [m]
   (let [to-v #(if (map? %) (to-dbo %) %)
         dbo  (BasicDBObject.)]
