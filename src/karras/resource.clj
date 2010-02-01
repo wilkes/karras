@@ -1,4 +1,4 @@
-(ns floyd.resource
+(ns karras.resource
   (:use     [compojure    :only [redirect-to html link-to capitalize]]
             [karras.sugar])
   (:require [karras       :as mongo])
