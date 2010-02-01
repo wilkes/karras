@@ -64,7 +64,7 @@
   (apply merge clauses))
 
 (defn incr       [field & [amount]] {:$inc {field (or amount 1)}})
-(defn set-fields [& pairs]          {:$set (apply hash-map pairs)})
+(defn set-fields [field-map]          {:$set field-map})
 (defn unset      [field]            {:$unset {field 1}})
 (defn push       [field value]      {:$push {field value}})
 (defn pop-last   [field]            {:$pop {field 1}})
