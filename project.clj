@@ -2,7 +2,8 @@
   :description "A clojure entity framework for MongoDB"
   :dependencies [[org.clojure/clojure "1.1.0"]
                  [org.clojure/clojure-contrib "1.1.0-master-SNAPSHOT"]
-                 [org.mongodb/mongo-java-driver "1.2.1"]]
+                 [org.mongodb/mongo-java-driver "1.2.1"]
+                 [compojure "0.3.2"]]
   :dev-dependencies [[swank-clojure "1.1.0-SNAPSHOT"]
                      [lein-clojars "0.5.0-SNAPSHOT"]
                      [autodoc "0.7.0"]]
