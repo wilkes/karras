@@ -39,21 +39,28 @@
   [& clauses]
   (apply merge clauses))
 
-(defn lt         [field y]   {field {:$lt  y}})
-(defn gt         [field y]   {field {:$gt  y}})
-(defn lte        [field y]   {field {:$lte y}})
-(defn gte        [field y]   {field {:$gte y}})
-(defn eq         [field y]   {field y})
-(defn within     [field y z] {field {:$gte y :$lte z}})
-(defn ne         [field y]   {field {:$ne y}})
-(defn in         [field ys]  {field {:$in ys}})
-(defn not-in     [field ys]  {field {:$nin ys}})
-(defn eq-mod     [field m v] {field {:$mod [m v]}})
-(defn all        [field y]   {field {:$all y}})
-(defn size       [field y]   {field {:$size y}})
-(defn exist?     [field]     {field {:$exists true}})
-(defn not-exist? [field]     {field {:$exists false}})
-(defn where      [js-string] {:where js-string})
+(defn through-date [d]
+  (.getTime
+   (doto (Calendar/getInstance)
+     (.setTime d)
+     (.add Calendar/DAY_OF_MONTH 1))))
+
+(defn lt           [field y]   {field {:$lt  y}})
+(defn gt           [field y]   {field {:$gt  y}})
+(defn lte          [field y]   {field {:$lte y}})
+(defn gte          [field y]   {field {:$gte y}})
+(defn eq           [field y]   {field y})
+(defn within       [field y z] {field {:$gte y :$lte z}})
+(defn within-dates [field y z] {field {:gte y :lt (through-date z)}})
+(defn ne           [field y]   {field {:$ne y}})
+(defn in           [field ys]  {field {:$in ys}})
+(defn not-in       [field ys]  {field {:$nin ys}})
+(defn eq-mod       [field m v] {field {:$mod [m v]}})
+(defn all          [field y]   {field {:$all y}})
+(defn size         [field y]   {field {:$size y}})
+(defn exist?       [field]     {field {:$exists true}})
+(defn not-exist?   [field]     {field {:$exists false}})
+(defn where        [js-string] {:where js-string})
 
 (defn modify
   "Sugar to create update documents
@@ -63,14 +70,14 @@
   [& clauses]
   (apply merge clauses))
 
-(defn incr       [field & [amount]] {:$inc {field (or amount 1)}})
-(defn set-fields [field-map]        {:$set field-map})
-(defn unset      [field]            {:$unset {field 1}})
-(defn push       [field value]      {:$push {field value}})
-(defn pop-last   [field]            {:$pop {field 1}})
-(defn pop-first  [field]            {:$pop {field -1}})
-(defn pull       [field value]      {:$pull {field value}})
-(defn pull-all   [field values]   {:$pullAll {field values}})
+(defn incr         [field & [amount]] {:$inc {field (or amount 1)}})
+(defn set-fields   [field-map]        {:$set field-map})
+(defn unset        [field]            {:$unset {field 1}})
+(defn push         [field value]      {:$push {field value}})
+(defn pop-last     [field]            {:$pop {field 1}})
+(defn pop-first    [field]            {:$pop {field -1}})
+(defn pull         [field value]      {:$pull {field value}})
+(defn pull-all     [field values]   {:$pullAll {field values}})
 
 (defn date
   "A convenience constructor for making a java.util.Date.  Takes zero or more 
