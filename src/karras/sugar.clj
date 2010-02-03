@@ -51,7 +51,7 @@
 (defn gte          [field y]   {field {:$gte y}})
 (defn eq           [field y]   {field y})
 (defn within       [field y z] {field {:$gte y :$lte z}})
-(defn within-dates [field y z] {field {:gte y :lt (through-date z)}})
+(defn within-dates [field y z] {field {:$gte y :$lt (through-date z)}})
 (defn ne           [field y]   {field {:$ne y}})
 (defn in           [field ys]  {field {:$in ys}})
 (defn not-in       [field ys]  {field {:$nin ys}})
