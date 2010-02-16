@@ -66,6 +66,9 @@
   [#^Mongo connection db-name]
   (.getDB connection (keyword-str db-name)))
 
+(defn drop-db [#^DBObject db]
+    (.dropDatabase db))
+
 (defn collection
   "Returns a DBCollection."
   ([#^DB db collection-name]
