@@ -51,8 +51,9 @@
 
 (declare to-clj)
 (defn to-clj-value [v]
+  (prn v)
   (cond
-   (map? v) (to-clj v)
+   (isa? (class v) java.util.Map) (to-clj v)
    (isa? (class v) java.util.List) (map to-clj-value v)
    :otherwise v))
 
@@ -78,6 +79,9 @@
 
 (defn drop-db [#^DBObject db]
     (.dropDatabase db))
+
+(defn list-collections [#^Mongo db]
+  (map keyword (.getCollectionNames db)))
 
 (defn collection
   "Returns a DBCollection."
@@ -263,4 +267,3 @@
 
 (defn list-indexes [#^DBCollection collection]
   (map to-clj (.getIndexInfo collection)))
-
