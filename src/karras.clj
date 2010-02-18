@@ -34,6 +34,7 @@
 (defn- has-option? [options k]
   (boolean (some #{k} options)))
 
+(declare to-dbo)
 (defn to-dbo-value [v]
   (cond
    (map? v) (to-dbo v)
@@ -48,6 +49,7 @@
       (.put dbo (keyword-str k) (to-dbo-value v)))
     dbo))
 
+(declare to-clj)
 (defn to-clj-value [v]
   (cond
    (map? v) (to-clj v)
