@@ -34,26 +34,34 @@
 (defn- has-option? [options k]
   (boolean (some #{k} options)))
 
+(defn to-dbo-value [v]
+  (cond
+   (map? v) (to-dbo v)
+   (or (list? v) (vector? v)) (map to-dbo-value v)
+   :otherwise v))
+
 (defn to-dbo
   "Converts a clojure map to a com.mongodb.DBObject"
   [m]
-  (let [to-v #(if (map? %) (to-dbo %) %)
-        dbo  (BasicDBObject.)]
+  (let [dbo  (BasicDBObject.)]
     (doseq [[k v] m]
-      (.put dbo (keyword-str k) (to-v v)))
+      (.put dbo (keyword-str k) (to-dbo-value v)))
     dbo))
+
+(defn to-clj-value [v]
+  (cond
+   (map? v) (to-clj v)
+   (isa? (class v) java.util.List) (map to-clj-value v)
+   :otherwise v))
 
 (defn to-clj
   "Converts a com.mongodb.DBObject to a clojure map"
   [dbo]
-  (apply merge (map (fn [#^java.util.Map$Entry e]
-                       (let [k (.getKey e)
-                             v (.getValue e)]
-                         {(keyword k)
-                          (if (instance? DBObject v)
-                            (to-clj v)
-                            v)}))
-                    (seq dbo))))
+  (apply merge
+         (map (fn [#^java.util.Map$Entry e]
+                {(keyword (.getKey e))
+                 (to-clj-value (.getValue e))})
+              (seq dbo))))
 
 (defn connect
   "Returns a single server connection. Defaults to host 127.0.0.1 port 27017"
