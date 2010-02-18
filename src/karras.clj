@@ -51,7 +51,6 @@
 
 (declare to-clj)
 (defn to-clj-value [v]
-  (prn v)
   (cond
    (isa? (class v) java.util.Map) (to-clj v)
    (isa? (class v) java.util.List) (map to-clj-value v)
