@@ -37,8 +37,8 @@
 (declare to-dbo)
 (defn to-dbo-value [v]
   (cond
-   (map? v) (to-dbo v)
-   (or (list? v) (vector? v)) (map to-dbo-value v)
+   (isa? (class v) java.util.Map) (to-dbo v)
+   (isa? (class v) java.util.List) (map to-dbo-value v)
    :otherwise v))
 
 (defn to-dbo
