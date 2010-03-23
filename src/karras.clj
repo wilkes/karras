@@ -34,57 +34,40 @@
 (defn- has-option? [options k]
   (boolean (some #{k} options)))
 
-(declare to-dbo)
-(defmulti to-dbo-value class)
+(defmulti to-dbo class)
 
-(defmethod to-dbo-value java.util.Map
-  [v]
-  (to-dbo v))
-
-(defmethod to-dbo-value java.util.List
-  [v]
-  (map to-dbo-value v))
-
-(defmethod to-dbo-value clojure.lang.Keyword
-  [v]
-  (str v))
-
-(defmethod to-dbo-value :default
-  [v]
-  v)
-
-(defn to-dbo
-  "Converts a clojure map to a com.mongodb.DBObject"
+(defmethod to-dbo java.util.Map
   [m]
   (let [dbo  (BasicDBObject.)]
     (doseq [[k v] m]
-      (.put dbo (keyword-str k) (to-dbo-value v)))
+      (.put dbo (keyword-str k) (to-dbo v)))
     dbo))
 
-(declare to-clj)
-
-(defmulti to-clj-value class)
-
-(defmethod to-clj-value java.util.Map
+(defmethod to-dbo java.util.List
   [v]
-  (to-clj v))
+  (map to-dbo v))
 
-(defmethod to-clj-value java.util.List
-  [v] 
-  (map to-clj-value v))
-
-(defmethod to-clj-value :default
+(defmethod to-dbo :default
   [v]
   v)
 
-(defn to-clj
-  "Converts a com.mongodb.DBObject to a clojure map"
-  [dbo]
+(defmulti to-clj class)
+
+(defmethod to-clj java.util.Map
+  [v]
   (apply merge
          (map (fn [#^java.util.Map$Entry e]
                 {(keyword (.getKey e))
-                 (to-clj-value (.getValue e))})
-              (seq dbo))))
+                 (to-clj (.getValue e))})
+              (seq v))))
+
+(defmethod to-clj java.util.List
+  [v] 
+  (map to-clj v))
+
+(defmethod to-clj :default
+  [v]
+  v)
 
 (defn connect
   "Returns a single server connection. Defaults to host 127.0.0.1 port 27017"
@@ -289,4 +272,4 @@
   (map to-clj (.getIndexInfo collection)))
 
 (defn eval-code [db code-str]
-  (to-clj-value (.eval db code-str (into-array nil))))
+  (to-clj (.eval db code-str (into-array nil))))
