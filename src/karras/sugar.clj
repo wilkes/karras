@@ -60,6 +60,7 @@
 (defn size         [field y]   {field {:$size y}})
 (defn exist?       [field]     {field {:$exists true}})
 (defn not-exist?   [field]     {field {:$exists false}})
+(defn is-nil?      [field]     (eq field nil)) 
 (defn where        [js-string] {:where js-string})
 
 (defn modify

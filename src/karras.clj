@@ -35,11 +35,23 @@
   (boolean (some #{k} options)))
 
 (declare to-dbo)
-(defn to-dbo-value [v]
-  (cond
-   (isa? (class v) java.util.Map) (to-dbo v)
-   (isa? (class v) java.util.List) (map to-dbo-value v)
-   :otherwise v))
+(defmulti to-dbo-value class)
+
+(defmethod to-dbo-value java.util.Map
+  [v]
+  (to-dbo v))
+
+(defmethod to-dbo-value java.util.List
+  [v]
+  (map to-dbo-value v))
+
+(defmethod to-dbo-value clojure.lang.Keyword
+  [v]
+  (str v))
+
+(defmethod to-dbo-value :default
+  [v]
+  v)
 
 (defn to-dbo
   "Converts a clojure map to a com.mongodb.DBObject"
@@ -50,11 +62,20 @@
     dbo))
 
 (declare to-clj)
-(defn to-clj-value [v]
-  (cond
-   (isa? (class v) java.util.Map) (to-clj v)
-   (isa? (class v) java.util.List) (map to-clj-value v)
-   :otherwise v))
+
+(defmulti to-clj-value class)
+
+(defmethod to-clj-value java.util.Map
+  [v]
+  (to-clj v))
+
+(defmethod to-clj-value java.util.List
+  [v] 
+  (map to-clj-value v))
+
+(defmethod to-clj-value :default
+  [v]
+  v)
 
 (defn to-clj
   "Converts a com.mongodb.DBObject to a clojure map"
@@ -266,3 +287,6 @@
 
 (defn list-indexes [#^DBCollection collection]
   (map to-clj (.getIndexInfo collection)))
+
+(defn eval-code [db code-str]
+  (to-clj-value (.eval db code-str (into-array nil))))
