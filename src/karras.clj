@@ -251,14 +251,21 @@
 (defn ensure-index
   "Ensure an index exist on a collection
    Options:
-     :force, force index creation, even if one exists
+     :dropDups, if :unique is specified, drop all but one instance of that duplicate document
+     :background, run the index building in the background
+     :name, a human readable name for the index
+     :safe, checks if the index creation succeeded, throws an exception if index creation failed
      :unique, require unique values for a field"
   [#^DBCollection collection fields & options]
-  (let [o? #(has-option? options %)]
-    (.ensureIndex collection #^DBObject
-                  (to-dbo fields)
-                  (boolean (o? :force))
-                  (boolean (o? :unique)))))
+  (.ensureIndex collection #^DBObject
+                (to-dbo fields)
+                (let [opt-map (apply hash-map options)]
+                  (if (not (empty? opt-map))
+                    (to-dbo opt-map)))))
+
+(defn drop-indexes
+  [#^DBCollection collection]
+  (.dropIndexes collection))
 
 (defn drop-index
   [#^DBCollection collection o]
