@@ -221,9 +221,12 @@
   (to-clj (.findOne collection (ObjectId. s))))
 
 (defn distinct-values
-  "Fetch a seq of the distinct values of a given collection for a key."
-  [#^DBCollection collection kw]
-  (seq (.distinct collection (name kw))))
+  "Fetch a seq of the distinct values of a given collection for a key and
+   optional query parameters."
+  ([#^DBCollection collection kw]
+     (seq (.distinct collection (name kw))))
+  ([#^DBCollection collection kw query]
+     (seq (.distinct collection (name kw) (to-dbo query)))))
 
 (defn group
   "Fetch a seq of grouped items.
