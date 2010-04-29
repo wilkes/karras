@@ -81,7 +81,7 @@
   (.getDB connection (keyword-str db-name)))
 
 (defn drop-db [#^DBObject db]
-    (.dropDatabase db))
+  (.dropDatabase db))
 
 (defn list-collections [#^Mongo db]
   (map keyword (.getCollectionNames db)))
@@ -137,7 +137,17 @@
   ([collection query obj]
       (update collection query obj :multi)))
 
-(defn- search* [#^DBCollection collection query include exclude  limit skip sort count?]
+(defnk fetch
+  "Fetch a seq of documents that match a given query.
+   Accepts the following keywords:
+       :limit, maximum number of documents to return
+       :skip, where in the result set the seq will begin, i.e. paging
+       :include, which keys to include in the result set, can not be combined with :exclude
+       :exclude, which keys to exclude from the result set, can not be combined with :include
+       :sort, which keys to order by
+       :count, if true return the count of the result set, defaults to false"
+  [collection query
+   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
   (let [cursor (if query
                  (if (or include exclude)
                    (let [keys (merge (zipmap (remove nil? include)
@@ -164,49 +174,29 @@
       (.count cursor)
       (map to-clj cursor))))
 
-(defnk fetch
-  "Fetch a seq of documents that match a given query.
-   Accepts the following keywords:
-       :limit, maximum number of documents to return
-       :skip, where in the result set the seq will begin, i.e. paging
-       :include, which keys to include in the result set, can not be combined with :exclude
-       :exclude, which keys to exclude from the result set, can not be combined with :include
-       :sort, which keys to order by
-       :count, if true return the count of the result set, defaults to false"
-  [collection query
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (search* collection
-           query
-           include
-           exclude
-           limit
-           skip
-           sort
-           count))
-
 (defnk fetch-all
   "Fetch all the documents of a collection. Same options as fetch."
   [collection :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (search* collection
-           nil
-           include
-           exclude
-           limit
-           skip
-           sort
-           count))
+  (fetch collection
+         nil
+         include
+         exclude
+         limit
+         skip
+         sort
+         count))
 
 (defnk fetch-one
-  "Fetch one document of a collection. Supports same options as fetch exceept :limit and :count"
+  "Fetch one document of a collection. Supports same options as fetch except :limit and :count"
   [collection query :skip nil :include nil :exclude nil :sort nil]
-  (first (search* collection
-                  query
-                  include
-                  exclude
-                  1
-                  skip
-                  sort
-                  false)))
+  (first (fetch collection
+                query
+                include
+                exclude
+                1
+                skip
+                sort
+                false)))
 
 (defn count-docs
   "Returns the count of documents, optionally, matching a query"
