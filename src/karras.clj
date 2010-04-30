@@ -34,40 +34,34 @@
 (defn- has-option? [options k]
   (boolean (some #{k} options)))
 
-(defmulti to-dbo class)
+(defprotocol MongoMappable
+  (to-dbo [d])
+  (to-clj [d]))
 
-(defmethod to-dbo java.util.Map
-  [m]
+(extend-protocol MongoMappable
+ java.util.Map
+ (to-dbo [m]
   (let [dbo  (BasicDBObject.)]
     (doseq [[k v] m]
       (.put dbo (keyword-str k) (to-dbo v)))
     dbo))
+ (to-clj [v]
+  (let [f (fn [result #^java.util.Map$Entry e]
+            (conj result [(keyword (.getKey e))
+                          (to-clj (.getValue e))]))]
+    (reduce f {} v)))
 
-(defmethod to-dbo java.util.List
-  [v]
-  (map to-dbo v))
+ java.util.List
+ (to-dbo [v] (map to-dbo v))
+ (to-clj [v] (map to-clj v))
 
-(defmethod to-dbo :default
-  [v]
-  v)
+ Object
+ (to-dbo [v] v)
+ (to-clj [v] v)
 
-(defmulti to-clj class)
-
-(defmethod to-clj java.util.Map
-  [v]
-  (apply merge
-         (map (fn [#^java.util.Map$Entry e]
-                {(keyword (.getKey e))
-                 (to-clj (.getValue e))})
-              (seq v))))
-
-(defmethod to-clj java.util.List
-  [v] 
-  (map to-clj v))
-
-(defmethod to-clj :default
-  [v]
-  v)
+ nil
+ (to-dbo [v] v)
+ (to-clj [v] v))
 
 (defn connect
   "Returns a single server connection. Defaults to host 127.0.0.1 port 27017"
@@ -170,7 +164,7 @@
                  (.sort cursor (to-dbo
                                 (apply merge sort)))
                    cursor)]
-    (if count?
+    (if count
       (.count cursor)
       (map to-clj cursor))))
 
