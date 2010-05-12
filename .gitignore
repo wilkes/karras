@@ -4,3 +4,5 @@ karras.jar
 lib
 classes
 autodoc
+.DS_Store
+.vagrant

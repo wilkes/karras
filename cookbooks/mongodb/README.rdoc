@@ -1,0 +1,47 @@
+= DESCRIPTION:
+
+Complete Debian/Ubuntu style MongoDB configuration.
+
+= REQUIREMENTS:
+
+Debian or Ubuntu preferred.  Tested on Ubuntu 8.04 Server LTS, should work on others.
+
+= ATTRIBUTES:
+
+* mongodb[:user] = User to install and run MongoDB under. Default: "mongodb"
+* mongodb[:group] = User group to install and run MongoDB under. Default: "mongodb"
+* mongodb[:bind_address] = Specifies a single IP that the database server will listen for. Default: "127.0.0.1"
+* mongodb[:port] = Specifies the port number on which Mongo will listen for client connections. Default: "27017"
+* mongodb[:version] = MongoDB version to install. Default: '1.4.2'
+* mongodb[:file_name] = Default: "mongodb-linux-#{kernel[:machine] || 'i686'}-#{mongodb[:version]}"
+* mongodb[:url] = Url to download MongoDB files from. Default: "http://downloads.mongodb.org/linux/#{mongodb[:file_name]}.tgz"
+* mongodb[:root] = Location to install MongoDB files to.  Default: "/usr/local/mongodb"
+* mongodb[:data_dir] = Specifies the directory for datafiles. Default: "/var/lib/mongodb"
+* mongodb[:log_dir] = Directory to write log files to. Default: "/var/log/mongodb"
+* mongodb[:config_dir] = Directory to read MongoDB conf file from. Default: "/etc/mongodb"
+* mongodb[:pid_dir] = Directory for inti.d service to write pid file to. Default: "/var/run"
+
+= USAGE:
+
+Include the mongodb recipe to install MongoDB and get 'sane' default settings.
+
+== TODO:
+
+* support for Master-Slave Replication and Replica Pairs configuration
+
+= LICENSE & AUTHOR:
+
+Author:: Seth Chisamore (<schisamo@gmail.com>)
+Copyright:: 2010, Seth Chisamore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
