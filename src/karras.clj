@@ -61,7 +61,7 @@
  (to-clj [v] v)
 
  nil
- (to-dbo [v] (BasicDBObject.))
+ (to-dbo [v] v)
  (to-clj [v] v))
 
 (defn connect
@@ -213,7 +213,7 @@
 (defn count-docs
   "Returns the count of documents, optionally, matching a query"
   ([collection]
-     (count-docs collection nil))
+     (count-docs collection {}))
   ([collection query]
      (fetch collection query :count true)))
 
@@ -248,10 +248,10 @@
      (group collection keys nil {:values []} "function(obj,prev) {prev.values.push(obj)}")))
 
 (defn delete
-  "Remove a document from a collection."
-  [#^DBCollection collection & objs]
-  (doseq [o objs]
-    (.remove collection (to-dbo o))))
+  "Removes documents matching the supplied queries from a collection."
+  [#^DBCollection collection & queries]
+  (doseq [q queries]
+    (.remove collection (to-dbo q))))
 
 (defn ensure-index
   "Ensure an index exist on a collection"

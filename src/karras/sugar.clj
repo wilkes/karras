@@ -62,6 +62,7 @@
 (defn not-exist?   [field]     {field {:$exists false}})
 (defn is-nil?      [field]     (eq field nil)) 
 (defn where        [js-string] {:where js-string})
+(defn element-match [field match-query] {field {:$elemMatch match-query}})
 
 (defn modify
   "Sugar to create update documents

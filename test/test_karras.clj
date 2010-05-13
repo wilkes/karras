@@ -5,7 +5,7 @@
 
 (deftest test-to-dbo
   (testing "primitives"
-    (is (= (BasicDBObject.) (to-dbo nil)))
+    (is (= nil (to-dbo nil)))
     (is (= 1 (to-dbo 1)))
     (is (= \a (to-dbo \a)))
     (is (= "a" (to-dbo "a"))))

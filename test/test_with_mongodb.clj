@@ -70,7 +70,9 @@
 
 (deftest deleting-tests
   (delete people Jim Jane)
-  (is (= #{Bill Sally} (setify (fetch-all people)))))
+  (is (= #{Bill Sally} (setify (fetch-all people))))
+  (delete people (query (gte :age 17)))
+  (is (empty? (fetch-all people))))
 
 (deftest saving-tests
   (save people (merge Jim {:weight 180}))
