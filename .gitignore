@@ -6,3 +6,4 @@ classes
 autodoc
 .DS_Store
 .vagrant
+/karras-*.jar

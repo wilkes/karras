@@ -31,8 +31,8 @@
 (defn asc  "Sugar for order by and index." [k] {k 1})
 (defn desc "Sugar for order by and index." [k] {k -1})
 
-(defn query
-  "Sugar to create a query document. Example:
+(defn where
+  "Sugar to create a where document. Example:
      (query (ne :j 3) (gt k 10))
    produces:
      {:j {:$ne 3} :k {:$gt 10}}"
