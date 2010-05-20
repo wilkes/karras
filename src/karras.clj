@@ -21,7 +21,7 @@
 ;; THE SOFTWARE.
 
 (ns karras
-  (:use [clojure.contrib.def :only [defnk]]
+  (:use [clojure.contrib.def :only [defnk defvar]]
         [clojure.contrib.ns-utils :only [immigrate]])
   (:import [com.mongodb Mongo DB DBCollection BasicDBObject
             DBObject DBCursor DBAddress MongoOptions
@@ -64,6 +64,16 @@
  (to-dbo [v] v)
  (to-clj [v] v))
 
+(defvar *mongo-db* nil)
+
+(defmacro with-mongo [mongo-db & body]
+  `(binding [karras/*mongo-db* ~mongo-db]
+     ~@body))
+
+(defmacro with-mongo-request [mongo-db & body]
+  `(binding [*mongo-db* ~mongo-db]
+     (in-request *mongo-db*  ~@body)))
+
 (defn connect
   "Returns a single server connection. Defaults to host 127.0.0.1 port 27017"
   ([] (connect "127.0.0.1"))
@@ -71,8 +81,7 @@
   ([#^String host port]
      (Mongo. host (int port))))
 
-(defn mongo-db
-  [#^Mongo connection db-name]
+(defn mongo-db [#^Mongo connection db-name]
   (.getDB connection (keyword-str db-name)))
 
 (defmacro in-request [#^DB db & body]
@@ -94,7 +103,7 @@
 (defn collection-db [#^DBCollection collection]
   (.getDB collection))
 
-(defn drop-db [#^DBObject db]
+(defn drop-db [#^DB db]
   (.dropDatabase db))
 
 (defn list-collections [#^Mongo db]
@@ -102,6 +111,8 @@
 
 (defn collection
   "Returns a DBCollection."
+  ([collection-name]
+     (collection *mongo-db* collection-name))
   ([#^DB db collection-name]
      (.getCollection db (keyword-str collection-name)))
   ([#^Mongo mongo db-name collection-name]
@@ -111,14 +122,21 @@
 (defn drop-collection [#^DBCollection collection]
   (.drop collection))
 
-(defn insert
+(defn- insert-one
   "Inserts one or more documents into a collection"
+  [#^DBCollection collection obj]
+  (let [dbo (to-dbo obj)]
+    (.insert collection dbo)
+    (to-clj dbo)))
+
+(defn insert
+  "Inserts one or more documents into a collection. 
+   Returns the inserted object with :_id"
   [#^DBCollection collection & objs]
-  (if (= 1 (count objs))
-    (to-clj
-     (.insert collection #^DBObject (to-dbo (first objs))))
-    (map to-clj
-         (.insert collection #^java.util.List (map to-dbo objs)))))
+  (let [inserted (doall (map #(insert-one collection %) objs))]
+    (if (= 1 (count objs))
+      (first inserted)
+      inserted)))
 
 (defn save
   "Saves a document to a colection, does an upsert behind the scenes"
@@ -132,12 +150,14 @@
      :upsert, performs an insert if the document doesn't have :_id
      :multi, update all documents that match the query"
   [#^DBCollection collection query obj & options]
-  (let [o? #(has-option? options %)]
-    (to-clj (.update collection
-                     (to-dbo query)
-                     (to-dbo obj)
-                     (o? :upsert)
-                     (o? :multi)))))
+  (let [o? #(has-option? options %)
+        dbo (to-dbo obj)]
+    (.update collection
+             (to-dbo query)
+             dbo
+             (o? :upsert)
+             (o? :multi))
+    (to-clj dbo)))
 
 (defn upsert
   "Shortcut for (update collection query obj :upsert)"
@@ -191,7 +211,8 @@
 (defnk fetch-all
   "Fetch all the documents of a collection. Same options as fetch."
   [collection :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (fetch collection nil
+  (fetch collection
+         nil
          :include include
          :exclude exclude
          :limit   limit  

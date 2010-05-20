@@ -1,4 +1,6 @@
-(ns karras.document)
+(ns karras.document
+  (:require karras)
+  (:use [clojure.contrib.def :only [defnk]]))
 
 (def docspecs (atom {}))
 
@@ -49,17 +51,19 @@
 
 (defmulti convert :type)
 
-(defmethod convert java.util.List [field-spec vals]
+(defmethod convert java.util.List
+  [field-spec vals]
   (map #(convert (assoc field-spec :type (:of field-spec)) %) vals))
 
-(defmethod convert :default [field-spec val]
+(defmethod convert :default
+  [_ val]
   val)
 
 (defn make [type hmap]
   (let [fields (-> type docspec :fields)]
     (reduce (fn [entity [k field-spec]]
               (assoc entity k (convert field-spec (k hmap))))
-            (.newInstance type)
+            (merge (.newInstance type) hmap)
             fields)))
 
 (defn- make-mongo-type [classname is-entity? fields]
@@ -102,4 +106,68 @@
 (defn alter-entity-type! [type & kvs]
   (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
 
+(defn collection-for [entity-or-type]
+  (let [type (if (instance? Class entity-or-type) entity-or-type (class entity-or-type))]
+    (karras/collection (-> type docspec :collection-name))))
 
+(defn create [type hmap]
+  (make type (karras/insert (collection-for type) (make type hmap))))
+
+(defn save
+  ([entity]
+     (karras/save (collection-for entity) entity))
+  ([entity & entities]
+     (doall (map save (cons entity entities)))))
+
+(defn delete
+  ([entity]
+     (karras/delete (collection-for entity) entity))
+  ([entity & entities]
+     (doall (map delete (cons entity entities)))))
+
+(defn delete-all
+  ([type]
+     (delete-all type {}))
+  ([type query]
+     (karras/delete (collection-for type) query)))
+
+(defnk fetch [type query
+              :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
+  (map #(make type %) (karras/fetch (collection-for type)
+                                    query
+                                    :include include
+                                    :exclude exclude
+                                    :limit   limit  
+                                    :skip    skip   
+                                    :sort    sort   
+                                    :count   count)))
+
+(defnk fetch-all [type
+                  :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
+  (map #(make type %) (karras/fetch-all (collection-for type)
+                                      :include include
+                                      :exclude exclude
+                                      :limit   limit  
+                                      :skip    skip   
+                                      :sort    sort   
+                                      :count   count)))
+
+(defnk fetch-one [type query
+                  :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
+  (make type (karras/fetch-one (collection-for type)
+                               query
+                               :include include
+                               :exclude exclude
+                               :limit   limit  
+                               :skip    skip   
+                               :sort    sort   
+                               :count   count)))
+
+(defn count-instances
+  ([type]
+     (count-instances type nil))
+  ([type query]
+     (karras/fetch (collection-for type) query :count true)))
+
+(defn distinct-values [type kw]
+  (karras/distinct-values (collection-for type) kw))

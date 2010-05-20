@@ -1,4 +1,4 @@
-(defproject karras "0.3.0-SNAPSHOT"
+(defproject karras "0.4.0-SNAPSHOT"
   :description "A clojure entity framework for MongoDB"
   :dependencies [[clojure "1.2.0-master-SNAPSHOT"]
                  [clojure-contrib "1.2.0-SNAPSHOT"]

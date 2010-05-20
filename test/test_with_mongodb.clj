@@ -24,8 +24,8 @@
  nil
  (setify [n] nil))
 
-(defonce people (collection (mongo-db (connect) :integration-tests)
-                            :people))
+(defonce indexing-tests-db (mongo-db (connect) :integration-tests))
+(defonce people (collection indexing-tests-db :people))
 
 (def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21}
                     {:first-name "Sally" :last-name "Jones"   :age 18}
@@ -53,8 +53,8 @@
   (is (= 4 (count-docs people)))
 
   (is (= 4 (count (fetch-all people))))
-  (is (= 2 (count (fetch people (query (gte :age 18))))))
-  (is (= Bill (fetch-one people (query (eq :first-name "Bill")))))
+  (is (= 2 (count (fetch people (where (gte :age 18))))))
+  (is (= Bill (fetch-one people (where (eq :first-name "Bill")))))
   
   (is (= #{21 18 16} (distinct-values people :age))))
 
@@ -71,7 +71,7 @@
 (deftest deleting-tests
   (delete people Jim Jane)
   (is (= #{Bill Sally} (setify (fetch-all people))))
-  (delete people (query (gte :age 17)))
+  (delete people (where (gte :age 17)))
   (is (empty? (fetch-all people))))
 
 (deftest saving-tests
@@ -85,6 +85,7 @@
   (is (= 180 (:weight (fetch-one people {:first-name "Jim"})))))
 
 (deftest update-all-tests
+  (is (= 4 (count-docs people)))
   (update-all people {:last-name "Johnson"} (modify (set-fields {:age 17})))
   (is (= 4 (count-docs people)))
   (let [johnsons (fetch people {:last-name "Johnson"})]

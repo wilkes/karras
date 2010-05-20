@@ -1,7 +1,8 @@
 (ns karras.test-document
-  (:use [karras.sugar :only [date]]
-   karras.document
-   clojure.test))
+  (:require karras)
+  (:use karras.sugar
+        karras.document
+        clojure.test))
 
 (defaggregate Street
   :name
@@ -25,6 +26,15 @@
   :blood-alcohol-level {:type Float :default 0.0}
   :address {:type Address}
   :phones {:type java.util.List :of Phone})
+
+(defentity Simple :value)
+
+(defonce db (karras/mongo-db (karras/connect) :document-testing))
+
+(use-fixtures :each (fn [t]
+                      (karras/with-mongo-request db
+                        (karras/drop-collection (collection-for Person))
+                        (t))))
 
 (deftest test-parse-fields
   (let [parsed? (fn [fields expected-parsed-fields]
@@ -80,27 +90,53 @@
 
 (deftest test-collection-name
   (testing "default name"
-    (is (= (:collection-name (docspec Person)) "Person")))
+    (is (= (:collection-name (docspec Simple)) "Simple")))
   (testing "override name"
     (alter-entity-type! Person :collection-name "people")
     (is (= (:collection-name (docspec Person)) "people"))))
 
-(deftest test-create
-  (testing "create"
-    (let [phone (make Phone {:number "555-555-1212"})]
-      (is (= Phone (class phone))))
-    (let [address (make Address {:city "Nashville" :street {:name "Main St." :number "123"}})]
-      (is (= Address (class address)))
-      (is (= Street (class (:street address)))))
-    (let [person (make Person {:first-name "John"
+(deftest test-make
+  (let [phone (make Phone {:number "555-555-1212"})]
+    (is (= Phone (class phone))))
+  (let [address (make Address {:city "Nashville"
+                               :street {:number "123"
+                                        :name "Main St."}})]
+    (is (= Address (class address)))
+    (is (= Street (class (:street address)))))
+  (let [person (make Person {:first-name "John"
+                             :last-name "Smith"
+                             :birthday (karras/date 1976 7 4)
+                             :phones [{:number "123" :country-code 2}]
+                             :address {:city "Nashville"
+                                       :street {:number "123" :name "Main St."}}})]
+    (is (= Address (class (-> person :address))))
+    (is (= Street (class (-> person :address :street))))
+    (is (= Phone (class (-> person :phones first))))))
+
+
+
+(deftest test-crud
+  (let [person (create Person {:first-name "John"
                                :last-name "Smith"
-                               :birthday (date 1976 7 4)
+                               :birthday (karras/date 1976 7 4)
                                :phones [{:number "123" :country-code 2}]
                                :address {:city "Nashville"
                                          :street {:number "123" :name "Main St."}}})]
-      (is (= Address (class (-> person :address))))
-      (is (= Street (class (-> person :address :street))))
-      (is (= Phone (class (-> person :phones first)))))))
-
-
-;(run-tests)
+    (is (= karras.test-document.Person (class person)))
+    (is (not (nil? (:_id person))))
+    (is (= (karras/collection :people) (collection-for Person)))
+    (is (= (karras/collection :people) (collection-for person)))
+    (is (= person (fetch-one Person
+                             (where (eq :_id (:_id person))))))
+    (is (= person (first (fetch-all Person))))
+    (is (= person (first (fetch Person (where (eq :last-name "Smith"))))))
+    (dotimes [x 5]
+      (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
+    (is (= "John" (first (distinct-values Person :first-name))))
+    (is (= 6 (count-instances Person)))
+    (delete person)
+    (is (= 5 (count-instances Person)))
+    (delete-all Person (where (eq :last-name "Smith1")))
+    (is (= 4 (count-instances Person)))
+    (delete-all Person)
+    (is (= 0 (count-instances Person)))))
