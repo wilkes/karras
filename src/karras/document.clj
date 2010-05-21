@@ -27,27 +27,20 @@
 
 (defprotocol EntityCallbacks
   (before-create [e])
-  (before-destroy [e])
+  (before-delete [e])
   (before-save [e])
   (before-update [e])
   (before-validate [e])
   (after-create [e])
-  (after-destroy [e])
+  (after-delete [e])
   (after-save [e])
   (after-update [e])
   (after-validate [e]))
 
 (def default-callbacks
-     {:before-create   identity 
-      :before-destroy  identity 
-      :before-save     identity 
-      :before-update   identity 
-      :before-validate identity 
-      :after-create    identity 
-      :after-destroy   identity 
-      :after-save      identity 
-      :after-update    identity 
-      :after-validate  identity})
+     (reduce (fn [defaults k] (assoc defaults k identity))
+             {}
+             (-> EntityCallbacks :method-map keys)))
 
 (defmulti convert :type)
 
@@ -110,14 +103,27 @@
   (let [type (if (instance? Class entity-or-type) entity-or-type (class entity-or-type))]
     (karras/collection (-> type docspec :collection-name))))
 
-(defn create [type hmap]
-  (make type (karras/insert (collection-for type) (make type hmap))))
+(defn ensure-type [type entity]
+  (if (= type (class entity))
+    entity
+    (make type entity)))
 
 (defn save
   ([entity]
-     (karras/save (collection-for entity) entity))
+     (let [do-save #(karras/save (collection-for entity) %)]
+       (->> entity
+            before-save
+            do-save
+            (ensure-type (class entity))
+            after-save)))
   ([entity & entities]
      (doall (map save (cons entity entities)))))
+
+(defn create [type hmap]
+  (-> (make type hmap)
+      before-create
+      save
+      after-create))
 
 (defn delete
   ([entity]

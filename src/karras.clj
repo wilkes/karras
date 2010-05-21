@@ -140,9 +140,10 @@
 
 (defn save
   "Saves a document to a colection, does an upsert behind the scenes"
-  [#^DBCollection collection & objs]
-  (doseq [o objs]
-    (.save collection (to-dbo o))))
+  [#^DBCollection collection obj]
+  (let [dbo (to-dbo obj)]
+    (.save collection dbo)
+    (to-clj dbo)))
 
 (defn update
   "Updates one or more documents in a collection that match the query with the document 
@@ -161,13 +162,15 @@
 
 (defn upsert
   "Shortcut for (update collection query obj :upsert)"
-  [collection query obj]
-  (update collection query obj :upsert))
+  ([collection obj]
+     (upsert collection obj obj))
+  ([collection query obj]
+     (update collection query obj :upsert)))
 
 (defn update-all
   "Shortcut for (update collection query obj :multi)"
   ([collection obj]
-     (update-all collection nil obj))
+     (update-all collection {} obj))
   ([collection query obj]
       (update collection query obj :multi)))
 

@@ -27,6 +27,19 @@
   :address {:type Address}
   :phones {:type java.util.List :of Phone})
 
+(alter-entity-type! Person :collection-name "people")
+
+(defn add-callback [sym e]
+  (assoc e :called (conj (or (vec (:called e)) []) sym)))
+
+(extend Person
+  EntityCallbacks
+  (assoc default-callbacks
+    :before-create (partial add-callback "before-create")
+    :before-save (partial add-callback "before-save")
+    :after-save (partial add-callback "after-save")
+    :after-create (partial add-callback "after-create")))
+
 (defentity Simple :value)
 
 (defonce db (karras/mongo-db (karras/connect) :document-testing))
@@ -58,19 +71,6 @@
        ['not-a-keyword]
        [:keyword 'not-a-map-or-keyword]))
 
-(deftest test-callback-protocol
-  (are [callback e] (= e (callback e))
-       before-create (Person.)
-       before-destroy (Person.)
-       before-save (Person.)
-       before-update (Person.)
-       before-validate (Person.)
-       after-create (Person.)
-       after-destroy (Person.)
-       after-save (Person.)
-       after-update (Person.)
-       after-validate (Person.)))
-
 (deftest test-docspec
   (is (not (nil? (docspec Address))))
   (is (not (nil? (docspec Phone))))
@@ -92,7 +92,6 @@
   (testing "default name"
     (is (= (:collection-name (docspec Simple)) "Simple")))
   (testing "override name"
-    (alter-entity-type! Person :collection-name "people")
     (is (= (:collection-name (docspec Person)) "people"))))
 
 (deftest test-make
@@ -116,20 +115,25 @@
 
 
 (deftest test-crud
-  (let [person (create Person {:first-name "John"
-                               :last-name "Smith"
-                               :birthday (karras/date 1976 7 4)
-                               :phones [{:number "123" :country-code 2}]
-                               :address {:city "Nashville"
-                                         :street {:number "123" :name "Main St."}}})]
+  (let [person (dissoc (create Person {:first-name "John"
+                                               :last-name "Smith"
+                                               :birthday (karras/date 1976 7 4)
+                                               :phones [{:number "123" :country-code 2}]
+                                               :address {:city "Nashville"
+                                                         :street {:number "123" :name "Main St."}}})
+                       :called)]
     (is (= karras.test-document.Person (class person)))
     (is (not (nil? (:_id person))))
     (is (= (karras/collection :people) (collection-for Person)))
     (is (= (karras/collection :people) (collection-for person)))
-    (is (= person (fetch-one Person
-                             (where (eq :_id (:_id person))))))
-    (is (= person (first (fetch-all Person))))
-    (is (= person (first (fetch Person (where (eq :last-name "Smith"))))))
+    (is (= person (dissoc (fetch-one Person
+                                     (where (eq :_id (:_id person))))
+                          :called)))
+    (is (= person (dissoc (first (fetch-all Person))
+                          :called)))
+    (is (= person (dissoc (first (fetch Person (where (eq :last-name "Smith"))))
+                          :called)))
+    (is (= 1 (count-instances Person)))
     (dotimes [x 5]
       (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
     (is (= "John" (first (distinct-values Person :first-name))))
@@ -140,3 +144,23 @@
     (is (= 4 (count-instances Person)))
     (delete-all Person)
     (is (= 0 (count-instances Person)))))
+
+(deftest test-callback-protocol
+  (are [callback e] (= e (callback e))
+       before-create (Simple.)
+       before-delete (Simple.)
+       before-save (Simple.)
+       before-update (Simple.)
+       before-validate (Simple.)
+       after-create (Simple.)
+       after-delete (Simple.)
+       after-save (Simple.)
+       after-update (Simple.)
+       after-validate (Simple.)))
+
+(deftest test-callback-impls
+  (let [person (create Person {:first-name "John" :last-name "Smith"})]
+    (is (= ["before-create" "before-save" "after-save" "after-create"]
+             (:called person)))))
+
+(run-tests)

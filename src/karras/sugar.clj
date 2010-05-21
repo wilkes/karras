@@ -33,7 +33,7 @@
 
 (defn where
   "Sugar to create a where document. Example:
-     (query (ne :j 3) (gt k 10))
+     (where (ne :j 3) (gt k 10))
    produces:
      {:j {:$ne 3} :k {:$gt 10}}"
   [& clauses]
