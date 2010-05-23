@@ -122,22 +122,6 @@
 (defn drop-collection [#^DBCollection collection]
   (.drop collection))
 
-(defn- insert-one
-  "Inserts one or more documents into a collection"
-  [#^DBCollection collection obj]
-  (let [dbo (to-dbo obj)]
-    (.insert collection dbo)
-    (to-clj dbo)))
-
-(defn insert
-  "Inserts one or more documents into a collection. 
-   Returns the inserted object with :_id"
-  [#^DBCollection collection & objs]
-  (let [inserted (doall (map #(insert-one collection %) objs))]
-    (if (= 1 (count objs))
-      (first inserted)
-      inserted)))
-
 (defn save
   "Saves a document to a colection, does an upsert behind the scenes"
   [#^DBCollection collection obj]
@@ -145,20 +129,27 @@
     (.save collection dbo)
     (to-clj dbo)))
 
+(defn insert
+  "Inserts one or more documents into a collection. 
+   Returns the inserted object with :_id"
+  [#^DBCollection collection & objs]
+  (let [inserted (doall (map #(save collection %) objs))]
+    (if (= 1 (count objs))
+      (first inserted)
+      inserted)))
+
 (defn update
   "Updates one or more documents in a collection that match the query with the document 
    provided.
      :upsert, performs an insert if the document doesn't have :_id
      :multi, update all documents that match the query"
   [#^DBCollection collection query obj & options]
-  (let [o? #(has-option? options %)
-        dbo (to-dbo obj)]
+  (let [o? #(has-option? options %)]
     (.update collection
              (to-dbo query)
-             dbo
+             (to-dbo obj)
              (o? :upsert)
-             (o? :multi))
-    (to-clj dbo)))
+             (o? :multi))))
 
 (defn upsert
   "Shortcut for (update collection query obj :upsert)"

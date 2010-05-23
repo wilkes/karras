@@ -29,16 +29,21 @@
 
 (alter-entity-type! Person :collection-name "people")
 
-(defn add-callback [sym e]
-  (assoc e :called (conj (or (vec (:called e)) []) sym)))
+(defn add-callback [s]
+  (fn [e]
+    (assoc e :called (conj (or (vec (:called e)) []) s))))
 
 (extend Person
   EntityCallbacks
   (assoc default-callbacks
-    :before-create (partial add-callback "before-create")
-    :before-save (partial add-callback "before-save")
-    :after-save (partial add-callback "after-save")
-    :after-create (partial add-callback "after-create")))
+    :before-create (add-callback "before-create")
+    :before-update (add-callback "before-update")
+    :before-save (add-callback "before-save")
+    :after-save (add-callback "after-save")
+    :after-update (add-callback "after-update")
+    :after-create (add-callback "after-create")
+    :before-delete (add-callback "before-delete")
+    :after-delete (add-callback "after-delete")))
 
 (defentity Simple :value)
 
@@ -161,6 +166,8 @@
 (deftest test-callback-impls
   (let [person (create Person {:first-name "John" :last-name "Smith"})]
     (is (= ["before-create" "before-save" "after-save" "after-create"]
-             (:called person)))))
-
-(run-tests)
+             (:called person)))
+    (is (= ["before-update" "before-save" "after-save" "after-update"]
+             (:called (save (dissoc person :called)))))
+    (is (= ["before-delete" "after-delete"]
+           (:called (delete (dissoc person :called)))))))

@@ -1,6 +1,7 @@
 (ns karras.document
   (:require karras)
-  (:use [clojure.contrib.def :only [defnk]]))
+  (:use karras.sugar
+        [clojure.contrib.def :only [defnk defalias]]))
 
 (def docspecs (atom {}))
 
@@ -110,24 +111,32 @@
 
 (defn save
   ([entity]
-     (let [do-save #(karras/save (collection-for entity) %)]
+     (let [update?  (-> entity :_id nil? not)
+           before-cb (if update? before-update before-create)
+           after-cb (if update? after-update after-create)]
        (->> entity
+            before-cb
             before-save
-            do-save
+            (karras/save (collection-for entity))
             (ensure-type (class entity))
-            after-save)))
+            after-save
+            after-cb)))
   ([entity & entities]
      (doall (map save (cons entity entities)))))
 
 (defn create [type hmap]
-  (-> (make type hmap)
-      before-create
-      save
-      after-create))
+  (save (make type hmap)))
+
+(defalias update save)
 
 (defn delete
   ([entity]
-     (karras/delete (collection-for entity) entity))
+     (let [do-delete #(do (karras/delete (collection-for entity) (where (eq :_id (:_id entity))))
+                          %)]
+       (->> entity
+            before-delete
+            do-delete
+            after-delete)))
   ([entity & entities]
      (doall (map delete (cons entity entities)))))
 
