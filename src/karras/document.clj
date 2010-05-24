@@ -31,12 +31,10 @@
   (before-delete [e])
   (before-save [e])
   (before-update [e])
-  (before-validate [e])
   (after-create [e])
   (after-delete [e])
   (after-save [e])
-  (after-update [e])
-  (after-validate [e]))
+  (after-update [e]))
 
 (def default-callbacks
      (reduce (fn [defaults k] (assoc defaults k identity))

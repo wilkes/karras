@@ -156,12 +156,10 @@
        before-delete (Simple.)
        before-save (Simple.)
        before-update (Simple.)
-       before-validate (Simple.)
        after-create (Simple.)
        after-delete (Simple.)
        after-save (Simple.)
-       after-update (Simple.)
-       after-validate (Simple.)))
+       after-update (Simple.)))
 
 (deftest test-callback-impls
   (let [person (create Person {:first-name "John" :last-name "Smith"})]
