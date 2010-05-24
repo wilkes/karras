@@ -110,12 +110,18 @@
   (let [person (make Person {:first-name "John"
                              :last-name "Smith"
                              :birthday (karras/date 1976 7 4)
-                             :phones [{:number "123" :country-code 2}]
+                             :phones [{:number "123"}]
                              :address {:city "Nashville"
                                        :street {:number "123" :name "Main St."}}})]
     (is (= Address (class (-> person :address))))
     (is (= Street (class (-> person :address :street))))
-    (is (= Phone (class (-> person :phones first))))))
+    (is (= Phone (class (-> person :phones first)))))
+  (let [person (make Person {:last-name "Smith"})
+        phone (make Phone {})]
+    (is (= #{:last-name :blood-alcohol-level} (set (keys person))))
+    (is (= 0.0 (:blood-alcohol-level person)))
+    (is (= #{:country-code} (set (keys phone))))
+    (is (= 1 (:country-code phone)))))
 
 
 

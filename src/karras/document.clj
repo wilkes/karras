@@ -52,9 +52,15 @@
   val)
 
 (defn make [type hmap]
-  (let [fields (-> type docspec :fields)]
+  (let [fields (-> type docspec :fields)
+        has-key? (fn [e k]
+                   (try (some #{k} (keys e))
+                        (catch Exception _ nil)))]
     (reduce (fn [entity [k field-spec]]
-              (assoc entity k (convert field-spec (k hmap))))
+              (cond
+               (has-key? entity k)   (assoc entity k (convert field-spec (k hmap)))
+               (:default field-spec) (assoc entity k (:default field-spec))
+               :otherwise            entity))
             (merge (.newInstance type) hmap)
             fields)))
 
