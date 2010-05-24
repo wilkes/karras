@@ -20,12 +20,6 @@
                                    :after-validate identity})
 (def validations (atom {}))
 
-(defn add-validation [type f]
-  (swap! validations #(assoc % type (conj (get % type #{}) f))))
-
-(defn clear-validations []
-  (swap! validations {}))
-
 (defn validate [e]
   (remove nil? (map #(% e) (get @validations (class e)))))
 
@@ -42,6 +36,14 @@
                            (when results
                              (raise invalid-entity e results))
                            (-> e after-validate (:before-save current-impls)))))))))
+
+(defn add-validation [type f]
+  (when-not (extends? ValidationCallbacks type)
+    (make-validatable type))
+  (swap! validations #(assoc % type (conj (get % type #{}) f))))
+
+(defn clear-validations []
+  (swap! validations {}))
 
 (defn is-present [field message e]
   (if-not (get e field)
