@@ -5,29 +5,28 @@
         clojure.test))
 
 (defaggregate Street
-  :name
-  :number)
+  [:name
+   :number])
 
 (defaggregate Address
-  :street {:type Street}
-  :city
-  :state
-  :postal-code)
+  [:street {:type Street}
+   :city
+   :state
+   :postal-code])
 
 (defaggregate Phone
-  :country-code {:type Integer :default 1}
-  :number)
+  [:country-code {:type Integer :default 1}
+   :number])
 
 (defentity Person 
-  :first-name
-  :middle-initial
-  :last-name
-  :birthday {:type java.util.Date}
-  :blood-alcohol-level {:type Float :default 0.0}
-  :address {:type Address}
-  :phones {:type java.util.List :of Phone})
-
-(alter-entity-type! Person :collection-name "people")
+  [:first-name
+   :middle-initial
+   :last-name
+   :birthday {:type java.util.Date}
+   :blood-alcohol-level {:type Float :default 0.0}
+   :address {:type Address}
+   :phones {:type java.util.List :of Phone}]
+  (spec-set :collection-name "people"))
 
 (defn add-callback [s]
   (fn [e]
@@ -45,7 +44,8 @@
     :before-delete (add-callback "before-delete")
     :after-delete (add-callback "after-delete")))
 
-(defentity Simple :value)
+(defentity Simple [:value])
+
 
 (defonce db (karras/mongo-db (karras/connect) :document-testing))
 

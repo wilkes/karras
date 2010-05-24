@@ -5,7 +5,9 @@
         karras.validations
         clojure.test))
 
-(defentity Person :first-name :last-name)
+(defentity Person
+  [:first-name :last-name]
+  (validates-pressence-of :first-name))
 
 (defonce db (karras/mongo-db (karras/connect) :document-testing))
 

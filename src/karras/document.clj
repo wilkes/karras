@@ -64,7 +64,7 @@
             (merge (.newInstance type) hmap)
             fields)))
 
-(defn- make-mongo-type [classname is-entity? fields]
+(defn- make-mongo-type [classname is-entity? fields type-fns]
   `(do
      (defrecord ~classname [])
      (swap! docspecs assoc
@@ -78,13 +78,14 @@
              EntityCallbacks
              default-callbacks)
      (defmethod convert ~classname [field-spec# val#]
-       (make (:type field-spec#) val#))))
+                (make (:type field-spec#) val#))
+     ~@(map (fn [f] `(-> ~classname ~f)) type-fns)))
 
-(defmacro defaggregate [classname & fields]
-  (make-mongo-type classname false fields))
+(defmacro defaggregate [classname fields & type-fns]
+  (make-mongo-type classname false fields type-fns))
 
-(defmacro defentity [classname & fields]
-  (make-mongo-type classname true fields))
+(defmacro defentity [classname fields & type-fns]
+  (make-mongo-type classname true fields type-fns))
 
 (defn field-spec-of [type & keys]
   (let [field-type (or (reduce (fn [t k]
@@ -101,7 +102,7 @@
 (defn docspec-of-item [type & keys]
   (docspec (:of (apply field-spec-of type keys))))
 
-(defn alter-entity-type! [type & kvs]
+(defn spec-set [type & kvs]
   (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
 
 (defn collection-for [entity-or-type]
