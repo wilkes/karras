@@ -193,9 +193,13 @@
   (let [indexes (get (docspec type) :indexes [])]
     (docspec-assoc type :indexes (conj indexes (apply compound-index keys)))))
 
-(defn ensure-indexes [type]
-  (doseq [idx (docspec-value type :indexes)]
-    (karras/ensure-index (collection-for type) idx)))
+(defn ensure-indexes
+  ([]
+     (doseq [type (keys@docspecs)]
+       (ensure-indexes type)))
+  ([type]
+     (doseq [idx (docspec-value type :indexes)]
+       (karras/ensure-index (collection-for type) idx))))
 
 (defn list-indexes [type]
   (karras/list-indexes (collection-for type)))

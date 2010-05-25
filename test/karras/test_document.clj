@@ -176,6 +176,6 @@
 
 (deftest test-ensure-indexes
   (is (empty? (list-indexes Person)))
-  (ensure-indexes Person)
+  (ensure-indexes)
   ;; 2 + _id index
   (is (= 3 (count (list-indexes Person)))))
