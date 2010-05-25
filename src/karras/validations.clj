@@ -8,17 +8,16 @@
    :errors errors
    :unhandled (fn [e] (throw (RuntimeException. (str-join " " (map str (:errors e))))))})
 
-(deferror validation-error [] [e errors]
-  {:entity e
-   :errors errors})
-
 (defprotocol ValidationCallbacks
   (before-validate [e])
   (after-validate [e]))
 
 (def default-validation-callbacks {:before-validate identity
                                    :after-validate identity})
-(def validations (atom {}))
+(defonce validations (atom {}))
+
+(defn clear-validations []
+  (swap! validations {}))
 
 (defn validate [e]
   (remove nil? (map #(% e) (get @validations (class e)))))
@@ -41,9 +40,6 @@
   (when-not (extends? ValidationCallbacks type)
     (make-validatable type))
   (swap! validations #(assoc % type (conj (get % type #{}) f))))
-
-(defn clear-validations []
-  (swap! validations {}))
 
 (defn is-present [field message e]
   (if-not (get e field)

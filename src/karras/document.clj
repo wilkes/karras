@@ -3,7 +3,7 @@
   (:use karras.sugar
         [clojure.contrib.def :only [defnk defalias]]))
 
-(def docspecs (atom {}))
+(defonce docspecs (atom {}))
 
 (defn docspec [type]
   (get @docspecs type))
@@ -38,7 +38,7 @@
   (after-save [e])
   (after-update [e]))
 
-(def default-callbacks
+(defonce default-callbacks
      (reduce #(assoc %1 %2 identity) {} (-> EntityCallbacks :method-map keys)))
 
 (defmulti convert :type)
