@@ -38,7 +38,6 @@
    :blood-alcohol-level {:default 0.0}
    :address {:type Address}
    :phones {:type :list :of Phone}]
-  (docspec-assoc :collection-name "people")
   (index (desc :last-name) (desc :first-name))
   (index (asc :birthday))
   (extend EntityCallbacks
@@ -51,7 +50,9 @@
      :before-delete (add-callback "before-delete")
      :after-delete (add-callback "after-delete")}))
 
-(defentity Simple [:value])
+(defentity Simple
+  [:value]
+  (docspec-assoc :collection-name "simpletons"))
 
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db
@@ -99,9 +100,9 @@
 
 (deftest test-collection-name
   (testing "default name"
-    (is (= (:collection-name (docspec Simple)) "Simple")))
+    (is (= (:collection-name (docspec Person)) "people")))
   (testing "override name"
-    (is (= (:collection-name (docspec Person)) "people"))))
+    (is (= (:collection-name (docspec Simple)) "simpletons"))))
 
 (deftest test-make
   (let [phone (make Phone {:number "555-555-1212"})]

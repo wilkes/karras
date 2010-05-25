@@ -1,7 +1,9 @@
 (ns karras.document
   (:require karras)
   (:use karras.sugar
-        [clojure.contrib.def :only [defnk defalias]]))
+        [clojure.contrib.def :only [defnk defalias]]
+        [clojure.contrib.str-utils2 :only [lower-case]]
+        inflections))
 
 (defonce docspecs (atom {}))
 
@@ -64,6 +66,9 @@
             (merge (.newInstance type) hmap)
             fields)))
 
+(defn- default-collection-name [classname]
+  (pluralize (lower-case (last (.split (str classname) "\\.")))))
+
 (defn- make-mongo-type [classname is-entity? fields type-fns]
   `(do
      (defrecord ~classname [])
@@ -72,7 +77,7 @@
             (DocumentType. ~classname
                            ~is-entity?
                            ~(parse-fields fields)
-                           ~(if is-entity? (last (.split (str classname) "\\.")) nil)))
+                           ~(if is-entity? (default-collection-name classname) nil)))
      (extend ~classname EntityCallbacks default-callbacks)
      (defmethod convert ~classname [field-spec# val#]
                 (make (:type field-spec#) val#))
@@ -195,7 +200,7 @@
 
 (defn ensure-indexes
   ([]
-     (doseq [type (keys@docspecs)]
+     (doseq [type (keys @docspecs)]
        (ensure-indexes type)))
   ([type]
      (doseq [idx (docspec-value type :indexes)]
