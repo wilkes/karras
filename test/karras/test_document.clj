@@ -17,21 +17,27 @@
    :postal-code])
 
 (defaggregate Phone
-  [:country-code {:type Integer :default 1}
+  [:country-code {:default 1}
    :number])
 
 (defn add-callback [s]
   (fn [e]
     (assoc e :called (conj (or (vec (:called e)) []) s))))
 
+(defmethod convert ::my-date
+  [field-spec d]
+  (if (instance? java.util.Date d)
+    (.format (java.text.SimpleDateFormat. "yyyy-MM-dd") d)
+    d))
+
 (defentity Person
   [:first-name
    :middle-initial
    :last-name
-   :birthday {:type java.util.Date}
-   :blood-alcohol-level {:type Float :default 0.0}
+   :birthday {:type ::my-date}
+   :blood-alcohol-level {:default 0.0}
    :address {:type Address}
-   :phones {:type java.util.List :of Phone}]
+   :phones {:type :list :of Phone}]
   (docspec-assoc :collection-name "people")
   (index (desc :last-name) (desc :first-name))
   (index (asc :birthday))
@@ -132,6 +138,7 @@
                                                          :street {:number "123" :name "Main St."}}})
                        :called)]
     (is (= karras.test-document.Person (class person)))
+    (is (= "1976-07-04" (:birthday person)))
     (is (not (nil? (:_id person))))
     (is (= (karras/collection :people) (collection-for Person)))
     (is (= (karras/collection :people) (collection-for person)))

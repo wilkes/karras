@@ -43,7 +43,7 @@
 
 (defmulti convert :type)
 
-(defmethod convert java.util.List
+(defmethod convert :list
   [field-spec vals]
   (map #(convert (assoc field-spec :type (:of field-spec)) %) vals))
 
