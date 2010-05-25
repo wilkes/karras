@@ -209,3 +209,19 @@
 (defn list-indexes [type]
   (karras/list-indexes (collection-for type)))
 
+(defn add-reference [entity k & vs]
+  (if-not (remove nil? (map :_id vs))
+    (throw (IllegalArgumentException. "All references must have an :_id.")))
+  (assoc entity k (concat (or (k entity) []) (map :_id vs))))
+
+(defn set-reference [entity k v]
+  (if-not (:_id v) (throw (IllegalArgumentException. "Reference must have an :_id.")))
+  (assoc entity k (:_id v)))
+
+(defn get-reference [entity k]
+  (let [field-spec (field-spec-of (class entity) k)
+        target-type (:of field-spec)
+        list? (= (:type field-spec) :references)]
+    (if list?
+      (fetch target-type (where (in :_id (k entity))))
+      (fetch-one target-type (where (eq :_id (k entity)))))))

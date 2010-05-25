@@ -50,6 +50,11 @@
      :before-delete (add-callback "before-delete")
      :after-delete (add-callback "after-delete")}))
 
+(defentity Company
+  [:name
+   :employees {:type :references :of Person}
+   :ceo {:type :reference :of Person}])
+
 (defentity Simple
   [:value]
   (docspec-assoc :collection-name "simpletons"))
@@ -57,6 +62,7 @@
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db
                         (karras/drop-collection (collection-for Person))
+                        (karras/drop-collection (collection-for Company))
                         (t))))
 
 (deftest test-parse-fields
@@ -187,3 +193,27 @@
   (ensure-indexes)
   ;; 2 + _id index
   (is (= 3 (count (list-indexes Person)))))
+
+(deftest test-references
+  (testing "saving"
+    (let [john (create Person {:first-name "John" :last-name "Smith"})
+          jane (create Person {:first-name "Jane" :last-name "Doe"})
+          company (-> (create Company {:name "Acme"})
+                      (set-reference :ceo john)
+                      (add-reference :employees jane)
+                      save)]
+      (is (= (:_id john) (:ceo company)))
+      (is (= (:_id jane) (first (:employees company))))))
+  (testing "reading"
+    (let [company (fetch-one Company (where (eq :name "Acme")))
+          john (get-reference company :ceo)
+          [jane] (get-reference company :employees)]
+      (is (= "Smith" (:last-name john)))
+      (is (= "Doe" (:last-name jane)))))
+  (testing "updating"
+    (let [bill (create Person {:first-name "Bill" :last-name "Jones"})
+          company (-> (fetch-one Company (where (eq :name "Acme")))
+                      (add-reference :employees bill))
+          [jane bill] (get-reference company :employees)]
+      (is (= "Jane" (:first-name jane)))
+      (is (= "Bill" (:first-name bill))))))
