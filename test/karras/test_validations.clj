@@ -9,6 +9,10 @@
   [:first-name :last-name]
   (validates-pressence-of :first-name))
 
+(defentity Thing
+  [:name]
+  (validates-pressence-of :name "name is required."))
+
 (defonce db (karras/mongo-db (karras/connect) :document-testing))
 
 (use-fixtures :each (fn [t]
@@ -19,4 +23,6 @@
  (deftest test-presence-of
    (is (= [":first-name can't be blank."] (validate (Person.))))
    (is (thrown-with-msg? RuntimeException #":first-name can't be blank."
-         (create Person {:last-name "Smith"}))))
+         (create Person {:last-name "Smith"})))
+   (is (empty? (validate (make Person {:first-name "John"}))))
+   (is (= ["name is required."] (validate (Thing.)))))

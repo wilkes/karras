@@ -41,12 +41,15 @@
     (make-validatable type))
   (swap! validations #(assoc % type (conj (get % type #{}) f))))
 
-(defn is-present [field message e]
-  (if-not (get e field)
-    (str field " " message)))
+
+
+(defn is-present? [e field]
+  (get e field))
 
 (defn validates-pressence-of
   ([type field]
-     (validates-pressence-of type field "can't be blank."))
+     (validates-pressence-of type field (str field " can't be blank.")))
   ([type field message]
-     (add-validation type (partial is-present field message))))
+     (add-validation type (fn [e]
+                            (if-not (is-present? e field)
+                              message)))))
