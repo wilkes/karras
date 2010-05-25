@@ -4,6 +4,8 @@
         karras.document
         clojure.test))
 
+(defonce db (karras/mongo-db (karras/connect) :document-testing))
+
 (defaggregate Street
   [:name
    :number])
@@ -18,7 +20,11 @@
   [:country-code {:type Integer :default 1}
    :number])
 
-(defentity Person 
+(defn add-callback [s]
+  (fn [e]
+    (assoc e :called (conj (or (vec (:called e)) []) s))))
+
+(defentity Person
   [:first-name
    :middle-initial
    :last-name
@@ -26,28 +32,20 @@
    :blood-alcohol-level {:type Float :default 0.0}
    :address {:type Address}
    :phones {:type java.util.List :of Phone}]
-  (spec-set :collection-name "people"))
-
-(defn add-callback [s]
-  (fn [e]
-    (assoc e :called (conj (or (vec (:called e)) []) s))))
-
-(extend Person
-  EntityCallbacks
-  (assoc default-callbacks
-    :before-create (add-callback "before-create")
-    :before-update (add-callback "before-update")
-    :before-save (add-callback "before-save")
-    :after-save (add-callback "after-save")
-    :after-update (add-callback "after-update")
-    :after-create (add-callback "after-create")
-    :before-delete (add-callback "before-delete")
-    :after-delete (add-callback "after-delete")))
+  (docspec-assoc :collection-name "people")
+  (index (desc :last-name) (desc :first-name))
+  (index (asc :birthday))
+  (extend EntityCallbacks
+    {:before-create (add-callback "before-create")
+     :before-update (add-callback "before-update")
+     :before-save (add-callback "before-save")
+     :after-save (add-callback "after-save")
+     :after-update (add-callback "after-update")
+     :after-create (add-callback "after-create")
+     :before-delete (add-callback "before-delete")
+     :after-delete (add-callback "after-delete")}))
 
 (defentity Simple [:value])
-
-
-(defonce db (karras/mongo-db (karras/connect) :document-testing))
 
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db
@@ -174,4 +172,10 @@
     (is (= ["before-update" "before-save" "after-save" "after-update"]
              (:called (save (dissoc person :called)))))
     (is (= ["before-delete" "after-delete"]
-           (:called (delete (dissoc person :called)))))))
+             (:called (delete (dissoc person :called)))))))
+
+(deftest test-ensure-indexes
+  (is (empty? (list-indexes Person)))
+  (ensure-indexes Person)
+  ;; 2 + _id index
+  (is (= 3 (count (list-indexes Person)))))

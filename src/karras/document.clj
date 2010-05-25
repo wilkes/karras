@@ -8,11 +8,13 @@
 (defn docspec [type]
   (get @docspecs type))
 
+(defn docspec-value [type key]
+     (get (docspec type) key))
+
 (defrecord DocumentType [record-class
                       is-entity?
                       fields
-                      collection-name
-                      validators])
+                      collection-name])
 
 (defn parse-fields [ks]
   (loop [attrs ks
@@ -37,9 +39,7 @@
   (after-update [e]))
 
 (def default-callbacks
-     (reduce (fn [defaults k] (assoc defaults k identity))
-             {}
-             (-> EntityCallbacks :method-map keys)))
+     (reduce #(assoc %1 %2 identity) {} (-> EntityCallbacks :method-map keys)))
 
 (defmulti convert :type)
 
@@ -72,11 +72,8 @@
             (DocumentType. ~classname
                            ~is-entity?
                            ~(parse-fields fields)
-                           ~(if is-entity? (last (.split (str classname) "\\.")) nil)
-                           nil))
-     (extend ~classname
-             EntityCallbacks
-             default-callbacks)
+                           ~(if is-entity? (last (.split (str classname) "\\.")) nil)))
+     (extend ~classname EntityCallbacks default-callbacks)
      (defmethod convert ~classname [field-spec# val#]
                 (make (:type field-spec#) val#))
      ~@(map (fn [f] `(-> ~classname ~f)) type-fns)))
@@ -102,7 +99,7 @@
 (defn docspec-of-item [type & keys]
   (docspec (:of (apply field-spec-of type keys))))
 
-(defn spec-set [type & kvs]
+(defn docspec-assoc [type & kvs]
   (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
 
 (defn collection-for [entity-or-type]
@@ -165,12 +162,12 @@
 (defnk fetch-all [type
                   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
   (map #(make type %) (karras/fetch-all (collection-for type)
-                                      :include include
-                                      :exclude exclude
-                                      :limit   limit  
-                                      :skip    skip   
-                                      :sort    sort   
-                                      :count   count)))
+                                        :include include
+                                        :exclude exclude
+                                        :limit   limit  
+                                        :skip    skip   
+                                        :sort    sort   
+                                        :count   count)))
 
 (defnk fetch-one [type query
                   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
@@ -191,3 +188,15 @@
 
 (defn distinct-values [type kw]
   (karras/distinct-values (collection-for type) kw))
+
+(defn index [type & keys]
+  (let [indexes (get (docspec type) :indexes [])]
+    (docspec-assoc type :indexes (conj indexes (apply compound-index keys)))))
+
+(defn ensure-indexes [type]
+  (doseq [idx (docspec-value type :indexes)]
+    (karras/ensure-index (collection-for type) idx)))
+
+(defn list-indexes [type]
+  (karras/list-indexes (collection-for type)))
+
