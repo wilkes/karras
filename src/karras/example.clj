@@ -1,5 +1,6 @@
 (ns karras.example
   (:use karras.core
+        karras.collection
         karras.sugar
         clojure.pprint))
 
