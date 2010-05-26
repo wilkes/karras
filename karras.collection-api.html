@@ -1,0 +1,351 @@
+<html>
+  <head>
+    <title>karras.collection API reference (karras)</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">karras</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="karras.collection-api.html" class="wiki_link">karras.collection</a></li><li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.document-api.html" class="wiki_link">karras.document</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li><li><a href="karras.validations-api.html" class="wiki_link">karras.validations</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#toc0">Overview</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/collection">collection</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/collection-db">collection-db</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/count-docs">count-docs</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/delete">delete</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/distinct-values">distinct-values</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/drop-collection">drop-collection</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/drop-index">drop-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/drop-index-named">drop-index-named</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/ensure-index">ensure-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/ensure-named-index">ensure-named-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/ensure-unique-index">ensure-unique-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/fetch">fetch</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/fetch-all">fetch-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/fetch-by-id">fetch-by-id</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/fetch-one">fetch-one</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/group">group</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/insert">insert</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/list-indexes">list-indexes</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/save">save</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/update">update</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/update-all">update-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.collection/upsert">upsert</a>
+    </div>
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras.collection</span></h1>
+by <span id="author">Unknown</span><br />
+<br />Usage:
+<pre>
+(ns your-namespace
+  (:require <span id="long-name">karras.collection</span>))
+</pre><pre>
+</pre><h2>Overview</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<h2>Public Variables and Functions</h2>
+<div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/collection">collection</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (collection collection-name)
+       (collection db collection-name)
+       (collection mongo db-name collection-name)
+</pre>
+  <pre id="var-docstr">Returns a DBCollection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/collection-db">collection-db</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (collection-db collection)
+</pre>
+  <pre id="var-docstr">Get the DB that this collection is associated with.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/count-docs">count-docs</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (count-docs collection)
+       (count-docs collection query)
+</pre>
+  <pre id="var-docstr">Returns the count of documents, optionally, matching a query</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/delete">delete</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (delete collection &amp; queries)
+</pre>
+  <pre id="var-docstr">Removes documents matching the supplied queries from a collection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/distinct-values">distinct-values</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (distinct-values collection kw)
+</pre>
+  <pre id="var-docstr">Fetch a seq of the distinct values of a given collection for a key.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/drop-collection">drop-collection</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (drop-collection collection)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/drop-index">drop-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (drop-index collection o)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/drop-index-named">drop-index-named</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (drop-index-named collection kw)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/ensure-index">ensure-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ensure-index collection fields)
+</pre>
+  <pre id="var-docstr">Ensure an index exist on a collection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/ensure-named-index">ensure-named-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ensure-named-index collection name fields)
+</pre>
+  <pre id="var-docstr">Ensure an index exist on a collection with the given name.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/ensure-unique-index">ensure-unique-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ensure-unique-index collection name fields)
+</pre>
+  <pre id="var-docstr">Ensure a unique index exist on a collection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/fetch">fetch</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch collection query &amp; options__19__auto__)
+</pre>
+  <pre id="var-docstr">Fetch a seq of documents that match a given query.
+Accepts the following keywords:
+    :limit, maximum number of documents to return
+    :skip, where in the result set the seq will begin, i.e. paging
+    :include, which keys to include in the result set, can not be combined with :exclude
+    :exclude, which keys to exclude from the result set, can not be combined with :include
+    :sort, which keys to order by
+    :count, if true return the count of the result set, defaults to false</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/fetch-all">fetch-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-all collection &amp; options__19__auto__)
+</pre>
+  <pre id="var-docstr">Fetch all the documents of a collection. Same options as fetch.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/fetch-by-id">fetch-by-id</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-by-id collection s)
+</pre>
+  <pre id="var-docstr">Fetch a document by :_id</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/fetch-one">fetch-one</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-one collection query &amp; options__19__auto__)
+</pre>
+  <pre id="var-docstr">Fetch one document of a collection. Supports same options as fetch except :limit and :count</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/group">group</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (group collection keys cond initial reduce)
+       (group collection keys)
+</pre>
+  <pre id="var-docstr">Fetch a seq of grouped items.
+Example:
+  SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
+  Karras: (group coll
+                 [:a :b] 
+                 {:active 1}
+                 {:csum 0}
+                 "function(obj,prev) { prev.csum += obj.c; }")</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/insert">insert</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (insert collection &amp; objs)
+</pre>
+  <pre id="var-docstr">Inserts one or more documents into a collection. 
+Returns the inserted object with :_id</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/list-indexes">list-indexes</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (list-indexes collection)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/save">save</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (save collection obj)
+</pre>
+  <pre id="var-docstr">Saves a document to a colection, does an upsert behind the scenes.
+Returns the object with :_id if it was inserted..</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/update">update</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (update collection query obj &amp; options)
+</pre>
+  <pre id="var-docstr">Updates one or more documents in a collection that match the query with the document 
+provided.
+  :upsert, performs an insert if the document doesn't have :_id
+  :multi, update all documents that match the query</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/update-all">update-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (update-all collection obj)
+       (update-all collection query obj)
+</pre>
+  <pre id="var-docstr">Shortcut for (update collection query obj :multi)</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.collection/upsert">upsert</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (upsert collection obj)
+       (upsert collection query obj)
+</pre>
+  <pre id="var-docstr">Shortcut for (update collection query obj :upsert)</pre>
+  
+</div>
+
+
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">No copyright info </div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>
