@@ -1,5 +1,5 @@
 (ns karras.document
-  (:require [karras.core :as karras])
+  (:require [karras.collection :as c])
   (:use karras.sugar
         [clojure.contrib.def :only [defnk defalias]]
         [clojure.contrib.str-utils2 :only [lower-case]]
@@ -153,7 +153,7 @@
   (let [type (if (instance? Class entity-or-type)
                entity-or-type
                (class entity-or-type))]
-    (karras/collection (-> type docspec :collection-name))))
+    (c/collection (-> type docspec :collection-name))))
 
 (defn ensure-type
   "Force an entity to be of a given type if is not already."
@@ -171,7 +171,7 @@
        (->> entity
             before-cb
             before-save
-            (karras/save (collection-for entity))
+            (c/save (collection-for entity))
             (ensure-type (class entity))
             after-save
             after-cb)))
@@ -188,7 +188,7 @@
 (defn delete
   "Deletes one or more entities."
   ([entity]
-     (let [do-delete #(do (karras/delete (collection-for entity) (where (eq :_id (:_id entity))))
+     (let [do-delete #(do (c/delete (collection-for entity) (where (eq :_id (:_id entity))))
                           %)]
        (->> entity
             before-delete
@@ -202,13 +202,13 @@
   ([type]
      (delete-all type {}))
   ([type where]
-     (karras/delete (collection-for type) where)))
+     (c/delete (collection-for type) where)))
 
 (defnk fetch
   "Fetch a seq of documents for the given type matching the supplied parameters."
   [type query
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (map #(make type %) (karras/fetch (collection-for type)
+  (map #(make type %) (c/fetch (collection-for type)
                                     query
                                     :include include
                                     :exclude exclude
@@ -221,7 +221,7 @@
   "Fetch all of the documents for the given type."
   [type
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (map #(make type %) (karras/fetch-all (collection-for type)
+  (map #(make type %) (c/fetch-all (collection-for type)
                                         :include include
                                         :exclude exclude
                                         :limit   limit  
@@ -233,7 +233,7 @@
   "Fetch the first document for the given type matching the supplied query and options."
   [type query
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (make type (karras/fetch-one (collection-for type)
+  (make type (c/fetch-one (collection-for type)
                                query
                                :include include
                                :exclude exclude
@@ -247,12 +247,12 @@
   ([type]
      (count-instances type nil))
   ([type query]
-     (karras/fetch (collection-for type) query :count true)))
+     (c/fetch (collection-for type) query :count true)))
 
 (defn distinct-values
   "Return the distinct values of a given type for a given key."
   [type kw]
-  (karras/distinct-values (collection-for type) kw))
+  (c/distinct-values (collection-for type) kw))
 
 (defn index
   "Associate an index with a give type."
@@ -267,10 +267,12 @@
        (ensure-indexes type)))
   ([type]
      (doseq [idx (docspec-value type :indexes)]
-       (karras/ensure-index (collection-for type) idx))))
+       (c/ensure-index (collection-for type) idx))))
 
-(defn list-indexes "" [type]
-  (karras/list-indexes (collection-for type)))
+(defn list-indexes
+  ""
+  [type]
+  (c/list-indexes (collection-for type)))
 
 (defn add-reference
   "Add one more :_id's to a sequence of the given key"

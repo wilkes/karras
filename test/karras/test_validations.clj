@@ -3,6 +3,7 @@
   (:use karras.sugar
         karras.document
         karras.validations
+        [karras.collection :only [drop-collection]]
         clojure.test))
 
 (defentity Person
@@ -13,11 +14,11 @@
   [:name]
   (validates-pressence-of :name "name is required."))
 
-(defonce db (karras/mongo-db (karras/connect) :document-testing))
+(defonce db (karras/mongo-db :document-testing))
 
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db
-                        (karras/drop-collection (collection-for Person))
+                        (drop-collection (collection-for Person))
                         (t))))
 
  (deftest test-presence-of

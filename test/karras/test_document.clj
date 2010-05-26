@@ -2,9 +2,10 @@
   (:require [karras.core :as karras])
   (:use karras.sugar
         karras.document
+        [karras.collection :only [drop-collection collection]]
         clojure.test))
 
-(defonce db (karras/mongo-db (karras/connect) :document-testing))
+(defonce db (karras/mongo-db :document-testing))
 
 (defaggregate Street
   [:name
@@ -61,8 +62,8 @@
 
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db
-                        (karras/drop-collection (collection-for Person))
-                        (karras/drop-collection (collection-for Company))
+                        (drop-collection (collection-for Person))
+                        (drop-collection (collection-for Company))
                         (t))))
 
 (deftest test-parse-fields
@@ -151,8 +152,8 @@
     (is (= karras.test-document.Person (class person)))
     (is (= "1976-07-04" (:birthday person)))
     (is (not (nil? (:_id person))))
-    (is (= (karras/collection :people) (collection-for Person)))
-    (is (= (karras/collection :people) (collection-for person)))
+    (is (= (collection :people) (collection-for Person)))
+    (is (= (collection :people) (collection-for person)))
     (is (= person (dissoc (fetch-one Person
                                      (where (eq :_id (:_id person))))
                           :called)))

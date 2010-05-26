@@ -23,36 +23,35 @@
 (ns karras.core
   (:use [clojure.contrib.def :only [defnk defvar]]
         [clojure.contrib.ns-utils :only [immigrate]])
-  (:import [com.mongodb Mongo DB DBCollection BasicDBObject
-            DBObject DBCursor DBAddress MongoOptions
-            ObjectId]))
+  (:import [com.mongodb Mongo DB BasicDBObject]
+           [java.util Map Map$Entry List]))
 
 (defn- keyword-str [kw]
   (if (keyword? kw)
     (name kw)
     (str kw)))
 
-(defn- has-option? [options k]
-  (boolean (some #{k} options)))
-
 (defprotocol MongoMappable
+  "(to-dbo [d])
+   (to-clj [d])
+   Implementations provided for Map, List, Object, and nil"
   (to-dbo [d])
   (to-clj [d]))
 
 (extend-protocol MongoMappable
- java.util.Map
+ Map
  (to-dbo [m]
   (let [dbo  (BasicDBObject.)]
     (doseq [[k v] m]
       (.put dbo (keyword-str k) (to-dbo v)))
     dbo))
  (to-clj [v]
-  (let [f (fn [result #^java.util.Map$Entry e]
+  (let [f (fn [result #^Map$Entry e]
             (conj result [(keyword (.getKey e))
                           (to-clj (.getValue e))]))]
     (reduce f {} v)))
 
- java.util.List
+ List
  (to-dbo [v] (map to-dbo v))
  (to-clj [v] (map to-clj v))
 
@@ -64,240 +63,75 @@
  (to-dbo [v] v)
  (to-clj [v] v))
 
-(defvar *mongo-db* nil)
+(defvar *mongo-db* nil
+  "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request.")
 
-(defmacro with-mongo [mongo-db & body]
+(defmacro with-mongo
+  "Macro to bind *mongo-db*"
+  [mongo-db & body]
   `(binding [karras/*mongo-db* ~mongo-db]
      ~@body))
 
-(defmacro with-mongo-request [mongo-db & body]
+(defmacro with-mongo-request
+  "Macro to bind *mongo-db* and wraps the body in a Mongo request.
+   For more information see: http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency"
+  [mongo-db & body]
   `(binding [*mongo-db* ~mongo-db]
      (in-request *mongo-db*  ~@body)))
 
 (defn connect
-  "Returns a single server connection. Defaults to host 127.0.0.1 port 27017"
+  "Returns a single server connection. Defaults to host 127.0.0.1:27017"
   ([] (connect "127.0.0.1"))
   ([host] (connect host 27017))
   ([#^String host port]
      (Mongo. host (int port))))
 
-(defn mongo-db [#^Mongo connection db-name]
-  (.getDB connection (keyword-str db-name)))
+(defn mongo-db
+  "Returns a com.mongo.DB object.
+   Defaults to host 127.0.0.1:27017 if a connection is not provided"
+  ([db-name]
+     (mongo-db (connect) db-name))
+  ([#^Mongo connection db-name]
+      (.getDB connection (keyword-str db-name))))
 
-(defmacro in-request [#^DB db & body]
+(defmacro in-request
+  "Macro to wrap the body in a Mongo request.
+   For more information see: http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency"
+  [#^DB db & body]
   `(try
     (.requestStart ~db)
     ~@body
     (finally
      (.requestDone ~db))))
 
-(defn write-concern-none [#^DB db]
+(defn write-concern-none
+  "From the mongo driver javadocs: 
+   Don't check for or report any errors on writes."
+  [#^DB db]
   (.setWriteConcern db com.mongodb.DB$WriteConcern/NONE))
 
-(defn write-concern-normal [#^DB db]
+(defn write-concern-normal
+  "From the mongo driver javadocs:
+   Use the default level of error checking on writes."
+  [#^DB db]
   (.setWriteConcern db com.mongodb.DB$WriteConcern/NORMAL))
 
-(defn write-concern-strict [#^DB db]
+(defn write-concern-strict
+  "From the mongo driver javadocs:
+   Send a getLastError command following all writes."
+  [#^DB db]
   (.setWriteConcern db com.mongodb.DB$WriteConcern/STRICT))
 
-(defn collection-db [#^DBCollection collection]
-  (.getDB collection))
-
-(defn drop-db [#^DB db]
+(defn drop-db
+  ""
+  [#^DB db]
   (.dropDatabase db))
 
-(defn list-collections [#^Mongo db]
+(defn list-collections
+  ""
+  [#^Mongo db]
   (map keyword (.getCollectionNames db)))
 
-(defn collection
-  "Returns a DBCollection."
-  ([collection-name]
-     (collection *mongo-db* collection-name))
-  ([#^DB db collection-name]
-     (.getCollection db (keyword-str collection-name)))
-  ([#^Mongo mongo db-name collection-name]
-     (collection (.getDB mongo (keyword-str db-name))
-                 collection-name)))
-
-(defn drop-collection [#^DBCollection collection]
-  (.drop collection))
-
-(defn save
-  "Saves a document to a colection, does an upsert behind the scenes"
-  [#^DBCollection collection obj]
-  (let [dbo (to-dbo obj)]
-    (.save collection dbo)
-    (to-clj dbo)))
-
-(defn insert
-  "Inserts one or more documents into a collection. 
-   Returns the inserted object with :_id"
-  [#^DBCollection collection & objs]
-  (let [inserted (doall (map #(save collection %) objs))]
-    (if (= 1 (count objs))
-      (first inserted)
-      inserted)))
-
-(defn update
-  "Updates one or more documents in a collection that match the query with the document 
-   provided.
-     :upsert, performs an insert if the document doesn't have :_id
-     :multi, update all documents that match the query"
-  [#^DBCollection collection query obj & options]
-  (let [o? #(has-option? options %)]
-    (.update collection
-             (to-dbo query)
-             (to-dbo obj)
-             (o? :upsert)
-             (o? :multi))))
-
-(defn upsert
-  "Shortcut for (update collection query obj :upsert)"
-  ([collection obj]
-     (upsert collection obj obj))
-  ([collection query obj]
-     (update collection query obj :upsert)))
-
-(defn update-all
-  "Shortcut for (update collection query obj :multi)"
-  ([collection obj]
-     (update-all collection {} obj))
-  ([collection query obj]
-      (update collection query obj :multi)))
-
-(defnk fetch
-  "Fetch a seq of documents that match a given query.
-   Accepts the following keywords:
-       :limit, maximum number of documents to return
-       :skip, where in the result set the seq will begin, i.e. paging
-       :include, which keys to include in the result set, can not be combined with :exclude
-       :exclude, which keys to exclude from the result set, can not be combined with :include
-       :sort, which keys to order by
-       :count, if true return the count of the result set, defaults to false"
-  [collection query
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (let [cursor (if query
-                 (if (or include exclude)
-                   (let [keys (merge (zipmap (remove nil? include)
-                                             (repeat 1))
-                                     (zipmap (remove nil? exclude)
-                                             (repeat 0)))]
-                     (.find collection
-                            #^DBObject (to-dbo query)
-                            #^DBObject (to-dbo keys)))
-                   (.find collection
-                          #^DBObject (to-dbo query)))
-                 (.find collection ))
-        cursor (if limit
-                 (.limit cursor limit)
-                 cursor)
-        cursor (if skip
-                 (.skip cursor skip)
-                 cursor)
-        cursor (if sort
-                 (.sort cursor (to-dbo
-                                (apply merge sort)))
-                   cursor)]
-    (if count
-      (.count cursor)
-      (map to-clj cursor))))
-
-(defnk fetch-all
-  "Fetch all the documents of a collection. Same options as fetch."
-  [collection :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (fetch collection
-         nil
-         :include include
-         :exclude exclude
-         :limit   limit  
-         :skip    skip   
-         :sort    sort   
-         :count   count))
-
-(defnk fetch-one
-  "Fetch one document of a collection. Supports same options as fetch except :limit and :count"
-  [collection query :skip nil :include nil :exclude nil :sort nil]
-  (first (fetch collection query
-                :include include
-                :exclude exclude
-                :limit   1
-                :skip    skip
-                :sort    sort
-                :count   false)))
-
-(defn count-docs
-  "Returns the count of documents, optionally, matching a query"
-  ([collection]
-     (count-docs collection {}))
-  ([collection query]
-     (fetch collection query :count true)))
-
-(defn fetch-by-id
-  "Fetch a document by :_id"
-  [#^DBCollection collection #^String s]
-  (to-clj (.findOne collection (ObjectId. s))))
-
-(defn distinct-values
-  "Fetch a seq of the distinct values of a given collection for a key."
-  [#^DBCollection collection kw]
-  (set (.distinct collection (name kw))))
-
-(defn group
-  "Fetch a seq of grouped items.
-     Example:
-       SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
-       Karras: (group coll
-                      [:a :b] 
-                      {:active 1}
-                      {:csum 0}
-                      \"function(obj,prev) { prev.csum += obj.c; }\")
-"
-  ([#^DBCollection collection keys cond initial reduce]
-     (map to-clj (.group collection
-                         (to-dbo (zipmap (map name keys)
-                                         (repeat true)))
-                          (to-dbo cond)
-                          (to-dbo initial)
-                          #^String reduce)))
-  ([#^DBCollection collection keys]
-     (group collection keys nil {:values []} "function(obj,prev) {prev.values.push(obj)}")))
-
-(defn delete
-  "Removes documents matching the supplied queries from a collection."
-  [#^DBCollection collection & queries]
-  (doseq [q queries]
-    (.remove collection (to-dbo q))))
-
-(defn ensure-index
-  "Ensure an index exist on a collection"
-  [#^DBCollection collection fields]
-  (.ensureIndex collection (to-dbo fields)))
-
-(defn ensure-unique-index
-  "Ensure a unique index exist on a collection"
-  [#^DBCollection collection #^String name fields]
-  (.ensureIndex collection
-                #^DBObject (to-dbo fields)
-                name
-                true))
-
-(defn ensure-named-index
-  "Ensure a unique index exist on a collection"
-  [#^DBCollection collection #^String name fields]
-  (.ensureIndex collection
-                #^DBObject (to-dbo fields)
-                name))
-
-(defn drop-index
-  [#^DBCollection collection o]
-  (.dropIndex collection #^DBObject (to-dbo o)))
-
-(defn drop-index-named
-  [#^DBCollection collection kw]
-  (.dropIndex collection (name kw)))
-
-(defn list-indexes [#^DBCollection collection]
-  (map to-clj (.getIndexInfo collection)))
-
-(defn eval-code [db code-str]
+(defn eval-code
+  [#^DB db code-str]
   (to-clj (.eval db code-str (into-array nil))))
