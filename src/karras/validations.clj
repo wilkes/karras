@@ -9,6 +9,10 @@
    :unhandled (fn [e] (throw (RuntimeException. (str-join " " (map str (:errors e))))))})
 
 (defprotocol ValidationCallbacks
+  "Required to return an entity.
+   Default implementation returns the entity that it received.
+   (before-validate [e])
+   (after-validate [e])"
   (before-validate [e])
   (after-validate [e]))
 
@@ -16,14 +20,15 @@
                                    :after-validate identity})
 (defonce validations (atom {}))
 
-(defn clear-validations []
-  (swap! validations {}))
-
 (defn validate [e]
   (remove nil? (map #(% e) (get @validations (class e)))))
 
-(defn make-validatable [type]
-  (let [current-impls (or (-> EntityCallbacks :impls (get type)) default-callbacks)]
+(defn make-validatable
+  "Extends a type with ValidationCallbacks and EntityCallbacks.
+  Wraps the before-save callback to call before-validate, validate, after-validate, then the original before-save callback."
+  [type]
+  (let [current-impls (or (-> EntityCallbacks :impls (get type))
+                          default-callbacks)]
     (extend type
       ValidationCallbacks
       default-validation-callbacks
@@ -36,17 +41,19 @@
                              (raise invalid-entity e results))
                            (-> e after-validate (:before-save current-impls)))))))))
 
-(defn add-validation [type f]
+(defn add-validation
+  "Associates a validation with an entity type.
+   If the type does not already extend ValidationCallbacks, then make-validatable is called."
+  [type f]
   (when-not (extends? ValidationCallbacks type)
     (make-validatable type))
   (swap! validations #(assoc % type (conj (get % type #{}) f))))
-
-
 
 (defn is-present? [e field]
   (get e field))
 
 (defn validates-pressence-of
+  "An example validation that checks whether a field has a non-nil value associated with it."
   ([type field]
      (validates-pressence-of type field (str field " can't be blank.")))
   ([type field message]
