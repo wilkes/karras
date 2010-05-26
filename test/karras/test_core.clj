@@ -1,4 +1,4 @@
-(ns test-karras
+(ns karras.test-core
   (:use karras.core
         clojure.test)
   (:import [com.mongodb BasicDBObject]))
@@ -31,4 +31,3 @@
   (testing "list"
     (is (= [1 2] (to-clj [1 2])))))
 
-;(run-tests)

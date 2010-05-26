@@ -1,4 +1,4 @@
-(ns test-with-mongodb
+(ns karras.test-collection
   (:use karras.core
         karras.collection
         karras.sugar
@@ -26,7 +26,7 @@
  nil
  (setify [n] nil))
 
-(defonce indexing-tests-db (mongo-db (connect) :integration-tests))
+(defonce indexing-tests-db (mongo-db :integration-tests))
 (defonce people (collection indexing-tests-db :people))
 
 (def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21}
@@ -52,29 +52,34 @@
                   (in-request (collection-db people) (t)))))
 
 (deftest fetching-tests
-  (is (= 4 (count-docs people)))
-
-  (is (= 4 (count (fetch-all people))))
-  (is (= 2 (count (fetch people (where (gte :age 18))))))
-  (is (= Bill (fetch-one people (where (eq :first-name "Bill")))))
-  
-  (is (= #{21 18 16} (distinct-values people :age))))
+  (testing "count-docs"
+    (is (= 4 (count-docs people))))
+  (testing "fetchgin"
+    (is (= 4 (count (fetch-all people))))
+    (is (= 2 (count (fetch people (where (gte :age 18))))))
+    (is (= Bill (fetch-one people (where (eq :first-name "Bill"))))))
+  (testing "distinct-values"
+    (is (= #{21 18 16} (distinct-values people :age)))))
 
 (deftest grouping-tests
-  (is (= #{{:age 21.0 :values #{Bill}}
-           {:age 18.0 :values #{Sally}}
-           {:age 16.0 :values #{Jim Jane}}}
-         (setify (group people [:age]))))
-  (is (= #{{:age 21.0 :last-name "Smith" :values #{Bill}}
-           {:age 18.0 :last-name "Jones" :values #{Sally}}
-           {:age 16.0 :last-name "Johnson" :values #{Jim Jane}}}
-         (setify (group people [:age :last-name])))))
+  (testing "group by a key"
+    (is (= #{{:age 21.0 :values #{Bill}}
+             {:age 18.0 :values #{Sally}}
+             {:age 16.0 :values #{Jim Jane}}}
+           (setify (group people [:age])))))
+  (testing "group by multiple keys"
+    (is (= #{{:age 21.0 :last-name "Smith" :values #{Bill}}
+             {:age 18.0 :last-name "Jones" :values #{Sally}}
+             {:age 16.0 :last-name "Johnson" :values #{Jim Jane}}}
+           (setify (group people [:age :last-name]))))))
 
 (deftest deleting-tests
-  (delete people Jim Jane)
-  (is (= #{Bill Sally} (setify (fetch-all people))))
-  (delete people (where (gte :age 17)))
-  (is (empty? (fetch-all people))))
+  (testing "delete by document"
+    (delete people Jim Jane)
+    (is (= #{Bill Sally} (setify (fetch-all people)))))
+  (testing "delete by where clause"
+    (delete people (where (gte :age 17)))
+    (is (empty? (fetch-all people)))))
 
 (deftest saving-tests
   (save people (merge Jim {:weight 180}))
@@ -110,15 +115,5 @@
   (is (= [{:key {:_id 1}, :ns "integration-tests.people", :name "_id_"}
           {:key {:first-name 1}, :unique true, :ns "integration-tests.people",
            :name "unique-first-name"}]
-         (list-indexes people))))
+           (list-indexes people))))
 
-
-(comment
-  "Somehow, pull this into a karras.test-util"
-  (eval `(binding
-                    [~@(reduce (fn [result p]
-                                 (conj result
-                                       (-> p :first-name symbol)
-                                       `(person-by-name ~(:first-name p))))
-                               [] sample-people)]
-                  (~t))))
