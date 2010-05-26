@@ -1,5 +1,6 @@
 (ns test-with-mongodb
   (:use karras.core
+        karras.sugar
         clojure.test))
 
 (defprotocol Setifiable

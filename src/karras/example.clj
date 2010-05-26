@@ -1,5 +1,6 @@
 (ns karras.example
   (:use karras.core
+        karras.sugar
         clojure.pprint))
 
 (def my-collection (collection (connect) :my-database :my-collection))

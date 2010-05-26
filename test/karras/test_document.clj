@@ -118,12 +118,14 @@
                                         :name "Main St."}})]
     (is (= Address (class address)))
     (is (= Street (class (:street address)))))
-  (let [person (make Person {:first-name "John"
-                             :last-name "Smith"
-                             :birthday (karras/date 1976 7 4)
-                             :phones [{:number "123"}]
-                             :address {:city "Nashville"
-                                       :street {:number "123" :name "Main St."}}})]
+  (let [person (make Person
+                     {:first-name "John"
+                      :last-name "Smith"
+                      :birthday (date 1976 7 4)
+                      :phones [{:number "123"}]
+                      :address {:city "Nashville"
+                                :street {:number "123"
+                                         :name "Main St."}}})]
     (is (= Address (class (-> person :address))))
     (is (= Street (class (-> person :address :street))))
     (is (= Phone (class (-> person :phones first)))))
@@ -137,12 +139,14 @@
 
 
 (deftest test-crud
-  (let [person (dissoc (create Person {:first-name "John"
-                                               :last-name "Smith"
-                                               :birthday (karras/date 1976 7 4)
-                                               :phones [{:number "123" :country-code 2}]
-                                               :address {:city "Nashville"
-                                                         :street {:number "123" :name "Main St."}}})
+  (let [person (dissoc (create Person
+                               {:first-name "John"
+                                :last-name "Smith"
+                                :birthday (date 1976 7 4)
+                                :phones [{:number "123" :country-code 2}]
+                                :address {:city "Nashville"
+                                          :street {:number "123"
+                                                   :name "Main St."}}})
                        :called)]
     (is (= karras.test-document.Person (class person)))
     (is (= "1976-07-04" (:birthday person)))

@@ -301,5 +301,3 @@
 
 (defn eval-code [db code-str]
   (to-clj (.eval db code-str (into-array nil))))
-
-(immigrate 'karras.sugar)
