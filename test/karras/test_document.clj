@@ -1,5 +1,5 @@
 (ns karras.test-document
-  (:require karras)
+  (:require [karras.core :as karras])
   (:use karras.sugar
         karras.document
         clojure.test))

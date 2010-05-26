@@ -1,5 +1,5 @@
 (ns karras.test-validations
-  (:require karras)
+  (:require [karras.core :as karras])
   (:use karras.sugar
         karras.document
         karras.validations

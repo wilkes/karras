@@ -1,5 +1,5 @@
 (ns test-karras
-  (:use karras
+  (:use karras.core
         clojure.test)
   (:import [com.mongodb BasicDBObject]))
 

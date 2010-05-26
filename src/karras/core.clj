@@ -20,7 +20,7 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(ns karras
+(ns karras.core
   (:use [clojure.contrib.def :only [defnk defvar]]
         [clojure.contrib.ns-utils :only [immigrate]])
   (:import [com.mongodb Mongo DB DBCollection BasicDBObject
