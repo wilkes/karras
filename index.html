@@ -34,7 +34,7 @@ namespace.
     <a class="wiki_link" href="api-index.html">API Index</a><br />
     <a class="wiki_link" href="#">Namespaces:</a>
     <ul id="left-sidebar-list">
-      <li><a href="karras-api.html" class="wiki_link">karras</a></li>
+      <li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.document-api.html" class="wiki_link">karras.document</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li><li><a href="karras.validations-api.html" class="wiki_link">karras.validations</a></li>
     </ul>
   </div>
 </div>
@@ -46,7 +46,23 @@ namespace.
                 <div id="right-sidebar"><div id="toc">
   <h1 class="nopad">Table of Contents</h1>
   <div style="margin-left: 1em;" class="toc-section">
-    <a href="#karras">karras</a>
+    <a href="#karras.core">karras.core</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.document">karras.document</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.example">karras.example</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.sugar">karras.sugar</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.validations">karras.validations</a>
     
     <br />
   </div>
@@ -59,30 +75,58 @@ namespace.
 <div id="namespace-entry">
   <br />
   <hr />
-  <h2 id="karras">karras</h2>
+  <h2 id="karras.core">karras.core</h2>
   by <span id="author">unknown author</span><br />
-  <a href="karras-api.html" id="api-link">Detailed API documentation</a><br />
+  <a href="karras.core-api.html" id="api-link">Detailed API documentation</a><br />
   <pre id="namespace-docstr"></pre>
   
   Public variables and functions:
-  <span id="var-link"><a href="karras-api.html#karras/collection" id="var-tag">collection</a> </span><span id="var-link"><a href="karras-api.html#karras/connect" id="var-tag">connect</a> </span><span id="var-link"><a href="karras-api.html#karras/count-docs" id="var-tag">count-docs</a> </span><span id="var-link"><a href="karras-api.html#karras/delete" id="var-tag">delete</a> </span><span id="var-link"><a href="karras-api.html#karras/distinct-values" id="var-tag">distinct-values</a> </span><span id="var-link"><a href="karras-api.html#karras/ensure-index" id="var-tag">ensure-index</a> </span><span id="var-link"><a href="karras-api.html#karras/fetch" id="var-tag">fetch</a> </span><span id="var-link"><a href="karras-api.html#karras/fetch-all" id="var-tag">fetch-all</a> </span><span id="var-link"><a href="karras-api.html#karras/fetch-by-id" id="var-tag">fetch-by-id</a> </span><span id="var-link"><a href="karras-api.html#karras/fetch-one" id="var-tag">fetch-one</a> </span><span id="var-link"><a href="karras-api.html#karras/group" id="var-tag">group</a> </span><span id="var-link"><a href="karras-api.html#karras/insert" id="var-tag">insert</a> </span><span id="var-link"><a href="karras-api.html#karras/save" id="var-tag">save</a> </span><span id="var-link"><a href="karras-api.html#karras/to-clj" id="var-tag">to-clj</a> </span><span id="var-link"><a href="karras-api.html#karras/to-dbo" id="var-tag">to-dbo</a> </span><span id="var-link"><a href="karras-api.html#karras/update" id="var-tag">update</a> </span><span id="var-link"><a href="karras-api.html#karras/update-all" id="var-tag">update-all</a> </span><span id="var-link"><a href="karras-api.html#karras/upsert" id="var-tag">upsert</a> </span><br />
-  <span id="subspace"><br />Variables and functions in
-    <span id="name">karras.sugar</span>:
-    <span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/asc">asc</a>
-    </span><span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/compound-index">compound-index</a>
-    </span><span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/date">date</a>
-    </span><span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/desc">desc</a>
-    </span><span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/modify">modify</a>
-    </span><span id="sub-var-link">
-      <a href="karras-api.html#karras.sugar/query">query</a>
-    </span>
-    <br />
-  </span>
+  <span id="var-link"><a href="karras.core-api.html#karras.core/all" id="var-tag">all</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/asc" id="var-tag">asc</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/collection" id="var-tag">collection</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/compound-index" id="var-tag">compound-index</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/connect" id="var-tag">connect</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/count-docs" id="var-tag">count-docs</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/date" id="var-tag">date</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/delete" id="var-tag">delete</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/desc" id="var-tag">desc</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/distinct-values" id="var-tag">distinct-values</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/element-match" id="var-tag">element-match</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/ensure-index" id="var-tag">ensure-index</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/ensure-named-index" id="var-tag">ensure-named-index</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/ensure-unique-index" id="var-tag">ensure-unique-index</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/eq" id="var-tag">eq</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/eq-mod" id="var-tag">eq-mod</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/exist?" id="var-tag">exist?</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/fetch" id="var-tag">fetch</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/fetch-all" id="var-tag">fetch-all</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/fetch-by-id" id="var-tag">fetch-by-id</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/fetch-one" id="var-tag">fetch-one</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/group" id="var-tag">group</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/gt" id="var-tag">gt</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/gte" id="var-tag">gte</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/in" id="var-tag">in</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/incr" id="var-tag">incr</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/insert" id="var-tag">insert</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/is-nil?" id="var-tag">is-nil?</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/js-query" id="var-tag">js-query</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/lt" id="var-tag">lt</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/lte" id="var-tag">lte</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/modify" id="var-tag">modify</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/ne" id="var-tag">ne</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/not-exist?" id="var-tag">not-exist?</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/not-in" id="var-tag">not-in</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/pop-first" id="var-tag">pop-first</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/pop-last" id="var-tag">pop-last</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/pull" id="var-tag">pull</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/pull-all" id="var-tag">pull-all</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/push" id="var-tag">push</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/save" id="var-tag">save</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/set-fields" id="var-tag">set-fields</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/size" id="var-tag">size</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/unset" id="var-tag">unset</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/update" id="var-tag">update</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/update-all" id="var-tag">update-all</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/upsert" id="var-tag">upsert</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/where" id="var-tag">where</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/within" id="var-tag">within</a> </span><span id="var-link"><a href="karras.core-api.html#karras.core/within-dates" id="var-tag">within-dates</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="karras.document">karras.document</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="karras.document-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="karras.document-api.html#karras.document/EntityCallbacks" id="var-tag">EntityCallbacks</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/add-reference" id="var-tag">add-reference</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/collection-for" id="var-tag">collection-for</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/count-instances" id="var-tag">count-instances</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/create" id="var-tag">create</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/defaggregate" id="var-tag">defaggregate</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/defentity" id="var-tag">defentity</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/delete" id="var-tag">delete</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/delete-all" id="var-tag">delete-all</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/distinct-values" id="var-tag">distinct-values</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/docspec" id="var-tag">docspec</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/docspec-assoc" id="var-tag">docspec-assoc</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/docspec-of" id="var-tag">docspec-of</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/docspec-of-item" id="var-tag">docspec-of-item</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/docspec-value" id="var-tag">docspec-value</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/ensure-indexes" id="var-tag">ensure-indexes</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/ensure-type" id="var-tag">ensure-type</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/fetch" id="var-tag">fetch</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/fetch-all" id="var-tag">fetch-all</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/fetch-one" id="var-tag">fetch-one</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/field-spec-of" id="var-tag">field-spec-of</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/get-reference" id="var-tag">get-reference</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/index" id="var-tag">index</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/list-indexes" id="var-tag">list-indexes</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/make" id="var-tag">make</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/save" id="var-tag">save</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/set-reference" id="var-tag">set-reference</a> </span><span id="var-link"><a href="karras.document-api.html#karras.document/update" id="var-tag">update</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="karras.example">karras.example</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="karras.example-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar">karras.sugar</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="karras.sugar-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="karras.sugar-api.html#karras.sugar/all" id="var-tag">all</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/asc" id="var-tag">asc</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/compound-index" id="var-tag">compound-index</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/date" id="var-tag">date</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/desc" id="var-tag">desc</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/element-match" id="var-tag">element-match</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/eq" id="var-tag">eq</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/eq-mod" id="var-tag">eq-mod</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/exist?" id="var-tag">exist?</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/gt" id="var-tag">gt</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/gte" id="var-tag">gte</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/in" id="var-tag">in</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/incr" id="var-tag">incr</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/is-nil?" id="var-tag">is-nil?</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/js-query" id="var-tag">js-query</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/lt" id="var-tag">lt</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/lte" id="var-tag">lte</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/modify" id="var-tag">modify</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/ne" id="var-tag">ne</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/not-exist?" id="var-tag">not-exist?</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/not-in" id="var-tag">not-in</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/pop-first" id="var-tag">pop-first</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/pop-last" id="var-tag">pop-last</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/pull" id="var-tag">pull</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/pull-all" id="var-tag">pull-all</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/push" id="var-tag">push</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/set-fields" id="var-tag">set-fields</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/size" id="var-tag">size</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/unset" id="var-tag">unset</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/where" id="var-tag">where</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/within" id="var-tag">within</a> </span><span id="var-link"><a href="karras.sugar-api.html#karras.sugar/within-dates" id="var-tag">within-dates</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="karras.validations">karras.validations</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="karras.validations-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="karras.validations-api.html#karras.validations/ValidationCallbacks" id="var-tag">ValidationCallbacks</a> </span><span id="var-link"><a href="karras.validations-api.html#karras.validations/add-validation" id="var-tag">add-validation</a> </span><span id="var-link"><a href="karras.validations-api.html#karras.validations/make-validatable" id="var-tag">make-validatable</a> </span><span id="var-link"><a href="karras.validations-api.html#karras.validations/validates-pressence-of" id="var-tag">validates-pressence-of</a> </span><br />
+  
 </div>
 </div>
               </div>

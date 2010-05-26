@@ -1,0 +1,445 @@
+<html>
+  <head>
+    <title>karras.sugar API reference (karras)</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">karras</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.document-api.html" class="wiki_link">karras.document</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li><li><a href="karras.validations-api.html" class="wiki_link">karras.validations</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#toc0">Overview</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/all">all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/asc">asc</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/compound-index">compound-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/date">date</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/desc">desc</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/element-match">element-match</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/eq">eq</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/eq-mod">eq-mod</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/exist?">exist?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/gt">gt</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/gte">gte</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/in">in</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/incr">incr</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/is-nil?">is-nil?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/js-query">js-query</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/lt">lt</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/lte">lte</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/modify">modify</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/ne">ne</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/not-exist?">not-exist?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/not-in">not-in</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/pop-first">pop-first</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/pop-last">pop-last</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/pull">pull</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/pull-all">pull-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/push">push</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/set-fields">set-fields</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/size">size</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/unset">unset</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/where">where</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/within">within</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/within-dates">within-dates</a>
+    </div>
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras.sugar</span></h1>
+by <span id="author">Unknown</span><br />
+<br />Usage:
+<pre>
+(ns your-namespace
+  (:require <span id="long-name">karras.sugar</span>))
+</pre><pre>
+</pre><h2>Overview</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<h2>Public Variables and Functions</h2>
+<div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/all">all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (all field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/asc">asc</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (asc k)
+</pre>
+  <pre id="var-docstr">Sugar for order by and index.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/compound-index">compound-index</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (compound-index &amp; asc-or-descs)
+</pre>
+  <pre id="var-docstr">Sugar to create compound index</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/date">date</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (date &amp; [year month date hour minute second milli])
+</pre>
+  <pre id="var-docstr">A convenience constructor for making a java.util.Date.  Takes zero or more 
+args. Zero args return the current time. One or more args returns a date 
+values provided and all other values zeroed out.
+Args are year, month, date, hour, minute, second, and  milliseconds</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/desc">desc</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (desc k)
+</pre>
+  <pre id="var-docstr">Sugar for order by and index.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/element-match">element-match</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (element-match field match-query)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/eq">eq</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (eq field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/eq-mod">eq-mod</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (eq-mod field m v)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/exist?">exist?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (exist? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/gt">gt</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (gt field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/gte">gte</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (gte field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/in">in</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (in field ys)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/incr">incr</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (incr field &amp; [amount])
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/is-nil?">is-nil?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (is-nil? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/js-query">js-query</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (js-query js-string)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/lt">lt</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (lt field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/lte">lte</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (lte field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/modify">modify</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (modify &amp; clauses)
+</pre>
+  <pre id="var-docstr">Sugar to create update documents
+  (modify (incr :j) (push :k 3))
+produces:
+  {:$inc :j :$push {:k 3}}</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/ne">ne</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ne field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/not-exist?">not-exist?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (not-exist? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/not-in">not-in</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (not-in field ys)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/pop-first">pop-first</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pop-first field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/pop-last">pop-last</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pop-last field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/pull">pull</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pull field value)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/pull-all">pull-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pull-all field values)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/push">push</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (push field value)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/set-fields">set-fields</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (set-fields field-map)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/size">size</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (size field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/unset">unset</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (unset field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/where">where</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (where &amp; clauses)
+</pre>
+  <pre id="var-docstr">Sugar to create a where document. Example:
+  (where (ne :j 3) (gt k 10))
+produces:
+  {:j {:$ne 3} :k {:$gt 10}}</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/within">within</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (within field y z)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/within-dates">within-dates</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (within-dates field y z)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div>
+
+
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">No copyright info </div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>

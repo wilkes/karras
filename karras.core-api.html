@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>karras API reference (karras)</title>
+    <title>karras.core API reference (karras)</title>
     <link href="static/favicon.png" rel="icon" />
     <link href="static/favicon.png" rel="shortcut icon" />
     <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
@@ -34,7 +34,7 @@ namespace.
     <a class="wiki_link" href="api-index.html">API Index</a><br />
     <a class="wiki_link" href="#">Namespaces:</a>
     <ul id="left-sidebar-list">
-      <li><a href="karras-api.html" class="wiki_link">karras</a></li>
+      <li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.document-api.html" class="wiki_link">karras.document</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li><li><a href="karras.validations-api.html" class="wiki_link">karras.validations</a></li>
     </ul>
   </div>
 </div>
@@ -48,58 +48,8 @@ namespace.
   <div style="margin-left: 1em;" class="toc-section">
     <a href="#toc0">Overview</a>
     <div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/asc">asc</a>
+      <a href="#karras.core/all">all</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/collection">collection</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/compound-index">compound-index</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/connect">connect</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/count-docs">count-docs</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/date">date</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/delete">delete</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/desc">desc</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/distinct-values">distinct-values</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/ensure-index">ensure-index</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/ensure-named-index">ensure-named-index</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/ensure-unique-index">ensure-unique-index</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/fetch">fetch</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/fetch-all">fetch-all</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/fetch-by-id">fetch-by-id</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/fetch-one">fetch-one</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/group">group</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/insert">insert</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/modify">modify</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/save">save</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/update">update</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/update-all">update-all</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/upsert">upsert</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras/where">where</a>
-    </div>
-    <br />
-  </div><div style="margin-left: 1em;" class="toc-section">
-    <a href="#karras.core">karras.core</a>
-    <div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/asc">asc</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/collection">collection</a>
@@ -118,11 +68,19 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/distinct-values">distinct-values</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/element-match">element-match</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/ensure-index">ensure-index</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/ensure-named-index">ensure-named-index</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/ensure-unique-index">ensure-unique-index</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/eq">eq</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/eq-mod">eq-mod</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/exist?">exist?</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/fetch">fetch</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -134,11 +92,49 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/group">group</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/gt">gt</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/gte">gte</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/in">in</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/incr">incr</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/insert">insert</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/is-nil?">is-nil?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/js-query">js-query</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/lt">lt</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/lte">lte</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/modify">modify</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/ne">ne</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/not-exist?">not-exist?</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/not-in">not-in</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/pop-first">pop-first</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/pop-last">pop-last</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/pull">pull</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/pull-all">pull-all</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/push">push</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/save">save</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/set-fields">set-fields</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/size">size</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.core/unset">unset</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/update">update</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -147,33 +143,21 @@ namespace.
       <a href="#karras.core/upsert">upsert</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.core/where">where</a>
-    </div>
-    <br />
-  </div><div style="margin-left: 1em;" class="toc-section">
-    <a href="#karras.sugar">karras.sugar</a>
-    <div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/asc">asc</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/compound-index">compound-index</a>
+      <a href="#karras.core/within">within</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/date">date</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/desc">desc</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/modify">modify</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#karras.sugar/where">where</a>
+      <a href="#karras.core/within-dates">within-dates</a>
     </div>
     <br />
   </div>
 </div>
 </div>
-                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras</span></h1>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras.core</span></h1>
 by <span id="author">Unknown</span><br />
 <br />Usage:
 <pre>
 (ns your-namespace
-  (:require <span id="long-name">karras</span>))
+  (:require <span id="long-name">karras.core</span>))
 </pre><pre>
 </pre><h2>Overview</h2>
 <pre id="namespace-docstr"></pre>
@@ -182,259 +166,14 @@ by <span id="author">Unknown</span><br />
 <div id="var-entry">
   <br />
   <hr />
-  <h2 id="karras/asc">asc</h2>
+  <h2 id="karras.core/all">all</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (asc k)
+  <pre id="var-usage">Usage: (all field y)
 </pre>
-  <pre id="var-docstr">Sugar for order by and index.</pre>
+  <pre id="var-docstr"></pre>
   
 </div><div id="var-entry">
   <br />
-  <hr />
-  <h2 id="karras/collection">collection</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (collection collection-name)
-       (collection db collection-name)
-       (collection mongo db-name collection-name)
-</pre>
-  <pre id="var-docstr">Returns a DBCollection.</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/compound-index">compound-index</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (compound-index &amp; asc-or-descs)
-</pre>
-  <pre id="var-docstr">Sugar to create compound index</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/connect">connect</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (connect)
-       (connect host)
-       (connect host port)
-</pre>
-  <pre id="var-docstr">Returns a single server connection. Defaults to host 127.0.0.1 port 27017</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/count-docs">count-docs</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (count-docs collection)
-       (count-docs collection query)
-</pre>
-  <pre id="var-docstr">Returns the count of documents, optionally, matching a query</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/date">date</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (date &amp; [year month date hour minute second milli])
-</pre>
-  <pre id="var-docstr">A convenience constructor for making a java.util.Date.  Takes zero or more 
-args. Zero args return the current time. One or more args returns a date 
-values provided and all other values zeroed out.
-Args are year, month, date, hour, minute, second, and  milliseconds</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/delete">delete</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (delete collection &amp; queries)
-</pre>
-  <pre id="var-docstr">Removes documents matching the supplied queries from a collection.</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/desc">desc</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (desc k)
-</pre>
-  <pre id="var-docstr">Sugar for order by and index.</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/distinct-values">distinct-values</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (distinct-values collection kw)
-</pre>
-  <pre id="var-docstr">Fetch a seq of the distinct values of a given collection for a key.</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/ensure-index">ensure-index</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (ensure-index collection fields)
-</pre>
-  <pre id="var-docstr">Ensure an index exist on a collection</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/ensure-named-index">ensure-named-index</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (ensure-named-index collection name fields)
-</pre>
-  <pre id="var-docstr">Ensure a unique index exist on a collection</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/ensure-unique-index">ensure-unique-index</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (ensure-unique-index collection name fields)
-</pre>
-  <pre id="var-docstr">Ensure a unique index exist on a collection</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/fetch">fetch</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch collection query &amp; options__19__auto__)
-</pre>
-  <pre id="var-docstr">Fetch a seq of documents that match a given query.
-Accepts the following keywords:
-    :limit, maximum number of documents to return
-    :skip, where in the result set the seq will begin, i.e. paging
-    :include, which keys to include in the result set, can not be combined with :exclude
-    :exclude, which keys to exclude from the result set, can not be combined with :include
-    :sort, which keys to order by
-    :count, if true return the count of the result set, defaults to false</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/fetch-all">fetch-all</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-all collection &amp; options__19__auto__)
-</pre>
-  <pre id="var-docstr">Fetch all the documents of a collection. Same options as fetch.</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/fetch-by-id">fetch-by-id</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-by-id collection s)
-</pre>
-  <pre id="var-docstr">Fetch a document by :_id</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/fetch-one">fetch-one</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-one collection query &amp; options__19__auto__)
-</pre>
-  <pre id="var-docstr">Fetch one document of a collection. Supports same options as fetch except :limit and :count</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/group">group</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (group collection keys cond initial reduce)
-       (group collection keys)
-</pre>
-  <pre id="var-docstr">Fetch a seq of grouped items.
-Example:
-  SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
-  Karras: (group coll
-                 [:a :b] 
-                 {:active 1}
-                 {:csum 0}
-                 "function(obj,prev) { prev.csum += obj.c; }")</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/insert">insert</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (insert collection &amp; objs)
-</pre>
-  <pre id="var-docstr">Inserts one or more documents into a collection. 
-Returns the inserted object with :_id</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/modify">modify</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (modify &amp; clauses)
-</pre>
-  <pre id="var-docstr">Sugar to create update documents
-  (modify (incr :j) (push :k 3))
-produces:
-  {:$inc :j :$push {:k 3}}</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/save">save</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (save collection obj)
-</pre>
-  <pre id="var-docstr">Saves a document to a colection, does an upsert behind the scenes</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/update">update</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (update collection query obj &amp; options)
-</pre>
-  <pre id="var-docstr">Updates one or more documents in a collection that match the query with the document 
-provided.
-  :upsert, performs an insert if the document doesn't have :_id
-  :multi, update all documents that match the query</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/update-all">update-all</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (update-all collection obj)
-       (update-all collection query obj)
-</pre>
-  <pre id="var-docstr">Shortcut for (update collection query obj :multi)</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/upsert">upsert</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (upsert collection obj)
-       (upsert collection query obj)
-</pre>
-  <pre id="var-docstr">Shortcut for (update collection query obj :upsert)</pre>
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="karras/where">where</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (where &amp; clauses)
-</pre>
-  <pre id="var-docstr">Sugar to create a where document. Example:
-  (where (ne :j 3) (gt k 10))
-produces:
-  {:j {:$ne 3} :k {:$gt 10}}</pre>
-  
-</div>
-<h2 id="namespace-name">karras.core</h2>
-<pre id="namespace-docstr"></pre>
-<br />
-<div id="var-entry">
   <hr />
   <h2 id="karras.core/asc">asc</h2>
   <span id="var-type">function</span><br />
@@ -443,6 +182,7 @@ produces:
   <pre id="var-docstr">Sugar for order by and index.</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/collection">collection</h2>
   <span id="var-type">function</span><br />
@@ -453,6 +193,7 @@ produces:
   <pre id="var-docstr">Returns a DBCollection.</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/compound-index">compound-index</h2>
   <span id="var-type">function</span><br />
@@ -461,6 +202,7 @@ produces:
   <pre id="var-docstr">Sugar to create compound index</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/connect">connect</h2>
   <span id="var-type">function</span><br />
@@ -471,6 +213,7 @@ produces:
   <pre id="var-docstr">Returns a single server connection. Defaults to host 127.0.0.1 port 27017</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/count-docs">count-docs</h2>
   <span id="var-type">function</span><br />
@@ -480,6 +223,7 @@ produces:
   <pre id="var-docstr">Returns the count of documents, optionally, matching a query</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/date">date</h2>
   <span id="var-type">function</span><br />
@@ -491,6 +235,7 @@ values provided and all other values zeroed out.
 Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/delete">delete</h2>
   <span id="var-type">function</span><br />
@@ -499,6 +244,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Removes documents matching the supplied queries from a collection.</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/desc">desc</h2>
   <span id="var-type">function</span><br />
@@ -507,6 +253,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Sugar for order by and index.</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/distinct-values">distinct-values</h2>
   <span id="var-type">function</span><br />
@@ -515,6 +262,16 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Fetch a seq of the distinct values of a given collection for a key.</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/element-match">element-match</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (element-match field match-query)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/ensure-index">ensure-index</h2>
   <span id="var-type">function</span><br />
@@ -523,6 +280,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Ensure an index exist on a collection</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/ensure-named-index">ensure-named-index</h2>
   <span id="var-type">function</span><br />
@@ -531,6 +289,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Ensure a unique index exist on a collection</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/ensure-unique-index">ensure-unique-index</h2>
   <span id="var-type">function</span><br />
@@ -539,6 +298,34 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-docstr">Ensure a unique index exist on a collection</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/eq">eq</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (eq field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/eq-mod">eq-mod</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (eq-mod field m v)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/exist?">exist?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (exist? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/fetch">fetch</h2>
   <span id="var-type">function</span><br />
@@ -554,6 +341,7 @@ Accepts the following keywords:
     :count, if true return the count of the result set, defaults to false</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/fetch-all">fetch-all</h2>
   <span id="var-type">function</span><br />
@@ -562,6 +350,7 @@ Accepts the following keywords:
   <pre id="var-docstr">Fetch all the documents of a collection. Same options as fetch.</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/fetch-by-id">fetch-by-id</h2>
   <span id="var-type">function</span><br />
@@ -570,6 +359,7 @@ Accepts the following keywords:
   <pre id="var-docstr">Fetch a document by :_id</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/fetch-one">fetch-one</h2>
   <span id="var-type">function</span><br />
@@ -578,6 +368,7 @@ Accepts the following keywords:
   <pre id="var-docstr">Fetch one document of a collection. Supports same options as fetch except :limit and :count</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/group">group</h2>
   <span id="var-type">function</span><br />
@@ -594,6 +385,43 @@ Example:
                  "function(obj,prev) { prev.csum += obj.c; }")</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/gt">gt</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (gt field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/gte">gte</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (gte field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/in">in</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (in field ys)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/incr">incr</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (incr field &amp; [amount])
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/insert">insert</h2>
   <span id="var-type">function</span><br />
@@ -603,6 +431,43 @@ Example:
 Returns the inserted object with :_id</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/is-nil?">is-nil?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (is-nil? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/js-query">js-query</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (js-query js-string)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/lt">lt</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (lt field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/lte">lte</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (lte field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/modify">modify</h2>
   <span id="var-type">function</span><br />
@@ -614,6 +479,79 @@ produces:
   {:$inc :j :$push {:k 3}}</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/ne">ne</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (ne field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/not-exist?">not-exist?</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (not-exist? field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/not-in">not-in</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (not-in field ys)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/pop-first">pop-first</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pop-first field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/pop-last">pop-last</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pop-last field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/pull">pull</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pull field value)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/pull-all">pull-all</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (pull-all field values)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/push">push</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (push field value)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/save">save</h2>
   <span id="var-type">function</span><br />
@@ -622,6 +560,34 @@ produces:
   <pre id="var-docstr">Saves a document to a colection, does an upsert behind the scenes</pre>
   
 </div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/set-fields">set-fields</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (set-fields field-map)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/size">size</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (size field y)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.core/unset">unset</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (unset field)
+</pre>
+  <pre id="var-docstr"></pre>
+  
+</div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/update">update</h2>
   <span id="var-type">function</span><br />
@@ -633,6 +599,7 @@ provided.
   :multi, update all documents that match the query</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/update-all">update-all</h2>
   <span id="var-type">function</span><br />
@@ -642,6 +609,7 @@ provided.
   <pre id="var-docstr">Shortcut for (update collection query obj :multi)</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/upsert">upsert</h2>
   <span id="var-type">function</span><br />
@@ -651,6 +619,7 @@ provided.
   <pre id="var-docstr">Shortcut for (update collection query obj :upsert)</pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
   <h2 id="karras.core/where">where</h2>
   <span id="var-type">function</span><br />
@@ -661,66 +630,23 @@ provided.
 produces:
   {:j {:$ne 3} :k {:$gt 10}}</pre>
   
-</div>
-<h2 id="namespace-name">karras.sugar</h2>
-<pre id="namespace-docstr"></pre>
-<br />
-<div id="var-entry">
+</div><div id="var-entry">
+  <br />
   <hr />
-  <h2 id="karras.sugar/asc">asc</h2>
+  <h2 id="karras.core/within">within</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (asc k)
+  <pre id="var-usage">Usage: (within field y z)
 </pre>
-  <pre id="var-docstr">Sugar for order by and index.</pre>
+  <pre id="var-docstr"></pre>
   
 </div><div id="var-entry">
+  <br />
   <hr />
-  <h2 id="karras.sugar/compound-index">compound-index</h2>
+  <h2 id="karras.core/within-dates">within-dates</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (compound-index &amp; asc-or-descs)
+  <pre id="var-usage">Usage: (within-dates field y z)
 </pre>
-  <pre id="var-docstr">Sugar to create compound index</pre>
-  
-</div><div id="var-entry">
-  <hr />
-  <h2 id="karras.sugar/date">date</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (date &amp; [year month date hour minute second milli])
-</pre>
-  <pre id="var-docstr">A convenience constructor for making a java.util.Date.  Takes zero or more 
-args. Zero args return the current time. One or more args returns a date 
-values provided and all other values zeroed out.
-Args are year, month, date, hour, minute, second, and  milliseconds</pre>
-  
-</div><div id="var-entry">
-  <hr />
-  <h2 id="karras.sugar/desc">desc</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (desc k)
-</pre>
-  <pre id="var-docstr">Sugar for order by and index.</pre>
-  
-</div><div id="var-entry">
-  <hr />
-  <h2 id="karras.sugar/modify">modify</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (modify &amp; clauses)
-</pre>
-  <pre id="var-docstr">Sugar to create update documents
-  (modify (incr :j) (push :k 3))
-produces:
-  {:$inc :j :$push {:k 3}}</pre>
-  
-</div><div id="var-entry">
-  <hr />
-  <h2 id="karras.sugar/where">where</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (where &amp; clauses)
-</pre>
-  <pre id="var-docstr">Sugar to create a where document. Example:
-  (where (ne :j 3) (gt k 10))
-produces:
-  {:j {:$ne 3} :k {:$gt 10}}</pre>
+  <pre id="var-docstr"></pre>
   
 </div>
 
