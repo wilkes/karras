@@ -23,7 +23,8 @@
 (ns karras.collection
   (:use [clojure.contrib.def :only [defnk]]
         [karras.core :only [*mongo-db* to-dbo to-clj]])
-  (:import [com.mongodb Mongo DB DBCollection DBObject ObjectId]))
+  (:import [com.mongodb Mongo DB DBCollection DBObject]
+           [org.bson.types ObjectId]))
 
 (defn- keyword-str [kw]
   (if (keyword? kw)
