@@ -129,7 +129,7 @@
 
 (defn list-collections
   ""
-  [#^Mongo db]
+  [#^DB db]
   (map keyword (.getCollectionNames db)))
 
 (defn eval-code

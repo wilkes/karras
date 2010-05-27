@@ -106,7 +106,7 @@
        :exclude, which keys to exclude from the result set, can not be combined with :include
        :sort, which keys to order by
        :count, if true return the count of the result set, defaults to false"
-  [collection query
+  [#^DBCollection collection query
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
   (let [cursor (if query
                  (if (or include exclude)

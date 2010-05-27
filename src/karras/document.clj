@@ -76,7 +76,7 @@
 
 (defn make
   "Converts a hashmap to the supplied type."
-  [type hmap]
+  [#^Class type hmap]
   (let [fields (-> type docspec :fields)
         has-key? (fn [e k]
                    (try (some #{k} (keys e))
