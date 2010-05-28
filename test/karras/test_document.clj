@@ -54,14 +54,23 @@
 (defentity Company
   [:name
    :employees {:type :references :of Person}
-   :ceo {:type :reference :of Person}])
+   :ceo {:type :reference :of Person}
+   :date-founded {:type ::my-date}]
+  (defscope older-companies [date-str]
+    (lte :date-founded date-str))
+  (defscope modern-companies []
+    (gt :date-founded "1980")))
 
 (defentity Simple
   [:value]
   (docspec-assoc :collection-name "simpletons"))
 
+(defmacro mongo [& forms]
+  `(karras/with-mongo-request db
+    ~@forms))
+
 (use-fixtures :each (fn [t]
-                      (karras/with-mongo-request db
+                      (mongo
                         (drop-collection (collection-for Person))
                         (drop-collection (collection-for Company))
                         (t))))
@@ -222,3 +231,12 @@
           [jane bill] (get-reference company :employees)]
       (is (= "Jane" (:first-name jane)))
       (is (= "Bill" (:first-name bill))))))
+
+(deftest test-deffetch
+  (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
+        dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
+        exxon (create Company {:name "Exxon" :date-founded "1911"})]
+    (is (= [jpmorgan] (older-companies "1800")))
+    (is (=  #{jpmorgan exxon} (set (older-companies "1913"))))
+    (is (=  [exxon jpmorgan] (older-companies "1913" :sort [(asc :name)])))
+    (is (=  [dell] (modern-companies)))))

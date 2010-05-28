@@ -297,3 +297,16 @@
     (if list?
       (fetch target-type (where (in :_id (k entity))))
       (fetch-one target-type (where (eq :_id (k entity)))))))
+
+
+(defmacro defscope [type-name fn-name [& args] & where-clauses]
+  `(defnk ~fn-name
+    [~@args :and nil
+     :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
+    (fetch ~type-name (where ~@where-clauses ~'and)
+           :include ~'include
+           :exclude ~'exclude
+           :limit   ~'limit  
+           :skip    ~'skip   
+           :sort    ~'sort   
+           :count   ~'count)))
