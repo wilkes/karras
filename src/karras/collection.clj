@@ -129,7 +129,7 @@
                  cursor)
         cursor (if sort
                  (.sort cursor (to-dbo
-                                (apply merge sort)))
+                                (apply merge (reverse sort))))
                    cursor)]
     (if count
       (.count cursor)
