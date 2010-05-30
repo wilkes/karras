@@ -135,28 +135,15 @@
       (.count cursor)
       (map to-clj cursor))))
 
-(defnk fetch-all
+(defn fetch-all
   "Fetch all the documents of a collection. Same options as fetch."
-  [collection :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (fetch collection
-         nil
-         :include include
-         :exclude exclude
-         :limit   limit  
-         :skip    skip   
-         :sort    sort   
-         :count   count))
+  [collection & options]
+  (apply fetch collection nil options))
 
-(defnk fetch-one
+(defn fetch-one
   "Fetch one document of a collection. Supports same options as fetch except :limit and :count"
-  [collection query :skip nil :include nil :exclude nil :sort nil]
-  (first (fetch collection query
-                :include include
-                :exclude exclude
-                :limit   1
-                :skip    skip
-                :sort    sort
-                :count   false)))
+  [collection query & options]
+  (first (apply fetch collection query options)))
 
 (defn count-docs
   "Returns the count of documents, optionally, matching a query"

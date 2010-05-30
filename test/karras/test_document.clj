@@ -239,4 +239,7 @@
     (is (= [jpmorgan] (older-companies "1800")))
     (is (=  #{jpmorgan exxon} (set (older-companies "1913"))))
     (is (=  [exxon jpmorgan] (older-companies "1913" :sort [(asc :name)])))
+    (is (=  [jpmorgan exxon dell]
+              (older-companies "1999" :sort [(asc :date-founded)
+                                             (asc :name)])))
     (is (=  [dell] (modern-companies)))))

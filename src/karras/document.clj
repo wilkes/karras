@@ -1,4 +1,22 @@
-(ns karras.document
+(ns
+    #^{:author "Wilkes Joiner"
+       :doc "
+A library for defining entities and aggregates.  Entities correspond to a mongo document.
+Aggregates correspond to a an embedded document.
+
+Example:
+
+  (defaggregate Address [:street :city :state :zip])
+
+  (defaggregate Phone [:area-code :number]
+
+  (defentity Person
+    [:first-name 
+     :last-name
+     :address {:type Address}
+     :phones {:type :list :of Phone}])
+"}
+    karras.document
   (:require [karras.collection :as c])
   (:use karras.sugar
         [clojure.contrib.def :only [defnk defalias]]
@@ -204,43 +222,20 @@
   ([type where]
      (c/delete (collection-for type) where)))
 
-(defnk fetch
+(defn fetch
   "Fetch a seq of documents for the given type matching the supplied parameters."
-  [type query
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (map #(make type %) (c/fetch (collection-for type)
-                                    query
-                                    :include include
-                                    :exclude exclude
-                                    :limit   limit  
-                                    :skip    skip   
-                                    :sort    sort   
-                                    :count   count)))
+  [type query & options]
+  (map #(make type %) (apply c/fetch (collection-for type) query options)))
 
-(defnk fetch-all
+(defn fetch-all
   "Fetch all of the documents for the given type."
-  [type
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (map #(make type %) (c/fetch-all (collection-for type)
-                                        :include include
-                                        :exclude exclude
-                                        :limit   limit  
-                                        :skip    skip   
-                                        :sort    sort   
-                                        :count   count)))
+  [type & options]
+  (map #(make type %) (apply c/fetch-all (collection-for type) options)))
 
-(defnk fetch-one
+(defn fetch-one
   "Fetch the first document for the given type matching the supplied query and options."
-  [type query
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (make type (c/fetch-one (collection-for type)
-                               query
-                               :include include
-                               :exclude exclude
-                               :limit   limit  
-                               :skip    skip   
-                               :sort    sort   
-                               :count   count)))
+  [type query & options]
+  (make type (apply c/fetch-one (collection-for type) query options)))
 
 (defn count-instances
   "Return the number of documents optionally matching a given where clause."
@@ -299,14 +294,27 @@
       (fetch-one target-type (where (eq :_id (k entity)))))))
 
 
-(defmacro defscope [type-name fn-name [& args] & where-clauses]
-  `(defnk ~fn-name
-    [~@args :and nil
-     :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-    (fetch ~type-name (where ~@where-clauses ~'and)
-           :include ~'include
-           :exclude ~'exclude
-           :limit   ~'limit  
-           :skip    ~'skip   
-           :sort    ~'sort   
-           :count   ~'count)))
+(defmacro defscope
+  "Defines a fetch function for the given type. 
+   The function created takes all of the options of fetch plus an :and option to append to the where clause.
+
+   Usage:
+     (defentity Person [:first-name :last-name :age]
+        (defscope adults [] (gte :age 18))
+        (defscope peope-in-age-range [min max] (within :age min max)))
+
+   Outside of defentity:
+     (defscope Person teenagers [] (within :age 13 19))
+
+   Give me all the teenagers with last names A-J sorted by last name:
+     (teenagers :and (within :last-name \"A\" \"J\") :sort [(asc :last-name)])
+
+   Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
+     (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
+  [type-name fn-name [& args] & where-clauses]
+  `(defn ~fn-name
+     [~@args & options#]
+     (let [and-clauses# (:and (apply hash-map options#))]
+       (apply fetch ~type-name
+              (where ~@where-clauses and-clauses#)
+              options#))))
