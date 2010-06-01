@@ -232,7 +232,10 @@
       (is (= "Jane" (:first-name jane)))
       (is (= "Bill" (:first-name bill))))))
 
-(deftest test-deffetch
+(deftest test-defscope
+  (is (= {:older-companies older-companies
+          :modern-companies modern-companies}
+         (docspec-value Company :scopes)))
   (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
         dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]

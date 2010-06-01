@@ -32,8 +32,8 @@ Example:
 
 (defn docspec-value
   "Lookup the DocSpec value for given key of the given type."
-  [type key]
-  (get (docspec type) key))
+  [type key & [default]]
+  (get (docspec type) key default))
 
 (defrecord DocSpec
   [record-class
@@ -165,6 +165,13 @@ Example:
   [type & kvs]
   (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
 
+(defn swap-docspec-in! [type attribute-path f & args]
+  (swap! docspecs
+         (fn [specs]
+           (let [path (cons type attribute-path)
+                 current-value (get-in specs path)]
+             (assoc-in specs path (apply f current-value args))))))
+
 (defn collection-for
   "Returns the DBCollection for the supplied entity instance or type."
   [entity-or-type]
@@ -252,8 +259,7 @@ Example:
 (defn index
   "Associate an index with a give type."
   [type & keys]
-  (let [indexes (get (docspec type) :indexes [])]
-    (docspec-assoc type :indexes (conj indexes (apply compound-index keys)))))
+  (swap-docspec-in! type [:indexes] conj (apply compound-index keys)))
 
 (defn ensure-indexes
   "Ensure the indexes are built, optionally for a given type. Defaults to all types."
@@ -311,10 +317,12 @@ Example:
 
    Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
      (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
-  [type-name fn-name [& args] & where-clauses]
-  `(defn ~fn-name
-     [~@args & options#]
-     (let [and-clauses# (:and (apply hash-map options#))]
-       (apply fetch ~type-name
-              (where ~@where-clauses and-clauses#)
-              options#))))
+  [type fn-name [& args] & where-clauses]
+  `(do
+     (defn ~fn-name
+       [~@args & options#]
+       (let [and-clauses# (:and (apply hash-map options#))]
+         (apply fetch ~type
+                (where ~@where-clauses and-clauses#)
+                options#)))
+     (swap-docspec-in! ~type [:scopes] assoc ~(keyword fn-name) ~fn-name)))

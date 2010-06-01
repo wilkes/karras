@@ -1,5 +1,5 @@
 (ns karras.validations
-  (:use [karras.document :only [EntityCallbacks default-callbacks]]
+  (:use [karras.document :only [EntityCallbacks default-callbacks swap-docspec-in! docspec]]
         clojure.contrib.error-kit
         [clojure.contrib.str-utils :only [str-join]]))
 
@@ -18,10 +18,11 @@
 
 (def default-validation-callbacks {:before-validate identity
                                    :after-validate identity})
-(defonce validations (atom {}))
 
 (defn validate [e]
-  (remove nil? (map #(% e) (get @validations (class e)))))
+  (let [validations (mapcat #(-> % :validations vals)
+                            (-> e class docspec :fields vals))]
+    (remove nil? (map #(% e) validations))))
 
 (defn make-validatable
   "Extends a type with ValidationCallbacks and EntityCallbacks.
@@ -44,10 +45,10 @@
 (defn add-validation
   "Associates a validation with an entity type.
    If the type does not already extend ValidationCallbacks, then make-validatable is called."
-  [type f]
+  [type field k f]
   (when-not (extends? ValidationCallbacks type)
     (make-validatable type))
-  (swap! validations #(assoc % type (conj (get % type #{}) f))))
+  (swap-docspec-in! type [:fields field :validations] assoc k f))
 
 (defn is-present? [e field]
   (get e field))
@@ -57,6 +58,7 @@
   ([type field]
      (validates-pressence-of type field (str field " can't be blank.")))
   ([type field message]
-     (add-validation type (fn [e]
-                            (if-not (is-present? e field)
-                              message)))))
+     (add-validation type field :validates-pressence-of
+                     (fn [e]
+                       (if-not (is-present? e field)
+                         message)))))
