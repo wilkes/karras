@@ -54,6 +54,8 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.document/collection-for">collection-for</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.document/convert">convert</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.document/count-instances">count-instances</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.document/create">create</a>
@@ -61,6 +63,8 @@ namespace.
       <a href="#karras.document/defaggregate">defaggregate</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.document/defentity">defentity</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.document/defscope">defscope</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.document/delete">delete</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -109,14 +113,28 @@ namespace.
 </div>
 </div>
                 <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">karras.document</span></h1>
-by <span id="author">Unknown</span><br />
+by <span id="author">Wilkes Joiner</span><br />
 <br />Usage:
 <pre>
 (ns your-namespace
   (:require <span id="long-name">karras.document</span>))
 </pre><pre>
 </pre><h2>Overview</h2>
-<pre id="namespace-docstr"></pre>
+<pre id="namespace-docstr">
+A library for defining entities and aggregates.  Entities correspond to a mongo document.
+Aggregates correspond to a an embedded document.
+
+Example:
+
+  (defaggregate Address [:street :city :state :zip])
+
+  (defaggregate Phone [:area-code :number]
+
+  (defentity Person
+    [:first-name 
+     :last-name
+     :address {:type Address}
+     :phones {:type :list :of Phone}])</pre>
 <br />
 <h2>Public Variables and Functions</h2>
 <div id="var-entry">
@@ -158,6 +176,17 @@ by <span id="author">Unknown</span><br />
 </div><div id="var-entry">
   <br />
   <hr />
+  <h2 id="karras.document/convert">convert</h2>
+  <span id="var-type">multimethod</span><br />
+  <pre id="var-usage">No usage documentation available</pre>
+  <pre id="var-docstr">Multimethod used to convert a document.
+Takes in a field-spec and a val and returns the conver
+Dispatches off of :type key of first arg.
+:default returns the value unmodified</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
   <h2 id="karras.document/count-instances">count-instances</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (count-instances type)
@@ -191,6 +220,30 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (defentity classname [&amp; fields] &amp; type-fns)
 </pre>
   <pre id="var-docstr">Defines an entity that corresponds to a collection.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.document/defscope">defscope</h2>
+  <span id="var-type">macro</span><br />
+  <pre id="var-usage">Usage: (defscope type fn-name [&amp; args] &amp; where-clauses)
+</pre>
+  <pre id="var-docstr">Defines a fetch function for the given type. 
+The function created takes all of the options of fetch plus an :and option to append to the where clause.
+
+Usage:
+  (defentity Person [:first-name :last-name :age]
+     (defscope adults [] (gte :age 18))
+     (defscope peope-in-age-range [min max] (within :age min max)))
+
+Outside of defentity:
+  (defscope Person teenagers [] (within :age 13 19))
+
+Give me all the teenagers with last names A-J sorted by last name:
+  (teenagers :and (within :last-name "A" "J") :sort [(asc :last-name)])
+
+Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
+  (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])</pre>
   
 </div><div id="var-entry">
   <br />
@@ -264,7 +317,7 @@ lookup of the docspec for the :of of the last field supplied.</pre>
   <hr />
   <h2 id="karras.document/docspec-value">docspec-value</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (docspec-value type key)
+  <pre id="var-usage">Usage: (docspec-value type key &amp; [default])
 </pre>
   <pre id="var-docstr">Lookup the DocSpec value for given key of the given type.</pre>
   
@@ -292,7 +345,7 @@ lookup of the docspec for the :of of the last field supplied.</pre>
   <hr />
   <h2 id="karras.document/fetch">fetch</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch type query &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (fetch type query &amp; options)
 </pre>
   <pre id="var-docstr">Fetch a seq of documents for the given type matching the supplied parameters.</pre>
   
@@ -301,7 +354,7 @@ lookup of the docspec for the :of of the last field supplied.</pre>
   <hr />
   <h2 id="karras.document/fetch-all">fetch-all</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-all type &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (fetch-all type &amp; options)
 </pre>
   <pre id="var-docstr">Fetch all of the documents for the given type.</pre>
   
@@ -310,7 +363,7 @@ lookup of the docspec for the :of of the last field supplied.</pre>
   <hr />
   <h2 id="karras.document/fetch-one">fetch-one</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-one type query &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (fetch-one type query &amp; options)
 </pre>
   <pre id="var-docstr">Fetch the first document for the given type matching the supplied query and options.</pre>
   
