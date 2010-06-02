@@ -8,5 +8,5 @@
                      [lein-clojars "0.5.0"]
                      [autodoc "0.7.1"]]
   :namespaces [karras.core karras.collection karras.sugar karras.entity karras.validations]
-  :autodoc {:web-src-dir "http://github.com/wilkes/blob/"
+  :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
             :web-home "http://wilkes.github.com/karras"})
