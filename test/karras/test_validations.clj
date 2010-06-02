@@ -1,7 +1,7 @@
 (ns karras.test-validations
   (:require [karras.core :as karras])
   (:use karras.sugar
-        karras.document
+        karras.entity
         karras.validations
         [karras.collection :only [drop-collection]]
         clojure.test))
@@ -14,7 +14,7 @@
   [:name]
   (validates-pressence-of :name "name is required."))
 
-(defonce db (karras/mongo-db :document-testing))
+(defonce db (karras/mongo-db :karras-testing))
 
 (use-fixtures :each (fn [t]
                       (karras/with-mongo-request db

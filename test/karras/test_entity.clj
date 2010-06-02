@@ -1,11 +1,11 @@
-(ns karras.test-document
+(ns karras.test-entity
   (:require [karras.core :as karras])
   (:use karras.sugar
-        karras.document
+        karras.entity
         [karras.collection :only [drop-collection collection]]
         clojure.test))
 
-(defonce db (karras/mongo-db :document-testing))
+(defonce db (karras/mongo-db :karras-testing))
 
 (defaggregate Street
   [:name
@@ -63,7 +63,7 @@
 
 (defentity Simple
   [:value]
-  (docspec-assoc :collection-name "simpletons"))
+  (entity-spec-assoc :collection-name "simpletons"))
 
 (defmacro mongo [& forms]
   `(karras/with-mongo-request db
@@ -97,28 +97,28 @@
        ['not-a-keyword]
        [:keyword 'not-a-map-or-keyword]))
 
-(deftest test-docspec
-  (is (not (nil? (docspec Address))))
-  (is (not (nil? (docspec Phone))))
-  (is (not (nil? (docspec Person)))))
+(deftest test-entity-spec
+  (is (not (nil? (entity-spec Address))))
+  (is (not (nil? (entity-spec Phone))))
+  (is (not (nil? (entity-spec Person)))))
 
-(deftest test-docspec-in
-  (is (= (docspec Address) (docspec-of Person :address)))
-  (is (= (docspec java.util.List) (docspec-of Person :phones)))
-  (is (= (docspec Phone) (docspec-of-item Person :phones)))
-  (is (= (docspec Street) (docspec-of Person :address :street))))
+(deftest test-entity-spec-in
+  (is (= (entity-spec Address) (entity-spec-of Person :address)))
+  (is (= (entity-spec java.util.List) (entity-spec-of Person :phones)))
+  (is (= (entity-spec Phone) (entity-spec-of-item Person :phones)))
+  (is (= (entity-spec Street) (entity-spec-of Person :address :street))))
 
-(deftest test-docspec-in
-  (is (= (docspec Address) (docspec-of Person :address)))
-  (is (= (docspec java.util.List) (docspec-of Person :phones)))
-  (is (= (docspec Phone) (docspec-of-item Person :phones)))
-  (is (= (docspec Street) (docspec-of Person :address :street))))
+(deftest test-entity-spec-in
+  (is (= (entity-spec Address) (entity-spec-of Person :address)))
+  (is (= (entity-spec java.util.List) (entity-spec-of Person :phones)))
+  (is (= (entity-spec Phone) (entity-spec-of-item Person :phones)))
+  (is (= (entity-spec Street) (entity-spec-of Person :address :street))))
 
 (deftest test-collection-name
   (testing "default name"
-    (is (= (:collection-name (docspec Person)) "people")))
+    (is (= (:collection-name (entity-spec Person)) "people")))
   (testing "override name"
-    (is (= (:collection-name (docspec Simple)) "simpletons"))))
+    (is (= (:collection-name (entity-spec Simple)) "simpletons"))))
 
 (deftest test-make
   (let [phone (make Phone {:number "555-555-1212"})]
@@ -158,7 +158,7 @@
                                           :street {:number "123"
                                                    :name "Main St."}}})
                        :called)]
-    (is (= karras.test-document.Person (class person)))
+    (is (= Person (class person)))
     (is (= "1976-07-04" (:birthday person)))
     (is (not (nil? (:_id person))))
     (is (= (collection :people) (collection-for Person)))
@@ -235,7 +235,7 @@
 (deftest test-defscope
   (is (= {:older-companies older-companies
           :modern-companies modern-companies}
-         (docspec-value Company :scopes)))
+         (entity-spec-get Company :scopes)))
   (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
         dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]

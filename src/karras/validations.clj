@@ -1,5 +1,5 @@
 (ns karras.validations
-  (:use [karras.document :only [EntityCallbacks default-callbacks swap-docspec-in! docspec]]
+  (:use [karras.entity :only [EntityCallbacks default-callbacks swap-entity-spec-in! entity-spec]]
         clojure.contrib.error-kit
         [clojure.contrib.str-utils :only [str-join]]))
 
@@ -21,7 +21,7 @@
 
 (defn validate [e]
   (let [validations (mapcat #(-> % :validations vals)
-                            (-> e class docspec :fields vals))]
+                            (-> e class entity-spec :fields vals))]
     (remove nil? (map #(% e) validations))))
 
 (defn make-validatable
@@ -48,7 +48,7 @@
   [type field k f]
   (when-not (extends? ValidationCallbacks type)
     (make-validatable type))
-  (swap-docspec-in! type [:fields field :validations] assoc k f))
+  (swap-entity-spec-in! type [:fields field :validations] assoc k f))
 
 (defn is-present? [e field]
   (get e field))

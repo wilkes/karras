@@ -1,8 +1,8 @@
 (ns
     #^{:author "Wilkes Joiner"
        :doc "
-A library for defining entities and aggregates.  Entities correspond to a mongo document.
-Aggregates correspond to a an embedded document.
+A library for defining entities and aggregates.  Entities correspond to a mongo entity.
+Aggregates correspond to a an embedded entity.
 
 Example:
 
@@ -16,30 +16,36 @@ Example:
      :address {:type Address}
      :phones {:type :list :of Phone}])
 "}
-    karras.document
+    karras.entity
   (:require [karras.collection :as c])
   (:use karras.sugar
         [clojure.contrib.def :only [defnk defalias]]
         [clojure.contrib.str-utils2 :only [lower-case]]
         inflections))
 
-(defonce docspecs (atom {}))
-
-(defn docspec
-  "Lookup the DocSpec for a given type"
-  [type]
-  (get @docspecs type))
-
-(defn docspec-value
-  "Lookup the DocSpec value for given key of the given type."
-  [type key & [default]]
-  (get (docspec type) key default))
-
-(defrecord DocSpec
+(defrecord EntitySpec
   [record-class
    is-entity?
    fields
    collection-name])
+
+(defonce entity-specs (atom {}))
+
+(defn entity-spec
+  "Lookup the DocSpec for a given type"
+  [type]
+  (get @entity-specs type))
+
+(defn entity-spec-get
+  "Lookup the EntitySpec value for given key of the given type."
+  [type key & [default]]
+  (get (entity-spec type) key default))
+
+(defn entity-spec-get-in
+  "Lookup the EntitySpec value for given key of the given type."
+  [type path]
+  (prn path)
+  (get-in (entity-spec type) path))
 
 (defn parse-fields [ks]
   (loop [attrs ks
@@ -78,7 +84,7 @@ Example:
   (reduce #(assoc %1 %2 identity) {} (-> EntityCallbacks :method-map keys)))
 
 (defmulti convert
-  "Multimethod used to convert a document.
+  "Multimethod used to convert a entity.
    Takes in a field-spec and a val and returns the conver
    Dispatches off of :type key of first arg.
    :default returns the value unmodified"
@@ -95,7 +101,7 @@ Example:
 (defn make
   "Converts a hashmap to the supplied type."
   [#^Class type hmap]
-  (let [fields (-> type docspec :fields)
+  (let [fields (-> type entity-spec :fields)
         has-key? (fn [e k]
                    (try (some #{k} (keys e))
                         (catch Exception _ nil)))]
@@ -113,9 +119,9 @@ Example:
 (defn- make-mongo-type [classname is-entity? fields type-fns]
   `(do
      (defrecord ~classname [])
-     (swap! docspecs assoc
+     (swap! entity-specs assoc
             ~classname
-            (DocSpec. ~classname
+            (EntitySpec. ~classname
                       ~is-entity?
                       ~(parse-fields fields)
                       ~(if is-entity?
@@ -141,38 +147,39 @@ Example:
    returns the field spec for the last key."
   [type & keys]
   (let [field-type (or (reduce (fn [t k]
-                                 (-> t docspec :fields k :type))
+                                 (-> t entity-spec :fields k :type))
                                type
                                (butlast keys))
                        type)
         last-key (last keys)]
-    (-> field-type docspec :fields last-key)))
+    (-> field-type entity-spec :fields last-key)))
 
-(defn docspec-of
+(defn entity-spec-of
   "Given a type and one or more keys,
-   lookup of the docspec for the :type of the last field supplied."
+   lookup of the entity-spec for the :type of the last field supplied."
   [type & keys]
-  (docspec (:type (apply field-spec-of type keys))))
+  (entity-spec (:type (apply field-spec-of type keys))))
 
-(defn docspec-of-item
+(defn entity-spec-of-item
   "Given a type and one or more keys,
-   lookup of the docspec for the :of of the last field supplied."
+   lookup of the entity-spec for the :of of the last field supplied."
   [type & keys]
-  (docspec (:of (apply field-spec-of type keys))))
+  (entity-spec (:of (apply field-spec-of type keys))))
 
-(defn docspec-assoc
-  "Associate the suppled keys and values with the docspec for the given type."
+(defn entity-spec-assoc
+  "Associate the suppled keys and values with the entity-spec for the given type."
   [type & kvs]
-  (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
+  (swap! entity-specs assoc type (apply assoc (entity-spec type) kvs)))
 
-(defn swap-docspec-in!
-  "Combines swap! and assoc-in to modify the attribute of a docspec."
+(defn swap-entity-spec-in!
+  "Combines swap! and assoc-in to modify the attribute of a entity-spec."
   [type attribute-path f & args]
-  (swap! docspecs
+  (swap! entity-specs
          (fn [specs]
            (let [path (cons type attribute-path)
                  current-value (get-in specs path)]
              (assoc-in specs path (apply f current-value args))))))
+
 
 (defn collection-for
   "Returns the DBCollection for the supplied entity instance or type."
@@ -180,7 +187,7 @@ Example:
   (let [type (if (instance? Class entity-or-type)
                entity-or-type
                (class entity-or-type))]
-    (c/collection (-> type docspec :collection-name))))
+    (c/collection (-> type entity-spec :collection-name))))
 
 (defn ensure-type
   "Force an entity to be of a given type if is not already."
@@ -225,33 +232,33 @@ Example:
      (doall (map delete (cons entity entities)))))
 
 (defn delete-all
-  "Deletes all documents given an optional where clause."
+  "Deletes all entitys given an optional where clause."
   ([type]
      (delete-all type {}))
   ([type where]
      (c/delete (collection-for type) where)))
 
 (defn fetch
-  "Fetch a seq of documents for the given type matching the supplied parameters."
-  [type query & options]
-  (map #(make type %) (apply c/fetch (collection-for type) query options)))
+  "Fetch a seq of entities for the given type matching the supplied parameters."
+  [type where-clause & options]
+  (map #(make type %) (apply c/fetch (collection-for type) where-clause options)))
 
 (defn fetch-all
-  "Fetch all of the documents for the given type."
+  "Fetch all of the entities for the given type."
   [type & options]
   (map #(make type %) (apply c/fetch-all (collection-for type) options)))
 
 (defn fetch-one
-  "Fetch the first document for the given type matching the supplied query and options."
-  [type query & options]
-  (make type (apply c/fetch-one (collection-for type) query options)))
+  "Fetch the first entity for the given type matching the supplied where-clause and options."
+  [type where-clause & options]
+  (make type (apply c/fetch-one (collection-for type) where-clause options)))
 
 (defn count-instances
-  "Return the number of documents optionally matching a given where clause."
+  "Return the number of entities optionally matching a given where clause."
   ([type]
      (count-instances type nil))
-  ([type query]
-     (c/fetch (collection-for type) query :count true)))
+  ([type where-clause]
+     (c/fetch (collection-for type) where-clause :count true)))
 
 (defn distinct-values
   "Return the distinct values of a given type for a given key."
@@ -261,15 +268,15 @@ Example:
 (defn index
   "Associate an index with a give type."
   [type & keys]
-  (swap-docspec-in! type [:indexes] conj (apply compound-index keys)))
+  (swap-entity-spec-in! type [:indexes] conj (apply compound-index keys)))
 
 (defn ensure-indexes
   "Ensure the indexes are built, optionally for a given type. Defaults to all types."
   ([]
-     (doseq [type (keys @docspecs)]
+     (doseq [type (keys @entity-specs)]
        (ensure-indexes type)))
   ([type]
-     (doseq [idx (docspec-value type :indexes)]
+     (doseq [idx (entity-spec-get type :indexes)]
        (c/ensure-index (collection-for type) idx))))
 
 (defn list-indexes
@@ -327,4 +334,4 @@ Example:
          (apply fetch ~type
                 (where ~@where-clauses and-clauses#)
                 options#)))
-     (swap-docspec-in! ~type [:scopes] assoc ~(keyword fn-name) ~fn-name)))
+     (swap-entity-spec-in! ~type [:scopes] assoc ~(keyword fn-name) ~fn-name)))
