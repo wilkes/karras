@@ -165,7 +165,9 @@ Example:
   [type & kvs]
   (swap! docspecs assoc type (apply assoc (docspec type) kvs)))
 
-(defn swap-docspec-in! [type attribute-path f & args]
+(defn swap-docspec-in!
+  "Combines swap! and assoc-in to modify the attribute of a docspec."
+  [type attribute-path f & args]
   (swap! docspecs
          (fn [specs]
            (let [path (cons type attribute-path)
