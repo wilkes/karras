@@ -81,18 +81,18 @@
     (testing "empty fields"
           (parsed? nil {}))
     (testing "no type specified"
-      (parsed? [:no-type] {:no-type {:type String}}))
+      (parsed? [:no-type] {:no-type {}}))
     (testing "type specified"
       (parsed? [:with-type {:type Integer}] {:with-type {:type Integer}}))
     (testing "mixed types and no types"
           (parsed? [:no-type
                     :with-type {:type Integer}]
-                   {:no-type {:type String}
+                   {:no-type {}
                     :with-type {:type Integer}})
           (parsed? [:with-type {:type Integer}
                     :no-type]
                    {:with-type {:type Integer}
-                    :no-type {:type String}})))
+                    :no-type {}})))
   (are [fields] (thrown? IllegalArgumentException (parse-fields fields))
        ['not-a-keyword]
        [:keyword 'not-a-map-or-keyword]))

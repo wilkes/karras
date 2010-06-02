@@ -55,8 +55,8 @@ Example:
       (let [[x y & zs] attrs]
         (cond
          (and (keyword? x) (map? y)) (recur zs (assoc results x y))
-         (and (keyword? x) (nil? y)) (recur zs  (assoc results x {:type String}))
-         (keyword? x)                (recur (cons y zs) (assoc results x {:type String}))
+         (and (keyword? x) (nil? y)) (recur zs  (assoc results x {}))
+         (keyword? x)                (recur (cons y zs) (assoc results x {}))
          :else (throw (IllegalArgumentException. (str x " is not a keyword or a map"))))))))
 
 (defprotocol EntityCallbacks
