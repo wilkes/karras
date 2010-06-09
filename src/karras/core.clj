@@ -55,6 +55,14 @@
  (to-dbo [v] (map to-dbo v))
  (to-clj [v] (map to-clj v))
 
+ clojure.lang.Keyword
+ (to-dbo [v] (str v))
+ (to-clj [v] (str v))
+
+ clojure.lang.Symbol
+ (to-dbo [v] (str v))
+ (to-clj [v] (str v)) 
+ 
  Object
  (to-dbo [v] v)
  (to-clj [v] v)
