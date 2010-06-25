@@ -36,7 +36,8 @@
    (to-clj [d])
    Implementations provided for Map, List, Object, and nil"
   (to-dbo [d])
-  (to-clj [d]))
+  (to-clj [d])
+  (to-description [d]))
 
 (extend-protocol MongoMappable
  Map
@@ -50,26 +51,37 @@
             (conj result [(keyword (.getKey e))
                           (to-clj (.getValue e))]))]
     (reduce f {} v)))
+ (to-description [v]
+  (let [f (fn [result #^Map$Entry e]
+            (conj result [(keyword (.getKey e))
+                          (to-description (.getValue e))]))]
+    (reduce f {} v)))
+
 
  List
  (to-dbo [v] (map to-dbo v))
  (to-clj [v] (map to-clj v))
+ (to-description [v] (vec (set (map to-description v))))
 
  clojure.lang.Keyword
  (to-dbo [v] (str v))
  (to-clj [v] (str v))
+ (to-description [v] java.lang.String)
 
  clojure.lang.Symbol
  (to-dbo [v] (str v))
- (to-clj [v] (str v)) 
+ (to-clj [v] (str v))
+ (to-description [v] java.lang.String)
  
  Object
  (to-dbo [v] v)
  (to-clj [v] v)
+ (to-description [v] (class v))
 
  nil
  (to-dbo [v] v)
- (to-clj [v] v))
+ (to-clj [v] v)
+ (to-description [v] v))
 
 (defvar *mongo-db* nil
   "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request.")
