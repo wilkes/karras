@@ -170,18 +170,24 @@
                       [:a :b] 
                       {:active 1}
                       {:csum 0}
-                      \"function(obj,prev) { prev.csum += obj.c; }\")
-"
-  ([#^DBCollection collection keys cond initial reduce]
-     (map to-clj (.group collection
-                         (to-dbo (zipmap (map name keys)
-                                         (repeat true)))
-                          (to-dbo cond)
-                          (to-dbo initial)
-                          #^String reduce)))
+                      \"function(obj,prev) { prev.csum += obj.c; }\")"
   ([#^DBCollection collection keys]
      (group collection keys nil {:values []}
-            "function(obj,prev) {prev.values.push(obj)}")))
+            "function(obj,prev) {prev.values.push(obj)}"))
+  ([#^DBCollection collection keys cond initial reduce]
+     (group collection keys cond initial reduce nil))
+  ([#^DBCollection collection keys cond initial reduce finalize]
+     (let [cmd {:ns (collection-name collection)
+                :key (zipmap (map name keys) (repeat true))
+                :cond cond
+                :initial initial
+                :$reduce reduce}
+           cmd (merge cmd (when finalize {:finalize finalize}))
+           response (.command (collection-db collection)
+                              (to-dbo {:group cmd}))]
+       (.throwOnError response)
+       (to-clj (.get response "retval")))))
+
 
 (defn delete
   "Removes documents matching the supplied queries from a collection."

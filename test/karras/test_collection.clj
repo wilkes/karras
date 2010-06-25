@@ -29,10 +29,10 @@
 (defonce indexing-tests-db (mongo-db :integration-tests))
 (defonce people (collection indexing-tests-db :people))
 
-(def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21}
-                    {:first-name "Sally" :last-name "Jones"   :age 18}
-                    {:first-name "Jim"   :last-name "Johnson" :age 16}
-                    {:first-name "Jane"  :last-name "Johnson" :age 16}])
+(def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21 :count 1}
+                    {:first-name "Sally" :last-name "Jones"   :age 18 :count 1}
+                    {:first-name "Jim"   :last-name "Johnson" :age 16 :count 1}
+                    {:first-name "Jane"  :last-name "Johnson" :age 16 :count 1}])
 
 (doseq [p sample-people]
   (eval `(declare ~(symbol (:first-name p)))))
@@ -72,6 +72,27 @@
              {:age 18.0 :last-name "Jones" :values #{Sally}}
              {:age 16.0 :last-name "Johnson" :values #{Jim Jane}}}
            (setify (group people [:age :last-name]))))))
+  (testing "group and count"
+    (is (= #{{:last-name "Johnson" :count 2.0 }
+             {:last-name "Smith" :count 1.0 }
+             {:last-name "Jones" :count 1.0 }}
+           (setify
+            (group people
+                   [:last-name]
+                   nil
+                   {:count 0}
+                   "function (o,out) { out.count++ }")))))
+  (testing "group and finalize"
+    (is (= #{{:last-name "Johnson" :age_sum 32.0 :count 2.0 :avg_age 16.0}
+             {:last-name "Smith" :age_sum 21.0 :count 1.0 :avg_age 21.0}
+             {:last-name "Jones" :age_sum 18.0 :count 1.0 :avg_age 18.0}}
+           (setify
+            (group people
+                   [:last-name]
+                   nil
+                   {:age_sum 0 :count 0}
+                   "function (o,out) { out.count++; out.age_sum += o.age; }"
+                   "function (out) {out.avg_age = out.age_sum / out.count}")))))
 
 (deftest deleting-tests
   (testing "delete by document"
