@@ -21,6 +21,7 @@
 ;; THE SOFTWARE.
 
 (ns karras.sugar
+  (:use [clojure.contrib.def :only [defvar]])
   (:import [java.util Calendar]))
 
 (defn compound-index
@@ -31,24 +32,24 @@
 (defn asc  "Sugar for order by and index." [k] {k 1})
 (defn desc "Sugar for order by and index." [k] {k -1})
 
-(def double-type           1)
-(def string-type           2)
-(def object-type           3)
-(def array-type            4)
-(def binary-type           5)
-(def object-id-type        7)
-(def boolean-type          8)
-(def date-type             9)
-(def null-type            10)
-(def regex-type           11)
-(def js-code-type         13)
-(def symbol-type          14)
-(def js-scoped-code-type  15)
-(def int32-type           16)
-(def timestamp-type       17)
-(def int64-type           18)
-(def min-key-type        255)
-(def max-key-type        127)
+(defvar double-type           1 "")
+(defvar string-type           2 "")
+(defvar object-type           3 "")
+(defvar array-type            4 "")
+(defvar binary-type           5 "")
+(defvar object-id-type        7 "")
+(defvar boolean-type          8 "")
+(defvar date-type             9 "")
+(defvar null-type            10 "")
+(defvar regex-type           11 "")
+(defvar js-code-type         13 "")
+(defvar symbol-type          14 "")
+(defvar js-scoped-code-type  15 "")
+(defvar int32-type           16 "")
+(defvar timestamp-type       17 "")
+(defvar int64-type           18 "")
+(defvar min-key-type        255 "")
+(defvar max-key-type        127 "")
 
 (defn where
   "Sugar to create a where document. Example:
