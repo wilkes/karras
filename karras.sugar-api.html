@@ -76,6 +76,8 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.sugar/is-nil?">is-nil?</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/is-type">is-type</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.sugar/js-query">js-query</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.sugar/lt">lt</a>
@@ -85,6 +87,8 @@ namespace.
       <a href="#karras.sugar/modify">modify</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.sugar/ne">ne</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.sugar/negate">negate</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.sugar/not-exist?">not-exist?</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
@@ -135,7 +139,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (all field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L59" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L78" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -144,7 +148,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (asc k)
 </pre>
   <pre id="var-docstr">Sugar for order by and index.</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L31" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L31" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -153,7 +157,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (compound-index &amp; asc-or-descs)
 </pre>
   <pre id="var-docstr">Sugar to create compound index</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L26" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L26" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -165,7 +169,7 @@ by <span id="author">Unknown</span><br />
 args. Zero args return the current time. One or more args returns a date 
 values provided and all other values zeroed out.
 Args are year, month, date, hour, minute, second, and  milliseconds</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L84" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L105" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -174,7 +178,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (desc k)
 </pre>
   <pre id="var-docstr">Sugar for order by and index.</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L32" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L32" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -183,7 +187,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (element-match field match-query)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L65" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L83" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -192,7 +196,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (eq field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L52" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L71" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -201,7 +205,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (eq-mod field m v)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L58" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L77" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -210,7 +214,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (exist? field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L61" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L80" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -219,7 +223,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (gt field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L49" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L68" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -228,7 +232,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (gte field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L51" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L70" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -237,7 +241,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (in field ys)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L56" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L75" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -246,7 +250,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (incr field &amp; [amount])
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L75" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L96" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -255,7 +259,16 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (is-nil? field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L63" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L86" id="var-source">Source</a>
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/is-type">is-type</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (is-type field type-number)
+</pre>
+  <pre id="var-docstr"></pre>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L84" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -264,7 +277,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (js-query js-string)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L64" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L82" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -273,7 +286,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (lt field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L48" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L67" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -282,7 +295,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   <pre id="var-usage">Usage: (lte field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L50" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L69" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -294,7 +307,7 @@ Args are year, month, date, hour, minute, second, and  milliseconds</pre>
   (modify (incr :j) (push :k 3))
 produces:
   {:$inc :j :$push {:k 3}}</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L67" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L88" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -303,7 +316,16 @@ produces:
   <pre id="var-usage">Usage: (ne field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L55" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L74" id="var-source">Source</a>
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.sugar/negate">negate</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (negate where-expr)
+</pre>
+  <pre id="var-docstr"></pre>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L85" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -312,7 +334,7 @@ produces:
   <pre id="var-usage">Usage: (not-exist? field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L62" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L81" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -321,7 +343,7 @@ produces:
   <pre id="var-usage">Usage: (not-in field ys)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L57" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L76" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -330,7 +352,7 @@ produces:
   <pre id="var-usage">Usage: (pop-first field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L80" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L101" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -339,7 +361,7 @@ produces:
   <pre id="var-usage">Usage: (pop-last field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L79" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L100" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -348,7 +370,7 @@ produces:
   <pre id="var-usage">Usage: (pull field value)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L81" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L102" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -357,7 +379,7 @@ produces:
   <pre id="var-usage">Usage: (pull-all field values)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L82" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L103" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -366,7 +388,7 @@ produces:
   <pre id="var-usage">Usage: (push field value)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L78" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L99" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -375,7 +397,7 @@ produces:
   <pre id="var-usage">Usage: (set-fields field-map)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L76" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L97" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -384,7 +406,7 @@ produces:
   <pre id="var-usage">Usage: (size field y)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L60" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L79" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -393,7 +415,7 @@ produces:
   <pre id="var-usage">Usage: (unset field)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L77" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L98" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -405,7 +427,7 @@ produces:
   (where (ne :j 3) (gt k 10))
 produces:
   {:j {:$ne 3} :k {:$gt 10}}</pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L34" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L53" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -414,7 +436,7 @@ produces:
   <pre id="var-usage">Usage: (within field y z)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L53" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L72" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -423,7 +445,7 @@ produces:
   <pre id="var-usage">Usage: (within-dates field y z)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/348a9d3894c5b74c85c92ceaaac808b21d6d05fd/src/karras/sugar.clj#L54" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e86dc5be4767874a31dddf6460a3fa94da92af9b/src/karras/sugar.clj#L73" id="var-source">Source</a>
 </div>
 
 

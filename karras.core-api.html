@@ -94,7 +94,7 @@ by <span id="author">Unknown</span><br />
   <span id="var-type">var</span><br />
   <pre id="var-usage"></pre>
   <pre id="var-docstr">Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request.</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L66" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L86" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -104,7 +104,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-docstr">(to-dbo [d])
 (to-clj [d])
 Implementations provided for Map, List, Object, and nil</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L34" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L34" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -115,7 +115,7 @@ Implementations provided for Map, List, Object, and nil</pre>
        (connect host port)
 </pre>
   <pre id="var-docstr">Returns a single server connection. Defaults to host 127.0.0.1:27017</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L82" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L102" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -124,7 +124,7 @@ Implementations provided for Map, List, Object, and nil</pre>
   <pre id="var-usage">Usage: (drop-db db)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L125" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L145" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -134,7 +134,7 @@ Implementations provided for Map, List, Object, and nil</pre>
 </pre>
   <pre id="var-docstr">Macro to wrap the body in a Mongo request.
 For more information see: <a href="http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency">http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L97" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L117" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -143,7 +143,7 @@ For more information see: <a href="http://www.mongodb.org/display/DOCS/Java+Driv
   <pre id="var-usage">Usage: (list-collections db)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L130" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L150" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -154,7 +154,7 @@ For more information see: <a href="http://www.mongodb.org/display/DOCS/Java+Driv
 </pre>
   <pre id="var-docstr">Returns a com.mongo.DB object.
 Defaults to host 127.0.0.1:27017 if a connection is not provided</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L89" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L109" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -163,7 +163,7 @@ Defaults to host 127.0.0.1:27017 if a connection is not provided</pre>
   <pre id="var-usage">Usage: (with-mongo mongo-db &amp; body)
 </pre>
   <pre id="var-docstr">Macro to bind *mongo-db*</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L69" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L89" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -173,7 +173,7 @@ Defaults to host 127.0.0.1:27017 if a connection is not provided</pre>
 </pre>
   <pre id="var-docstr">Macro to bind *mongo-db* and wraps the body in a Mongo request.
 For more information see: <a href="http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency">http://www.mongodb.org/display/DOCS/Java+Driver+Concurrency</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L75" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L95" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -183,7 +183,7 @@ For more information see: <a href="http://www.mongodb.org/display/DOCS/Java+Driv
 </pre>
   <pre id="var-docstr">From the mongo driver javadocs: 
 Don't check for or report any errors on writes.</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L107" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L127" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -193,7 +193,7 @@ Don't check for or report any errors on writes.</pre>
 </pre>
   <pre id="var-docstr">From the mongo driver javadocs:
 Use the default level of error checking on writes.</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L113" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L133" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -203,7 +203,7 @@ Use the default level of error checking on writes.</pre>
 </pre>
   <pre id="var-docstr">From the mongo driver javadocs:
 Send a getLastError command following all writes.</pre>
-  <a href="http://github.com/wilkes/karras/blob/5168c184e977f7533581fa37a0cf2aada13f69e8/src/karras/core.clj#L119" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/397be261bb593512c75c4df857ba22fa5e8fd2c3/src/karras/core.clj#L139" id="var-source">Source</a>
 </div>
 
 
