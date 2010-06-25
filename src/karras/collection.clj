@@ -177,7 +177,7 @@
   ([#^DBCollection collection keys cond initial reduce]
      (group collection keys cond initial reduce nil))
   ([#^DBCollection collection keys cond initial reduce finalize]
-     (let [cmd {:ns (collection-name collection)
+     (let [cmd {:ns (.getName collection)
                 :key (zipmap (map name keys) (repeat true))
                 :cond cond
                 :initial initial
