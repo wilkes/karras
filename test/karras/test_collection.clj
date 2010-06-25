@@ -29,10 +29,10 @@
 (defonce indexing-tests-db (mongo-db :integration-tests))
 (defonce people (collection indexing-tests-db :people))
 
-(def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21 :count 1}
-                    {:first-name "Sally" :last-name "Jones"   :age 18 :count 1}
-                    {:first-name "Jim"   :last-name "Johnson" :age 16 :count 1}
-                    {:first-name "Jane"  :last-name "Johnson" :age 16 :count 1}])
+(def sample-people [{:first-name "Bill"  :last-name "Smith"   :age 21}
+                    {:first-name "Sally" :last-name "Jones"   :age 18}
+                    {:first-name "Jim"   :last-name "Johnson" :age 16}
+                    {:first-name "Jane"  :last-name "Johnson" :age 16}])
 
 (doseq [p sample-people]
   (eval `(declare ~(symbol (:first-name p)))))
@@ -120,6 +120,28 @@
     (is (= 2 (count johnsons)))
     (doseq [j johnsons]
       (is (= 17 (:age j))))))
+
+(deftest find-and-modify-tests
+  (testing "return unmodified document"
+    (is (= Sally
+           (find-and-modify people
+                            (where (eq :age 18))
+                            (modify (set-fields {:voter true}))))))
+  (testing "return unmodified document"
+    (is (= (merge Sally {:voter false})
+           (find-and-modify people
+                            (where (eq :age 18))
+                            (modify (set-fields {:voter false}))
+                            :return-new true))))
+  (testing "sorting"
+    (= Jane (find-and-modify people
+                             (where (eq :age 16))
+                             (modify (set-fields {:driver true}))
+                             :sort [(asc :last-name) (asc :first-name)]))))
+
+(deftest find-and-remove-tests
+  (testing "return removed  document"
+    (is (= Sally (find-and-remove people (where (eq :age 18)))))))
 
 (deftest indexing-tests
   (is (= 1 (count (list-indexes people)))) ;; _id is always indexed

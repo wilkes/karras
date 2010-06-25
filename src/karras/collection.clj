@@ -188,6 +188,28 @@
        (.throwOnError response)
        (to-clj (.get response "retval")))))
 
+(defn- find-and-modify*   [#^DBCollection collection query modifier remove sort return-new]
+    (let [cmd {:query query
+               :sort (apply merge {}  (reverse sort))
+               :new return-new}
+          cmd (merge cmd (if remove {:remove true} {:update modifier}))
+          ;; because mongo is picky about the order of the BSON
+          ;; need a more robust way to enforce the key ordering
+          cmd (merge cmd {:findandmodify (.getName collection)})
+          db (collection-db collection)
+          response (.command db (to-dbo cmd))]
+      (.throwOnError response)
+      (to-clj (.get response "value"))))
+
+(defnk find-and-modify
+  "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
+  [#^DBCollection collection query modifier :sort [] :return-new false]
+  (find-and-modify* collection query modifier false sort return-new))
+
+(defnk find-and-remove
+  "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
+  [#^DBCollection collection query :sort [] :return-new false]
+  (find-and-modify* collection query nil true sort return-new))
 
 (defn delete
   "Removes documents matching the supplied queries from a collection."
