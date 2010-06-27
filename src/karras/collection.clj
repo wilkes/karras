@@ -51,22 +51,22 @@
 
 (defn drop-collection
   ""
-  [#^DBCollection collection]
-  (.drop collection))
+  [#^DBCollection coll]
+  (.drop coll))
 
 (defn save
   "Saves a document to a colection, does an upsert behind the scenes.
    Returns the object with :_id if it was inserted.."
-  [#^DBCollection collection obj]
+  [#^DBCollection coll obj]
   (let [dbo (to-dbo obj)]
-    (.save collection dbo)
+    (.save coll dbo)
     (to-clj dbo)))
 
 (defn insert
   "Inserts one or more documents into a collection. 
    Returns the inserted object with :_id"
-  [#^DBCollection collection & objs]
-  (let [inserted (doall (map #(save collection %) objs))]
+  [#^DBCollection coll & objs]
+  (let [inserted (doall (map #(save coll %) objs))]
     (if (= 1 (count objs))
       (first inserted)
       inserted)))
@@ -76,9 +76,9 @@
    provided.
      :upsert, performs an insert if the document doesn't have :_id
      :multi, update all documents that match the query"
-  [#^DBCollection collection query obj & options]
+  [#^DBCollection coll query obj & options]
   (let [o? #(has-option? options %)]
-    (.update collection
+    (.update coll
              (to-dbo query)
              (to-dbo obj)
              (o? :upsert)
@@ -86,17 +86,17 @@
 
 (defn upsert
   "Shortcut for (update collection query obj :upsert)"
-  ([collection obj]
-     (upsert collection obj obj))
-  ([collection query obj]
-     (update collection query obj :upsert)))
+  ([coll obj]
+     (upsert coll obj obj))
+  ([coll query obj]
+     (update coll query obj :upsert)))
 
 (defn update-all
   "Shortcut for (update collection query obj :multi)"
-  ([collection obj]
-     (update-all collection {} obj))
-  ([collection query obj]
-      (update collection query obj :multi)))
+  ([coll obj]
+     (update-all coll {} obj))
+  ([coll query obj]
+      (update coll query obj :multi)))
 
 (defnk fetch
   "Fetch a seq of documents that match a given query.
@@ -107,7 +107,7 @@
        :exclude, which keys to exclude from the result set, can not be combined with :include
        :sort, which keys to order by
        :count, if true return the count of the result set, defaults to false"
-  [#^DBCollection collection query
+  [#^DBCollection coll query
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
   (let [cursor (if query
                  (if (or include exclude)
@@ -115,12 +115,12 @@
                                              (repeat 1))
                                      (zipmap (remove nil? exclude)
                                              (repeat 0)))]
-                     (.find collection
+                     (.find coll
                             #^DBObject (to-dbo query)
                             #^DBObject (to-dbo keys)))
-                   (.find collection
+                   (.find coll
                           #^DBObject (to-dbo query)))
-                 (.find collection ))
+                 (.find coll ))
         cursor (if limit
                  (.limit cursor limit)
                  cursor)
@@ -137,30 +137,30 @@
 
 (defn fetch-all
   "Fetch all the documents of a collection. Same options as fetch."
-  [collection & options]
-  (apply fetch collection nil options))
+  [coll & options]
+  (apply fetch coll nil options))
 
 (defn fetch-one
   "Fetch one document of a collection. Supports same options as fetch except :limit and :count"
-  [collection query & options]
-  (first (apply fetch collection query options)))
+  [coll query & options]
+  (first (apply fetch coll query options)))
 
 (defn count-docs
   "Returns the count of documents, optionally, matching a query"
-  ([#^DBCollection collection]
-     (count-docs collection {}))
-  ([#^DBCollection collection query]
-     (fetch collection query :count true)))
+  ([#^DBCollection coll]
+     (count-docs coll {}))
+  ([#^DBCollection coll query]
+     (fetch coll query :count true)))
 
 (defn fetch-by-id
   "Fetch a document by :_id"
-  [#^DBCollection collection #^String s]
-  (to-clj (.findOne collection (ObjectId. s))))
+  [#^DBCollection coll #^String s]
+  (to-clj (.findOne coll (ObjectId. s))))
 
 (defn distinct-values
   "Fetch a seq of the distinct values of a given collection for a key."
-  [#^DBCollection collection kw]
-  (set (.distinct collection (name kw))))
+  [#^DBCollection coll kw]
+  (set (.distinct coll (name kw))))
 
 (defn group
   "Fetch a seq of grouped items.
@@ -171,83 +171,101 @@
                       {:active 1}
                       {:csum 0}
                       \"function(obj,prev) { prev.csum += obj.c; }\")"
-  ([#^DBCollection collection keys]
-     (group collection keys nil {:values []}
+  ([#^DBCollection coll keys]
+     (group coll keys nil {:values []}
             "function(obj,prev) {prev.values.push(obj)}"))
-  ([#^DBCollection collection keys cond initial reduce]
-     (group collection keys cond initial reduce nil))
-  ([#^DBCollection collection keys cond initial reduce finalize]
-     (let [cmd {:ns (.getName collection)
+  ([#^DBCollection coll keys cond initial reduce]
+     (group coll keys cond initial reduce nil))
+  ([#^DBCollection coll keys cond initial reduce finalize]
+     (let [cmd {:ns (.getName coll)
                 :key (zipmap (map name keys) (repeat true))
                 :cond cond
                 :initial initial
                 :$reduce reduce}
            cmd (merge cmd (when finalize {:finalize finalize}))
-           response (.command (collection-db collection)
+           response (.command (collection-db coll)
                               (to-dbo {:group cmd}))]
        (.throwOnError response)
        (to-clj (.get response "retval")))))
 
-(defn- find-and-modify*   [#^DBCollection collection query modifier remove sort return-new]
+(defn- find-and-modify*   [#^DBCollection coll query modifier remove sort return-new]
     (let [cmd {:query query
                :sort (apply merge {}  (reverse sort))
                :new return-new}
           cmd (merge cmd (if remove {:remove true} {:update modifier}))
           ;; because mongo is picky about the order of the BSON
           ;; need a more robust way to enforce the key ordering
-          cmd (merge cmd {:findandmodify (.getName collection)})
-          db (collection-db collection)
+          cmd (merge cmd {:findandmodify (.getName coll)})
+          db (collection-db coll)
           response (.command db (to-dbo cmd))]
       (.throwOnError response)
       (to-clj (.get response "value"))))
 
 (defnk find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection collection query modifier :sort [] :return-new false]
-  (find-and-modify* collection query modifier false sort return-new))
+  [#^DBCollection coll query modifier :sort [] :return-new false]
+  (find-and-modify* coll query modifier false sort return-new))
 
 (defnk find-and-remove
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection collection query :sort [] :return-new false]
-  (find-and-modify* collection query nil true sort return-new))
+  [#^DBCollection coll query :sort [] :return-new false]
+  (find-and-modify* coll query nil true sort return-new))
+
+(defnk map-reduce
+  "See http://www.mongodb.org/display/DOCS/MapReduce"
+  [#^DBCollection coll mapfn reducefn :query nil :sort [] :limit nil
+   :out nil :keeptemp? false :finalize nil :scope nil  :verbose? true]
+  (let [db (collection-db coll)
+        cmd {:map mapfn :reduce reducefn :keeptemp keeptemp? :verbose verbose?}
+        cmd (merge cmd (if query {:query query}))
+        cmd (merge cmd (if sort {:sort (apply merge {} (reverse sort))}))
+        cmd (merge cmd (if limit {:limit limit}))
+        cmd (merge cmd (if out {:out out}))
+        cmd (merge cmd (if finalize {:finalize finalize}))
+        cmd (merge cmd (if scope {:scope scope}))
+        cmd (merge cmd {:mapreduce (.getName coll)})
+        response (.command db (to-dbo cmd))
+        clj-response (to-clj response)]
+    (.throwOnError response)
+    (assoc clj-response :collection (collection db (:result clj-response)))))
 
 (defn delete
   "Removes documents matching the supplied queries from a collection."
-  [#^DBCollection collection & queries]
+  [#^DBCollection coll & queries]
   (doseq [q queries]
-    (.remove collection (to-dbo q))))
+    (.remove coll (to-dbo q))))
 
 (defn ensure-index
   "Ensure an index exist on a collection."
-  [#^DBCollection collection fields]
-  (.ensureIndex collection (to-dbo fields)))
+  [#^DBCollection coll fields]
+  (.ensureIndex coll (to-dbo fields)))
 
 (defn ensure-unique-index
   "Ensure a unique index exist on a collection."
-  [#^DBCollection collection #^String name fields]
-  (.ensureIndex collection
+  [#^DBCollection coll #^String name fields]
+  (.ensureIndex coll
                 #^DBObject (to-dbo fields)
                 name
                 true))
 
 (defn ensure-named-index
   "Ensure an index exist on a collection with the given name."
-  [#^DBCollection collection #^String name fields]
-  (.ensureIndex collection
+  [#^DBCollection coll #^String name fields]
+  (.ensureIndex coll
                 #^DBObject (to-dbo fields)
                 name))
 
 (defn drop-index
   ""
-  [#^DBCollection collection o]
-  (.dropIndex collection #^DBObject (to-dbo o)))
+  [#^DBCollection coll o]
+  (.dropIndex coll #^DBObject (to-dbo o)))
 
 (defn drop-index-named
   ""
-  [#^DBCollection collection kw]
-  (.dropIndex collection (name kw)))
+  [#^DBCollection coll kw]
+  (.dropIndex coll (name kw)))
 
 (defn list-indexes
   ""
-  [#^DBCollection collection]
-  (map to-clj (.getIndexInfo collection)))
+  [#^DBCollection coll]
+  (map to-clj (.getIndexInfo coll)))

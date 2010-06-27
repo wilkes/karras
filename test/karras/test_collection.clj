@@ -143,6 +143,28 @@
   (testing "return removed  document"
     (is (= Sally (find-and-remove people (where (eq :age 18)))))))
 
+(deftest map-reduce-tests
+  (testing "simple counting"
+    (let [expected {:ok 1.0,
+                    :counts {:output 1, :emit 4, :input 4},
+                    :timing {:total 2, :emitLoop 0, :mapTime 0},
+                    :timeMillis 2,
+                    :result "tmp.mr.mapreduce_1277648704_2"}
+          results (map-reduce people
+                       "function() {emit(this.last_name, 1)}"
+                       "function(k,vals) {
+                           var sum=0;
+                           for(var i in vals) sum += vals[i];
+                           return sum;
+                        }")]
+      (is (= (:ok expected) (:ok results)))
+      (is (= (:counts expected) (:counts results)))
+      (is (not (nil? (:timing results))))
+      (is (not (nil? (:timeMillis results))))
+      (is (not (nil? (:result results))))
+      (is (not (nil? (:collection results))))
+      (is (= [{:value 4.0}] (fetch (:collection results) {}))))))
+
 (deftest indexing-tests
   (is (= 1 (count (list-indexes people)))) ;; _id is always indexed
     
