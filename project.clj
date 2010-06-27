@@ -6,7 +6,8 @@
                  [inflections "0.4"]]  
   :dev-dependencies [[swank-clojure "1.2.1"]
                      [lein-clojars "0.5.0"]
-                     [autodoc "0.7.1"]]
+                     [autodoc "0.7.1"]
+                     [scriptjure "0.1.9"]]
   :namespaces [karras.core karras.collection karras.sugar karras.entity karras.validations]
   :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
             :web-home "http://wilkes.github.com/karras"})

@@ -2,7 +2,8 @@
   (:use karras.core
         karras.collection
         karras.sugar
-        clojure.test))
+        clojure.test
+        [com.reasonr.scriptjure :only [js]]))
 
 (defprotocol Setifiable
   "Convert sequential types to sets for simpler equality checks"
@@ -163,6 +164,19 @@
       (is (not (nil? (:timeMillis results))))
       (is (not (nil? (:result results))))
       (is (not (nil? (:collection results))))
+      (is (= [{:value 4.0}] (fetch (:collection results) {})))))
+  (testing "simple counting with scriptjure"
+    (let [expected {:ok 1.0,
+                    :counts {:output 1, :emit 4, :input 4}}
+          results (map-reduce people
+                              (js (fn [] (emit this.last_name 1)))
+                              (js (fn [k vals]
+                                    (var sum 0)
+                                    (doseq [i vals]
+                                      (set! sum (+ sum (aget vals i))))
+                                    (return sum))))]
+      (is (= (:ok expected) (:ok results)))
+      (is (= (:counts expected) (:counts results)))
       (is (= [{:value 4.0}] (fetch (:collection results) {}))))))
 
 (deftest indexing-tests
