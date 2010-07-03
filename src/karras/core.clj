@@ -89,7 +89,7 @@
 (defmacro with-mongo
   "Macro to bind *mongo-db*"
   [mongo-db & body]
-  `(binding [karras/*mongo-db* ~mongo-db]
+  `(binding [*mongo-db* ~mongo-db]
      ~@body))
 
 (defmacro with-mongo-request
