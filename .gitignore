@@ -7,3 +7,4 @@ autodoc
 .DS_Store
 .vagrant
 /karras-*.jar
+*.sw[op]
