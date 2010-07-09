@@ -110,7 +110,7 @@ Example:
                (has-key? entity k)   (assoc entity k (convert field-spec (k hmap)))
                (:default field-spec) (assoc entity k (:default field-spec))
                :otherwise            entity))
-            (merge (.newInstance type) hmap)
+            (with-meta (merge (.newInstance type) hmap) (meta hmap))
             fields)))
 
 (defn- default-collection-name [classname]

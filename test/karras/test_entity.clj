@@ -144,7 +144,9 @@
     (is (= #{:last-name :blood-alcohol-level} (set (keys person))))
     (is (= 0.0 (:blood-alcohol-level person)))
     (is (= #{:country-code} (set (keys phone))))
-    (is (= 1 (:country-code phone)))))
+    (is (= 1 (:country-code phone))))
+   (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
+     (is (= {:meta "data"} (meta person)) "preserves the metadata of original hash")))
 
 
 
