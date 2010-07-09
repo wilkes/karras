@@ -60,7 +60,7 @@
   [#^DBCollection coll obj]
   (let [dbo (to-dbo obj)]
     (.save coll dbo)
-    (to-clj dbo)))
+    (-> dbo to-clj (with-meta (meta obj)))))
 
 (defn insert
   "Inserts one or more documents into a collection. 

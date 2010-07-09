@@ -106,7 +106,10 @@
 (deftest saving-tests
   (save people (merge Jim {:weight 180}))
   (is (= 4 (count-docs people)))
-  (is (= 180 (:weight (fetch-one people {:first-name "Jim"})))))
+  (is (= 180 (:weight (fetch-one people {:first-name "Jim"}))))
+  (let [doc-with-meta (with-meta Jim {:some :data})
+        saved-doc (save people doc-with-meta)]
+    (is (= (meta doc-with-meta) (meta saved-doc)) "meta-data is preserved")))
 
 (deftest updating-tests
   (update people {:first-name "Jim"} (merge Jim {:weight 180}))
