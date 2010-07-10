@@ -73,6 +73,7 @@
                       (mongo
                         (drop-collection (collection-for Person))
                         (drop-collection (collection-for Company))
+                        (drop-collection (collection-for Simple))
                         (t))))
 
 (deftest test-parse-fields
@@ -248,3 +249,26 @@
               (older-companies "1999" :sort [(asc :date-founded)
                                              (asc :name)])))
     (is (=  [dell] (modern-companies)))))
+
+
+(deftest test-find-and-*
+  (let [foo (create Simple {:value "Foo"})
+        expected (merge foo {:age 21})]
+    (is (= expected
+           (find-and-modify Simple (where (eq :value "Foo"))
+                            (modify (set-fields {:age 21}))
+                            :return-new true)))
+    (is (= expected
+           (find-and-remove Simple (where (eq :value "Foo")))))))
+
+(deftest test-map-reduce
+  (dotimes [n 5]
+    (create Simple {:value n}))
+  (is (= [{:_id "sum" :value (apply + (range 5))}] 
+           (map-reduce-fetch-all Simple
+                                 "function() {emit('sum', this.value)}"
+                                 "function(k,vals) {
+                                                 var sum=0;
+                                                 for(var i in vals) sum += vals[i];
+                                                 return sum;
+                                              }"))))

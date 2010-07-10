@@ -131,7 +131,7 @@
            (find-and-modify people
                             (where (eq :age 18))
                             (modify (set-fields {:voter true}))))))
-  (testing "return unmodified document"
+  (testing "return modified document"
     (is (= (merge Sally {:voter false})
            (find-and-modify people
                             (where (eq :age 18))
@@ -166,8 +166,18 @@
       (is (not (nil? (:timing results))))
       (is (not (nil? (:timeMillis results))))
       (is (not (nil? (:result results))))
-      (is (not (nil? (:collection results))))
-      (is (= [{:value 4.0}] (fetch (:collection results) {})))))
+      (is (= [{:value 4.0}] (fetch-map-reduce-values results)))
+      (is (= [] (fetch-map-reduce-values results (where (eq :values 3)))))))
+    (testing "simple counting map-reduce-fetch-all"
+    (let [expected [{:value 4.0}]
+          results (map-reduce-fetch-all people
+                       "function() {emit(this.last_name, 1)}"
+                       "function(k,vals) {
+                           var sum=0;
+                           for(var i in vals) sum += vals[i];
+                           return sum;
+                        }")]
+      (is (= expected results))))
   (testing "simple counting with scriptjure"
     (let [expected {:ok 1.0,
                     :counts {:output 1, :emit 4, :input 4}}
@@ -180,7 +190,7 @@
                                     (return sum))))]
       (is (= (:ok expected) (:ok results)))
       (is (= (:counts expected) (:counts results)))
-      (is (= [{:value 4.0}] (fetch (:collection results) {}))))))
+      (is (= [{:value 4.0}] (fetch-map-reduce-values results))))))
 
 (deftest indexing-tests
   (is (= 1 (count (list-indexes people)))) ;; _id is always indexed

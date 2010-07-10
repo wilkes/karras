@@ -21,7 +21,7 @@
 ;; THE SOFTWARE.
 
 (ns karras.collection
-  (:use [clojure.contrib.def :only [defnk]]
+  (:use [clojure.contrib.def :only [defnk defvar]]
         [karras.core :only [*mongo-db* to-dbo to-clj]])
   (:import [com.mongodb Mongo DB DBCollection DBObject]
            [org.bson.types ObjectId]))
@@ -225,9 +225,22 @@
         cmd (merge cmd (if scope {:scope scope}))
         cmd (merge cmd {:mapreduce (.getName coll)})
         response (.command db (to-dbo cmd))
-        clj-response (to-clj response)]
+        clj-response (to-clj response)
+        results-coll (collection db (:result clj-response))]
     (.throwOnError response)
-    (assoc clj-response :collection (collection db (:result clj-response)))))
+    (assoc clj-response :fetch-fn (fn [& [where-clause & options]]
+                                     (apply fetch results-coll where-clause options)))))
+
+(defn fetch-map-reduce-values
+  "Takes the result of map-reduce and fetches the values. Takes the same options as fetch."
+  [map-reduce-result & fetch-options]
+  (let [fetch-fn (:fetch-fn map-reduce-result)]
+    (apply fetch-fn fetch-options)))
+
+(defvar map-reduce-fetch-all (comp fetch-map-reduce-values map-reduce)
+  "Composes map-reduce and fetch-map-reduce-values and returns all the results.
+   If you need to filter the results use:
+     (fetch-map-reduce-values (map-reduce ...) ...your fetch options...")
 
 (defn delete
   "Removes documents matching the supplied queries from a collection."

@@ -19,7 +19,7 @@ Example:
     karras.entity
   (:require [karras.collection :as c])
   (:use karras.sugar
-        [clojure.contrib.def :only [defnk defalias]]
+        [clojure.contrib.def :only [defnk defalias defvar]]
         [clojure.contrib.str-utils2 :only [lower-case]]
         inflections))
 
@@ -264,6 +264,31 @@ Example:
   "Return the distinct values of a given type for a given key."
   [type kw]
   (c/distinct-values (collection-for type) kw))
+
+(defn find-and-modify
+  "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
+  [type query modifier & options]
+  (make type (apply c/find-and-modify (collection-for type) query modifier options)))
+
+(defn find-and-remove
+  "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
+  [type query & options]
+  (make type (apply c/find-and-remove (collection-for type) query options)))
+
+(defn map-reduce
+  "See http://www.mongodb.org/display/DOCS/MapReduce"
+  [type mapfn reducefn & options]
+  (apply c/map-reduce (collection-for type) mapfn reducefn options))
+
+(defn fetch-map-reduce-values
+  "Takes the result of map-reduce and fetches the values. Takes the same options as fetch."
+  [map-reduce-result & fetch-options]
+  (apply c/fetch-map-reduce-values map-reduce-result fetch-options))
+
+(defvar map-reduce-fetch-all (comp fetch-map-reduce-values map-reduce)
+  "Composes map-reduce and fetch-map-reduce-values and returns all the results.
+   If you need to filter the results use:
+     (fetch-map-reduce-values (map-reduce ...) ...your fetch options...")
 
 (defn index
   "Associate an index with a give type."
