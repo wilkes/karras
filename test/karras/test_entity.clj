@@ -3,8 +3,10 @@
   (:use karras.sugar
         karras.entity
         [karras.collection :only [drop-collection collection]]
-        clojure.test))
+        clojure.test
+        midje.semi-sweet))
 
+(def not-nil? (comp not nil?))
 (defonce db (karras/mongo-db :karras-testing))
 
 (defaggregate Street
@@ -80,7 +82,7 @@
 
 (deftest test-parse-fields
   (let [parsed? (fn [fields expected-parsed-fields]
-                  (is (= (parse-fields fields) expected-parsed-fields)))]
+                  (expect (parse-fields fields) =>  expected-parsed-fields))]
     (testing "empty fields"
           (parsed? nil {}))
     (testing "no type specified"
@@ -101,36 +103,29 @@
        [:keyword 'not-a-map-or-keyword]))
 
 (deftest test-entity-spec
-  (is (not (nil? (entity-spec Address))))
-  (is (not (nil? (entity-spec Phone))))
-  (is (not (nil? (entity-spec Person)))))
+  (doseq [e [Address Phone Person]]
+    (expect e => not-nil?)))
 
 (deftest test-entity-spec-in
-  (is (= (entity-spec Address) (entity-spec-of Person :address)))
-  (is (= (entity-spec java.util.List) (entity-spec-of Person :phones)))
-  (is (= (entity-spec Phone) (entity-spec-of-item Person :phones)))
-  (is (= (entity-spec Street) (entity-spec-of Person :address :street))))
-
-(deftest test-entity-spec-in
-  (is (= (entity-spec Address) (entity-spec-of Person :address)))
-  (is (= (entity-spec java.util.List) (entity-spec-of Person :phones)))
-  (is (= (entity-spec Phone) (entity-spec-of-item Person :phones)))
-  (is (= (entity-spec Street) (entity-spec-of Person :address :street))))
+  (expect (entity-spec-of Person :address) => (entity-spec Address))
+  (expect (entity-spec-of Person :phones) => (entity-spec java.util.List))
+  (expect (entity-spec-of-item Person :phones) => (entity-spec Phone))
+  (expect (entity-spec-of Person :address :street) => (entity-spec Street)))
 
 (deftest test-collection-name
   (testing "default name"
-    (is (= (:collection-name (entity-spec Person)) "people")))
+    (expect (:collection-name (entity-spec Person)) => "people"))
   (testing "override name"
-    (is (= (:collection-name (entity-spec Simple)) "simpletons"))))
+    (expect (:collection-name (entity-spec Simple)) => "simpletons")))
 
 (deftest test-make
   (let [phone (make Phone {:number "555-555-1212"})]
-    (is (= Phone (class phone))))
+    (expect (class phone) => Phone))
   (let [address (make Address {:city "Nashville"
                                :street {:number "123"
                                         :name "Main St."}})]
-    (is (= Address (class address)))
-    (is (= Street (class (:street address)))))
+    (expect (class address) => Address)
+    (expect (class (:street address)) => Street))
   (let [person (make Person
                      {:first-name "John"
                       :last-name "Smith"
@@ -139,49 +134,52 @@
                       :address {:city "Nashville"
                                 :street {:number "123"
                                          :name "Main St."}}})]
-    (is (= Address (class (-> person :address))))
-    (is (= Street (class (-> person :address :street))))
-    (is (= Phone (class (-> person :phones first)))))
+    (expect (class (-> person :address)) => Address)
+    (expect (class (-> person :address :street)) => Street)
+    (expect (class (-> person :phones first))=> Phone))
   (let [person (make Person {:last-name "Smith"})
         phone (make Phone {})]
-    (is (= #{:last-name :blood-alcohol-level} (set (keys person))))
-    (is (= 0.0 (:blood-alcohol-level person)))
-    (is (= #{:country-code} (set (keys phone))))
-    (is (= 1 (:country-code phone))))
+    (expect (keys person) => (in-any-order [:last-name :blood-alcohol-level]))
+    (expect (:blood-alcohol-level person) =>  0.0)
+    (expect (keys phone) => [:country-code])
+    (expect (:country-code phone) => 1))
+  (testing "preserves the metadata of original hash")
    (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
-     (is (= {:meta "data"} (meta person)) "preserves the metadata of original hash")))
+     (expect (meta person) => {:meta "data"})))
+
+(defn remove-called [e] (dissoc e :called))
 
 (deftest test-crud
-  (let [person (dissoc (create Person
-                               {:first-name "John"
-                                :last-name "Smith"
-                                :birthday (date 1976 7 4)
-                                :phones [{:number "123" :country-code 2}]
-                                :address {:city "Nashville"
-                                          :street {:number "123"
-                                                   :name "Main St."}}})
-                       :called)]
-    (is (= Person (class person)))
-    (is (= "1976-07-04" (:birthday person)))
-    (is (not (nil? (:_id person))))
-    (is (= (collection :people) (collection-for Person)))
-    (is (= (collection :people) (collection-for person)))
-    (is (= person (dissoc (fetch-by-id Person (:_id person)) :called)))
-    (is (= person (dissoc (first (fetch-all Person))
-                          :called)))
-    (is (= person (dissoc (first (fetch Person (where (eq :last-name "Smith"))))
-                          :called)))
-    (is (= 1 (count-instances Person)))
+  (let [person (remove-called (create Person
+                                      {:first-name "John"
+                                       :last-name "Smith"
+                                       :birthday (date 1976 7 4)
+                                       :phones [{:number "123" :country-code 2}]
+                                       :address {:city "Nashville"
+                                                 :street {:number "123"
+                                                          :name "Main St."}}}))]
+    (expect (class person) => Person)
+    (expect (:birthday person) => "1976-07-04")
+    (expect (:_id person) => not-nil?)
+    (expect (collection-for Person) => (collection :people))
+    (expect (collection-for Person) => (collection-for person))
+    (expect (remove-called (fetch-one Person (where (eq :_id (:_id person)))))
+            => person)
+    (expect (remove-called (first (fetch-all Person)))
+            => person)
+    (expect (remove-called (first (fetch Person (where (eq :last-name "Smith")))))
+            => person)
+    (expect (count-instances Person) => 1)
     (dotimes [x 5]
       (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
-    (is (= "John" (first (distinct-values Person :first-name))))
-    (is (= 6 (count-instances Person)))
+    (expect (first (distinct-values Person :first-name)) => "John")
+    (expect (count-instances Person) => 6)
     (delete person)
-    (is (= 5 (count-instances Person)))
+    (expect (count-instances Person) => 5)
     (delete-all Person (where (eq :last-name "Smith1")))
-    (is (= 4 (count-instances Person)))
+    (expect (count-instances Person) => 4)
     (delete-all Person)
-    (is (= 0 (count-instances Person)))))
+    (expect (count-instances Person) => 0)))
 
 (deftest test-callback-protocol
   (are [callback e] (= e (callback e))
@@ -196,18 +194,18 @@
 
 (deftest test-callback-impls
   (let [person (create Person {:first-name "John" :last-name "Smith"})]
-    (is (= ["before-create" "before-save" "after-save" "after-create"]
-             (:called person)))
-    (is (= ["before-update" "before-save" "after-save" "after-update"]
-             (:called (save (dissoc person :called)))))
-    (is (= ["before-delete" "after-delete"]
-             (:called (delete (dissoc person :called)))))))
+    (is (expect (:called person)
+                => ["before-create" "before-save" "after-save" "after-create"]))
+    (is (expect (:called (save (remove-called person)))
+                => ["before-update" "before-save" "after-save" "after-update"]))
+    (is (expect (:called (delete (remove-called person)))
+                => ["before-delete" "after-delete"]))))
 
 (deftest test-ensure-indexes
-  (is (empty? (list-indexes Person)))
+  (expect (list-indexes Person) => empty?)
   (ensure-indexes)
   ;; 2 + _id index
-  (is (= 3 (count (list-indexes Person)))))
+  (expect (count (list-indexes Person)) => 3))
 
 (deftest test-references
   (testing "saving"
@@ -217,21 +215,21 @@
                       (set-reference :ceo john)
                       (add-reference :employees jane)
                       save)]
-      (is (= (:_id john) (:ceo company)))
-      (is (= (:_id jane) (first (:employees company))))))
+      (expect (:ceo company) => (:_id john))
+      (expect (first (:employees company)) => (:_id jane))))
   (testing "reading"
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (get-reference company :ceo)
           [jane] (get-reference company :employees)]
-      (is (= "Smith" (:last-name john)))
-      (is (= "Doe" (:last-name jane)))))
+      (expect (:last-name john) => "Smith")
+      (expect (:last-name jane) => "Doe" )))
   (testing "updating"
     (let [bill (create Person {:first-name "Bill" :last-name "Jones"})
           company (-> (fetch-one Company (where (eq :name "Acme")))
                       (add-reference :employees bill))
           [jane bill] (get-reference company :employees)]
-      (is (= "Jane" (:first-name jane)))
-      (is (= "Bill" (:first-name bill))))))
+      (expect (:first-name jane) => "Jane")
+      (expect (:first-name bill) => "Bill"))))
 
 (deftest test-deffetch
   (is (= {:older-companies older-companies
@@ -240,13 +238,12 @@
   (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
         dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
-    (is (= [jpmorgan] (older-companies "1800")))
-    (is (=  #{jpmorgan exxon} (set (older-companies "1913"))))
-    (is (=  [exxon jpmorgan] (older-companies "1913" :sort [(asc :name)])))
-    (is (=  [jpmorgan exxon dell]
-              (older-companies "1999" :sort [(asc :date-founded)
-                                             (asc :name)])))
-    (is (=  [dell] (modern-companies)))))
+    (expect (older-companies "1800") => [jpmorgan])
+    (expect (older-companies "1913") => (in-any-order [jpmorgan exxon]) )
+    (expect (older-companies "1913" :sort [(asc :name)]) => [exxon jpmorgan])
+    (expect (older-companies "1999" :sort [(asc :date-founded) (asc :name)])
+            => [jpmorgan exxon dell])
+    (expect (modern-companies) => [dell])))
 
 (deftest test-deffetch-one
   (is (= {:company-by-name company-by-name}
@@ -259,21 +256,21 @@
 (deftest test-find-and-*
   (let [foo (create Simple {:value "Foo"})
         expected (merge foo {:age 21})]
-    (is (= expected
-           (find-and-modify Simple (where (eq :value "Foo"))
-                            (modify (set-fields {:age 21}))
-                            :return-new true)))
-    (is (= expected
-           (find-and-remove Simple (where (eq :value "Foo")))))))
+    (expect (find-and-modify Simple (where (eq :value "Foo"))
+                             (modify (set-fields {:age 21}))
+                             :return-new true)
+            => expected)
+    (expect (find-and-remove Simple (where (eq :value "Foo")))
+            => expected)))
 
 (deftest test-map-reduce
   (dotimes [n 5]
     (create Simple {:value n}))
-  (is (= [{:_id "sum" :value (apply + (range 5))}] 
-           (map-reduce-fetch-all Simple
-                                 "function() {emit('sum', this.value)}"
-                                 "function(k,vals) {
-                                                 var sum=0;
-                                                 for(var i in vals) sum += vals[i];
-                                                 return sum;
-                                              }"))))
+  (expect (map-reduce-fetch-all Simple
+                                "function() {emit('sum', this.value)}"
+                                "function(k,vals) {
+                                    var sum=0;
+                                    for(var i in vals) sum += vals[i];
+                                    return sum;
+                                 }")
+                  => [{:_id "sum" :value (apply + (range 5))}]))
