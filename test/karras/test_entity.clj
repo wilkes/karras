@@ -23,10 +23,6 @@
   [:country-code {:default 1}
    :number])
 
-(defn add-callback [s]
-  (fn [e]
-    (assoc e :called (conj (or (vec (:called e)) []) s))))
-
 (defmethod convert ::my-date
   [field-spec d]
   (if (instance? java.util.Date d)
@@ -42,16 +38,7 @@
    :address {:type Address}
    :phones {:type :list :of Phone}]
   (index (desc :last-name) (desc :first-name))
-  (index (asc :birthday))
-  (extend EntityCallbacks
-    {:before-create (add-callback "before-create")
-     :before-update (add-callback "before-update")
-     :before-save (add-callback "before-save")
-     :after-save (add-callback "after-save")
-     :after-update (add-callback "after-update")
-     :after-create (add-callback "after-create")
-     :before-delete (add-callback "before-delete")
-     :after-delete (add-callback "after-delete")}))
+  (index (asc :birthday)))
 
 (defentity Company
   [:name
@@ -119,67 +106,77 @@
     (expect (:collection-name (entity-spec Simple)) => "simpletons")))
 
 (deftest test-make
-  (let [phone (make Phone {:number "555-555-1212"})]
-    (expect (class phone) => Phone))
-  (let [address (make Address {:city "Nashville"
-                               :street {:number "123"
-                                        :name "Main St."}})]
-    (expect (class address) => Address)
-    (expect (class (:street address)) => Street))
-  (let [person (make Person
-                     {:first-name "John"
-                      :last-name "Smith"
-                      :birthday (date 1976 7 4)
-                      :phones [{:number "123"}]
-                      :address {:city "Nashville"
-                                :street {:number "123"
-                                         :name "Main St."}}})]
-    (expect (class (-> person :address)) => Address)
-    (expect (class (-> person :address :street)) => Street)
-    (expect (class (-> person :phones first))=> Phone))
-  (let [person (make Person {:last-name "Smith"})
-        phone (make Phone {})]
-    (expect (keys person) => (in-any-order [:last-name :blood-alcohol-level]))
-    (expect (:blood-alcohol-level person) =>  0.0)
-    (expect (keys phone) => [:country-code])
-    (expect (:country-code phone) => 1))
+  (testing "flat"
+    (expect (class (make Phone {:number "555-555-1212"})) => Phone))
+  (testing "nested"
+    (let [address (make Address {:city "Nashville"
+                                 :street {:number "123"
+                                          :name "Main St."}})]
+      (expect (class address) => Address)
+      (expect (class (:street address)) => Street)))
+  (testing "complex nested with defaults"
+    (let [person (make Person
+                       {:first-name "John"
+                        :last-name "Smith"
+                        :birthday (date 1976 7 4)
+                        :phones [{:number "123"}]
+                        :address {:city "Nashville"
+                                  :street {:number "123"
+                                           :name "Main St."}}})]
+      (expect (-> person :address class) => Address)
+      (expect (-> person :address :street class) => Street)
+      (expect (-> person :phones first class)=> Phone)
+      (expect (-> person :blood-alcohol-level) =>  0.0)
+      (expect (-> person :phones first :country-code) => 1)))
   (testing "preserves the metadata of original hash")
    (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
      (expect (meta person) => {:meta "data"})))
 
-(defn remove-called [e] (dissoc e :called))
-
 (deftest test-crud
-  (let [person (remove-called (create Person
-                                      {:first-name "John"
-                                       :last-name "Smith"
-                                       :birthday (date 1976 7 4)
-                                       :phones [{:number "123" :country-code 2}]
-                                       :address {:city "Nashville"
-                                                 :street {:number "123"
-                                                          :name "Main St."}}}))]
-    (expect (class person) => Person)
-    (expect (:birthday person) => "1976-07-04")
-    (expect (:_id person) => not-nil?)
-    (expect (collection-for Person) => (collection :people))
-    (expect (collection-for Person) => (collection-for person))
-    (expect (remove-called (fetch-one Person (where (eq :_id (:_id person)))))
-            => person)
-    (expect (remove-called (first (fetch-all Person)))
-            => person)
-    (expect (remove-called (first (fetch Person (where (eq :last-name "Smith")))))
-            => person)
-    (expect (count-instances Person) => 1)
-    (dotimes [x 5]
-      (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
-    (expect (first (distinct-values Person :first-name)) => "John")
-    (expect (count-instances Person) => 6)
-    (delete person)
-    (expect (count-instances Person) => 5)
-    (delete-all Person (where (eq :last-name "Smith1")))
-    (expect (count-instances Person) => 4)
-    (delete-all Person)
-    (expect (count-instances Person) => 0)))
+  (let [person (create Person
+                       {:first-name "John"
+                        :last-name "Smith"
+                        :birthday (date 1976 7 4)
+                        :phones [{:number "123" :country-code 2}]
+                        :address {:city "Nashville"
+                                  :street {:number "123"
+                                           :name "Main St."}}})]
+    (testing "create"
+      (expect (class person) => Person)
+      (expect (:birthday person) => "1976-07-04")
+      (expect (:_id person) => not-nil?)
+      (expect (count-instances Person) => 1))
+    (testing "fetch-one"
+      (expect (fetch-one Person (where (eq :_id (:_id person))))
+              => person))
+    (testing "fetch-all"
+      (expect (first (fetch-all Person))
+              => person))
+    (testing "fetch"
+      (expect (first (fetch Person (where (eq :last-name "Smith"))))
+              => person))
+    (testing "deletion"
+      (dotimes [x 5]
+        (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
+      (expect (first (distinct-values Person :first-name)) => "John")
+      (expect (count-instances Person) => 6)
+      (testing "delete"
+        (delete person)
+        (expect (count-instances Person) => 5))
+      (testing "delete-all with where clause"
+        (delete-all Person (where (eq :last-name "Smith1")))
+        (expect (count-instances Person) => 4))
+      (testing "delete-all"
+        (delete-all Person)
+        (expect (count-instances Person) => 0)))))
+
+(deftest test-collection-for
+  (testing "entity type"
+    (expect (collection-for Person) => :people
+            (fake (collection "people") => :people)))
+  (testing "entity instance"
+    (expect (collection-for (make Person {:last-name "Smith"})) => :people
+            (fake (collection "people") => :people))))
 
 (deftest test-callback-protocol
   (are [callback e] (= e (callback e))
@@ -193,13 +190,26 @@
        after-update (Simple.)))
 
 (deftest test-callback-impls
+  (let [add-callback (fn [s]
+                       (fn [e]
+                         (assoc e :called (conj (or (vec (:called e)) []) s))))]
+    (extend Person
+      EntityCallbacks
+      {:before-create (add-callback "before-create")
+       :before-update (add-callback "before-update")
+       :before-save (add-callback "before-save")
+       :after-save (add-callback "after-save")
+       :after-update (add-callback "after-update")
+       :after-create (add-callback "after-create")
+       :before-delete (add-callback "before-delete")
+       :after-delete (add-callback "after-delete")}))
   (let [person (create Person {:first-name "John" :last-name "Smith"})]
-    (is (expect (:called person)
-                => ["before-create" "before-save" "after-save" "after-create"]))
-    (is (expect (:called (save (remove-called person)))
-                => ["before-update" "before-save" "after-save" "after-update"]))
-    (is (expect (:called (delete (remove-called person)))
-                => ["before-delete" "after-delete"]))))
+    (expect (:called person)
+            => ["before-create" "before-save" "after-save" "after-create"])
+    (expect (:called (save (dissoc person :called)))
+            => ["before-update" "before-save" "after-save" "after-update"])
+    (expect (:called (delete (dissoc person :called)))
+            => ["before-delete" "after-delete"])))
 
 (deftest test-ensure-indexes
   (expect (list-indexes Person) => empty?)
@@ -256,12 +266,14 @@
 (deftest test-find-and-*
   (let [foo (create Simple {:value "Foo"})
         expected (merge foo {:age 21})]
-    (expect (find-and-modify Simple (where (eq :value "Foo"))
-                             (modify (set-fields {:age 21}))
-                             :return-new true)
-            => expected)
-    (expect (find-and-remove Simple (where (eq :value "Foo")))
-            => expected)))
+    (testing "find-and-modify"
+      (expect (find-and-modify Simple (where (eq :value "Foo"))
+                               (modify (set-fields {:age 21}))
+                               :return-new true)
+              => expected))
+    (testing "find-and-remove"
+      (expect (find-and-remove Simple (where (eq :value "Foo")))
+              => expected))))
 
 (deftest test-map-reduce
   (dotimes [n 5]
