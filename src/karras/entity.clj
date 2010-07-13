@@ -253,6 +253,11 @@ Example:
   [type where-clause & options]
   (make type (apply c/fetch-one (collection-for type) where-clause options)))
 
+(defn fetch-by-id
+  "Fetch an enity by :_id"
+  [type id]
+  (fetch-one type (where (eq :_id id))))
+
 (defn count-instances
   "Return the number of entities optionally matching a given where clause."
   ([type]

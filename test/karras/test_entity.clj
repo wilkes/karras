@@ -151,8 +151,6 @@
    (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
      (is (= {:meta "data"} (meta person)) "preserves the metadata of original hash")))
 
-
-
 (deftest test-crud
   (let [person (dissoc (create Person
                                {:first-name "John"
@@ -168,9 +166,7 @@
     (is (not (nil? (:_id person))))
     (is (= (collection :people) (collection-for Person)))
     (is (= (collection :people) (collection-for person)))
-    (is (= person (dissoc (fetch-one Person
-                                     (where (eq :_id (:_id person))))
-                          :called)))
+    (is (= person (dissoc (fetch-by-id Person (:_id person)) :called)))
     (is (= person (dissoc (first (fetch-all Person))
                           :called)))
     (is (= person (dissoc (first (fetch Person (where (eq :last-name "Smith"))))
