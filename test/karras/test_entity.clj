@@ -56,11 +56,11 @@
    :employees {:type :references :of Person}
    :ceo {:type :reference :of Person}
    :date-founded {:type ::my-date}]
-  (defscope older-companies [date-str]
+  (deffetch older-companies [date-str]
     (lte :date-founded date-str))
-  (defscope modern-companies []
+  (deffetch modern-companies []
     (gt :date-founded "1980"))
-  (defscope-one company-by-name [name]
+  (deffetch-one company-by-name [name]
     (eq :name name)))
 
 (defentity Simple
@@ -237,10 +237,10 @@
       (is (= "Jane" (:first-name jane)))
       (is (= "Bill" (:first-name bill))))))
 
-(deftest test-defscope
+(deftest test-deffetch
   (is (= {:older-companies older-companies
           :modern-companies modern-companies}
-         (entity-spec-get Company :scopes)))
+         (entity-spec-get Company :fetchs)))
   (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
         dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
@@ -252,9 +252,9 @@
                                              (asc :name)])))
     (is (=  [dell] (modern-companies)))))
 
-(deftest test-defscope-one
+(deftest test-deffetch-one
   (is (= {:company-by-name company-by-name}
-         (entity-spec-get Company :scope-ones)))
+         (entity-spec-get Company :fetch-ones)))
   (let [dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
     (is (= dell (company-by-name "Dell")))))

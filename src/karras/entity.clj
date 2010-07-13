@@ -333,7 +333,7 @@ Example:
       (fetch target-type (where (in :_id (k entity))))
       (fetch-one target-type (where (eq :_id (k entity)))))))
 
-(defn make-scope
+(defn make-fetch
   [fetch-fn spec-key type fn-name args where-clauses]
   `(do
      (defn ~fn-name
@@ -344,17 +344,17 @@ Example:
                 options#)))
      (swap-entity-spec-in! ~type [~spec-key] assoc ~(keyword fn-name) ~fn-name)))
 
-(defmacro defscope
+(defmacro deffetch
   "Defines a fetch function for the given type. 
    The function created takes all of the options of fetch plus an :and option to append to the where clause.
 
    Usage:
      (defentity Person [:first-name :last-name :age]
-        (defscope adults [] (gte :age 18))
-        (defscope peope-in-age-range [min max] (within :age min max)))
+        (deffetch adults [] (gte :age 18))
+        (deffetch peope-in-age-range [min max] (within :age min max)))
 
    Outside of defentity:
-     (defscope Person teenagers [] (within :age 13 19))
+     (deffetch Person teenagers [] (within :age 13 19))
 
    Give me all the teenagers with last names A-J sorted by last name:
      (teenagers :and (within :last-name \"A\" \"J\") :sort [(asc :last-name)])
@@ -362,20 +362,20 @@ Example:
    Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
      (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
   [type fn-name [& args] & where-clauses]
-  (make-scope 'fetch :scopes type fn-name args where-clauses))
+  (make-fetch 'fetch :fetchs type fn-name args where-clauses))
 
-(defmacro defscope-one
+(defmacro deffetch-one
   "Defines a fetch-one function for the given type. 
    The function created takes all of the options of fetch-one plus an :and option to append to the where clause.
 
    Usage:
      (defentity Person [:first-name :last-name :age]
-        (defscope-one person-by-fullname
+        (deffetch-one person-by-fullname
           [first-name last-name]
           (eq :first-name first-name)
           (eq :last-name last-name)))
 
-   Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
+   Fetch a person by name:
      (person-by-name \"John\" \"Smith\")"
   [type fn-name [& args] & where-clauses]
-  (make-scope 'fetch-one :scope-ones type fn-name args where-clauses))
+  (make-fetch 'fetch-one :fetch-ones type fn-name args where-clauses))
