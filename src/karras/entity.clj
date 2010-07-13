@@ -185,20 +185,20 @@ Example:
   (save (make type hmap)))
 
 (defn update
-  "Updates one or more documents in a collection that match the query with the document 
+  "Updates one or more documents in a collection that match the criteria with the document 
    provided.
      :upsert, performs an insert if the document doesn't have :_id
-     :multi, update all documents that match the query
+     :multi, update all documents that match the criteria
    If working with an instance of an entity, use the save function."
-  [type where-clause modifiers & options]
-  (apply c/update (collection-for type) where-clause modifiers options))
+  [type criteria modifiers & options]
+  (apply c/update (collection-for type) criteria modifiers options))
 
 (defn update-all
-  "Shortcut for (update type query obj :multi)"
+  "Shortcut for (update type criteria obj :multi)"
   ([type obj]
      (update-all type {} obj))
-  ([type query obj]
-     (c/update-all (collection-for type) query obj)))
+  ([type criteria obj]
+     (c/update-all (collection-for type) criteria obj)))
 
 (defn delete
   "Deletes one or more entities."
@@ -216,8 +216,8 @@ Example:
 
 (defn fetch
   "Fetch a seq of entities for the given type matching the supplied parameters."
-  [type where-clause & options]
-  (map #(make type %) (apply c/fetch (collection-for type) where-clause options)))
+  [type criteria & options]
+  (map #(make type %) (apply c/fetch (collection-for type) criteria options)))
 
 (defn fetch-all
   "Fetch all of the entities for the given type."
@@ -225,9 +225,9 @@ Example:
   (map #(make type %) (apply c/fetch-all (collection-for type) options)))
 
 (defn fetch-one
-  "Fetch the first entity for the given type matching the supplied where-clause and options."
-  [type where-clause & options]
-  (make type (apply c/fetch-one (collection-for type) where-clause options)))
+  "Fetch the first entity for the given type matching the supplied criteria and options."
+  [type criteria & options]
+  (make type (apply c/fetch-one (collection-for type) criteria options)))
 
 (defn fetch-by-id
   "Fetch an enity by :_id"
@@ -240,8 +240,8 @@ Example:
   "Return the number of entities optionally matching a given where clause."
   ([type]
      (count-instances type nil))
-  ([type where-clause]
-     (c/fetch (collection-for type) where-clause :count true)))
+  ([type criteria]
+     (c/fetch (collection-for type) criteria :count true)))
 
 (defn distinct-values
   "Return the distinct values of a given type for a given key."
@@ -250,13 +250,13 @@ Example:
 
 (defn find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [type query modifier & options]
-  (make type (apply c/find-and-modify (collection-for type) query modifier options)))
+  [type criteria modifier & options]
+  (make type (apply c/find-and-modify (collection-for type) criteria modifier options)))
 
 (defn find-and-remove
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [type query & options]
-  (make type (apply c/find-and-remove (collection-for type) query options)))
+  [type criteria & options]
+  (make type (apply c/find-and-remove (collection-for type) criteria options)))
 
 (defn map-reduce
   "See http://www.mongodb.org/display/DOCS/MapReduce"
@@ -317,13 +317,13 @@ Example:
       (fetch-one target-type (where (eq :_id (k entity)))))))
 
 (defn make-fetch
-  [fetch-fn spec-key type fn-name args where-clauses]
+  [fetch-fn spec-key type fn-name args criteria]
   `(do
      (defn ~fn-name
        [~@args & options#]
        (let [and-clauses# (:and (apply hash-map options#))]
          (apply ~fetch-fn  ~type
-                (where ~@where-clauses and-clauses#)
+                (where ~@criteria and-clauses#)
                 options#)))
      (swap-entity-spec-in! ~type [~spec-key] assoc ~(keyword fn-name) ~fn-name)))
 
@@ -344,8 +344,8 @@ Example:
 
    Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
      (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
-  [type fn-name [& args] & where-clauses]
-  (make-fetch 'fetch :fetchs type fn-name args where-clauses))
+  [type fn-name [& args] & criteria]
+  (make-fetch 'fetch :fetchs type fn-name args criteria))
 
 (defmacro deffetch-one
   "Defines a fetch-one function for the given type. 
@@ -360,5 +360,5 @@ Example:
 
    Fetch a person by name:
      (person-by-name \"John\" \"Smith\")"
-  [type fn-name [& args] & where-clauses]
-  (make-fetch 'fetch-one :fetch-ones type fn-name args where-clauses))
+  [type fn-name [& args] & criteria]
+  (make-fetch 'fetch-one :fetch-ones type fn-name args criteria))

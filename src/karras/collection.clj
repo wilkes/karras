@@ -72,34 +72,34 @@
       inserted)))
 
 (defn update
-  "Updates one or more documents in a collection that match the query with the document 
+  "Updates one or more documents in a collection that match the criteria with the document 
    provided.
      :upsert, performs an insert if the document doesn't have :_id
-     :multi, update all documents that match the query"
-  [#^DBCollection coll query obj & options]
+     :multi, update all documents that match the criteria"
+  [#^DBCollection coll criteria obj & options]
   (let [o? #(has-option? options %)]
     (.update coll
-             (to-dbo query)
+             (to-dbo criteria)
              (to-dbo obj)
              (o? :upsert)
              (o? :multi))))
 
 (defn upsert
-  "Shortcut for (update collection query obj :upsert)"
+  "Shortcut for (update collection criteria obj :upsert)"
   ([coll obj]
      (upsert coll obj obj))
-  ([coll query obj]
-     (update coll query obj :upsert)))
+  ([coll criteria obj]
+     (update coll criteria obj :upsert)))
 
 (defn update-all
-  "Shortcut for (update collection query obj :multi)"
+  "Shortcut for (update collection criteria obj :multi)"
   ([coll obj]
      (update-all coll {} obj))
-  ([coll query obj]
-      (update coll query obj :multi)))
+  ([coll criteria obj]
+      (update coll criteria obj :multi)))
 
 (defnk fetch
-  "Fetch a seq of documents that match a given query.
+  "Fetch a seq of documents that match a given criteria.
    Accepts the following keywords:
        :limit, maximum number of documents to return
        :skip, where in the result set the seq will begin, i.e. paging
@@ -107,19 +107,19 @@
        :exclude, which keys to exclude from the result set, can not be combined with :include
        :sort, which keys to order by
        :count, if true return the count of the result set, defaults to false"
-  [#^DBCollection coll query
+  [#^DBCollection coll criteria
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
-  (let [cursor (if query
+  (let [cursor (if criteria
                  (if (or include exclude)
                    (let [keys (merge (zipmap (remove nil? include)
                                              (repeat 1))
                                      (zipmap (remove nil? exclude)
                                              (repeat 0)))]
                      (.find coll
-                            #^DBObject (to-dbo query)
+                            #^DBObject (to-dbo criteria)
                             #^DBObject (to-dbo keys)))
                    (.find coll
-                          #^DBObject (to-dbo query)))
+                          #^DBObject (to-dbo criteria)))
                  (.find coll ))
         cursor (if limit
                  (.limit cursor limit)
@@ -142,15 +142,15 @@
 
 (defn fetch-one
   "Fetch one document of a collection. Supports same options as fetch except :limit and :count"
-  [coll query & options]
-  (first (apply fetch coll query options)))
+  [coll criteria & options]
+  (first (apply fetch coll criteria options)))
 
 (defn count-docs
-  "Returns the count of documents, optionally, matching a query"
+  "Returns the count of documents, optionally, matching a criteria"
   ([#^DBCollection coll]
      (count-docs coll {}))
-  ([#^DBCollection coll query]
-     (fetch coll query :count true)))
+  ([#^DBCollection coll criteria]
+     (fetch coll criteria :count true)))
 
 (defn fetch-by-id
   "Fetch a document by :_id"
@@ -189,8 +189,8 @@
        (.throwOnError response)
        (to-clj (.get response "retval")))))
 
-(defn- find-and-modify*   [#^DBCollection coll query modifier remove sort return-new]
-    (let [cmd {:query query
+(defn- find-and-modify*   [#^DBCollection coll criteria modifier remove sort return-new]
+    (let [cmd {:query criteria
                :sort (apply merge {}  (reverse sort))
                :new return-new}
           cmd (merge cmd (if remove {:remove true} {:update modifier}))
@@ -204,13 +204,13 @@
 
 (defnk find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection coll query modifier :sort [] :return-new false]
-  (find-and-modify* coll query modifier false sort return-new))
+  [#^DBCollection coll criteria modifier :sort [] :return-new false]
+  (find-and-modify* coll criteria modifier false sort return-new))
 
 (defnk find-and-remove
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection coll query :sort [] :return-new false]
-  (find-and-modify* coll query nil true sort return-new))
+  [#^DBCollection coll criteria :sort [] :return-new false]
+  (find-and-modify* coll criteria nil true sort return-new))
 
 (defnk map-reduce
   "See http://www.mongodb.org/display/DOCS/MapReduce"
@@ -229,8 +229,8 @@
         clj-response (to-clj response)
         results-coll (collection db (:result clj-response))]
     (.throwOnError response)
-    (assoc clj-response :fetch-fn (fn [& [where-clause & options]]
-                                     (apply fetch results-coll where-clause options)))))
+    (assoc clj-response :fetch-fn (fn [& [criteria & options]]
+                                     (apply fetch results-coll criteria options)))))
 
 (defn fetch-map-reduce-values
   "Takes the result of map-reduce and fetches the values. Takes the same options as fetch."
