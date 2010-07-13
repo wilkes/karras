@@ -34,7 +34,7 @@ namespace.
     <a class="wiki_link" href="api-index.html">API Index</a><br />
     <a class="wiki_link" href="#">Namespaces:</a>
     <ul id="left-sidebar-list">
-      <li><a href="karras.collection-api.html" class="wiki_link">karras.collection</a></li><li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.entity-api.html" class="wiki_link">karras.entity</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li><li><a href="karras.validations-api.html" class="wiki_link">karras.validations</a></li>
+      <li><a href="karras.collection-api.html" class="wiki_link">karras.collection</a></li><li><a href="karras.core-api.html" class="wiki_link">karras.core</a></li><li><a href="karras.entity-api.html" class="wiki_link">karras.entity</a></li><li><a href="karras.example-api.html" class="wiki_link">karras.example</a></li><li><a href="karras.sugar-api.html" class="wiki_link">karras.sugar</a></li>
     </ul>
   </div>
 </div>
@@ -127,7 +127,7 @@ by <span id="author">Unknown</span><br />
        (collection mongo db-name collection-name)
 </pre>
   <pre id="var-docstr">Returns a DBCollection.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L42" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L42" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -136,17 +136,17 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (collection-db collection)
 </pre>
   <pre id="var-docstr">Get the DB that this collection is associated with.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L37" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L37" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/count-docs">count-docs</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (count-docs coll)
-       (count-docs coll query)
+       (count-docs coll criteria)
 </pre>
-  <pre id="var-docstr">Returns the count of documents, optionally, matching a query</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L148" id="var-source">Source</a>
+  <pre id="var-docstr">Returns the count of documents, optionally, matching a criteria</pre>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L148" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -155,7 +155,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (delete coll &amp; queries)
 </pre>
   <pre id="var-docstr">Removes documents matching the supplied queries from a collection.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L245" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L246" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -164,7 +164,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (distinct-values coll kw)
 </pre>
   <pre id="var-docstr">Fetch a seq of the distinct values of a given collection for a key.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L160" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L161" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -173,7 +173,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (drop-collection coll)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L52" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L52" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -182,7 +182,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (drop-index coll o)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L271" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L272" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -191,7 +191,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (drop-index-named coll kw)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L276" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L277" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -200,7 +200,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (ensure-index coll fields)
 </pre>
   <pre id="var-docstr">Ensure an index exist on a collection.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L251" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L252" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -209,7 +209,7 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (ensure-named-index coll name fields)
 </pre>
   <pre id="var-docstr">Ensure an index exist on a collection with the given name.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L264" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L265" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -218,15 +218,15 @@ by <span id="author">Unknown</span><br />
   <pre id="var-usage">Usage: (ensure-unique-index coll name fields)
 </pre>
   <pre id="var-docstr">Ensure a unique index exist on a collection.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L256" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L257" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/fetch">fetch</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch coll query &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (fetch coll criteria &amp; options__19__auto__)
 </pre>
-  <pre id="var-docstr">Fetch a seq of documents that match a given query.
+  <pre id="var-docstr">Fetch a seq of documents that match a given criteria.
 Accepts the following keywords:
     :limit, maximum number of documents to return
     :skip, where in the result set the seq will begin, i.e. paging
@@ -234,7 +234,7 @@ Accepts the following keywords:
     :exclude, which keys to exclude from the result set, can not be combined with :include
     :sort, which keys to order by
     :count, if true return the count of the result set, defaults to false</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L101" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L101" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -243,16 +243,16 @@ Accepts the following keywords:
   <pre id="var-usage">Usage: (fetch-all coll &amp; options)
 </pre>
   <pre id="var-docstr">Fetch all the documents of a collection. Same options as fetch.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L138" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L138" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/fetch-by-id">fetch-by-id</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-by-id coll s)
+  <pre id="var-usage">Usage: (fetch-by-id coll id)
 </pre>
   <pre id="var-docstr">Fetch a document by :_id</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L155" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L155" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -261,34 +261,34 @@ Accepts the following keywords:
   <pre id="var-usage">Usage: (fetch-map-reduce-values map-reduce-result &amp; fetch-options)
 </pre>
   <pre id="var-docstr">Takes the result of map-reduce and fetches the values. Takes the same options as fetch.</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L234" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L235" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/fetch-one">fetch-one</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (fetch-one coll query &amp; options)
+  <pre id="var-usage">Usage: (fetch-one coll criteria &amp; options)
 </pre>
   <pre id="var-docstr">Fetch one document of a collection. Supports same options as fetch except :limit and :count</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L143" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L143" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/find-and-modify">find-and-modify</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (find-and-modify coll query modifier &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (find-and-modify coll criteria modifier &amp; options__19__auto__)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/findandmodify+Command">http://www.mongodb.org/display/DOCS/findandmodify+Command</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L204" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L205" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/find-and-remove">find-and-remove</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (find-and-remove coll query &amp; options__19__auto__)
+  <pre id="var-usage">Usage: (find-and-remove coll criteria &amp; options__19__auto__)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/findandmodify+Command">http://www.mongodb.org/display/DOCS/findandmodify+Command</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L209" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L210" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -306,7 +306,7 @@ Example:
                  {:active 1}
                  {:csum 0}
                  "function(obj,prev) { prev.csum += obj.c; }")</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L165" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L166" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -316,7 +316,7 @@ Example:
 </pre>
   <pre id="var-docstr">Inserts one or more documents into a collection. 
 Returns the inserted object with :_id</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L65" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L65" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -325,7 +325,7 @@ Returns the inserted object with :_id</pre>
   <pre id="var-usage">Usage: (list-indexes coll)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L281" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L282" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -334,7 +334,7 @@ Returns the inserted object with :_id</pre>
   <pre id="var-usage">Usage: (map-reduce coll mapfn reducefn &amp; options__19__auto__)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/MapReduce">http://www.mongodb.org/display/DOCS/MapReduce</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L214" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L215" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -344,7 +344,7 @@ Returns the inserted object with :_id</pre>
   <pre id="var-docstr">Composes map-reduce and fetch-map-reduce-values and returns all the results.
 If you need to filter the results use:
   (fetch-map-reduce-values (map-reduce ...) ...your fetch options...</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L240" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L241" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -354,39 +354,39 @@ If you need to filter the results use:
 </pre>
   <pre id="var-docstr">Saves a document to a colection, does an upsert behind the scenes.
 Returns the object with :_id if it was inserted..</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L57" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L57" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/update">update</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (update coll query obj &amp; options)
+  <pre id="var-usage">Usage: (update coll criteria obj &amp; options)
 </pre>
-  <pre id="var-docstr">Updates one or more documents in a collection that match the query with the document 
+  <pre id="var-docstr">Updates one or more documents in a collection that match the criteria with the document 
 provided.
   :upsert, performs an insert if the document doesn't have :_id
-  :multi, update all documents that match the query</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L74" id="var-source">Source</a>
+  :multi, update all documents that match the criteria</pre>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L74" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/update-all">update-all</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (update-all coll obj)
-       (update-all coll query obj)
+       (update-all coll criteria obj)
 </pre>
-  <pre id="var-docstr">Shortcut for (update collection query obj :multi)</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L94" id="var-source">Source</a>
+  <pre id="var-docstr">Shortcut for (update collection criteria obj :multi)</pre>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L94" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
   <h2 id="karras.collection/upsert">upsert</h2>
   <span id="var-type">function</span><br />
   <pre id="var-usage">Usage: (upsert coll obj)
-       (upsert coll query obj)
+       (upsert coll criteria obj)
 </pre>
-  <pre id="var-docstr">Shortcut for (update collection query obj :upsert)</pre>
-  <a href="http://github.com/wilkes/karras/blob/34d304ceff955bf5ab4c26490c35be1da085fbd0/src/karras/collection.clj#L87" id="var-source">Source</a>
+  <pre id="var-docstr">Shortcut for (update collection criteria obj :upsert)</pre>
+  <a href="http://github.com/wilkes/karras/blob/e6c02e66d31a5f9cfa907eda5e01c77f6a4be539/src/karras/collection.clj#L87" id="var-source">Source</a>
 </div>
 
 
