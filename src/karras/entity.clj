@@ -155,7 +155,6 @@ Example:
                  current-value (get-in specs path)]
              (assoc-in specs path (apply f current-value args))))))
 
-
 (defn collection-for
   "Returns the DBCollection for the supplied entity instance or type."
   [entity-or-type]
@@ -185,7 +184,21 @@ Example:
   [type hmap]
   (save (make type hmap)))
 
-(defalias update save)
+(defn update
+  "Updates one or more documents in a collection that match the query with the document 
+   provided.
+     :upsert, performs an insert if the document doesn't have :_id
+     :multi, update all documents that match the query
+   If working with an instance of an entity, use the save function."
+  [type where-clause modifiers & options]
+  (apply c/update (collection-for type) where-clause modifiers options))
+
+(defn update-all
+  "Shortcut for (update type query obj :multi)"
+  ([type obj]
+     (update-all type {} obj))
+  ([type query obj]
+     (c/update-all (collection-for type) query obj)))
 
 (defn delete
   "Deletes one or more entities."
@@ -218,8 +231,10 @@ Example:
 
 (defn fetch-by-id
   "Fetch an enity by :_id"
-  [type id]
-  (c/fetch-by-id (collection-for type) id))
+  ([entity]
+     (fetch-by-id (class entity) (:_id entity)))
+  ([type id]
+      (c/fetch-by-id (collection-for type) id)))
 
 (defn count-instances
   "Return the number of entities optionally matching a given where clause."

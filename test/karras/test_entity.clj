@@ -155,6 +155,14 @@
     (testing "fetch"
       (expect (first (fetch Person (where (eq :last-name "Smith"))))
               => person))
+    (testing "save"
+      (save (assoc person :was-saved true))
+      (expect (:was-saved (fetch-by-id person)) => true))
+    (testing "update"
+      (update Person (where (eq :last-name "Smith"))
+                      (modify (set-fields {:birthday (date 1977 7 4)})))
+      (expect (:birthday (fetch-one Person (where (eq :last-name "Smith"))))
+              => "1977-07-04"))
     (testing "deletion"
       (dotimes [x 5]
         (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
