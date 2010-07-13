@@ -223,11 +223,11 @@
     (expect (modern-companies) => [dell])))
 
 (deftest test-deffetch-one
-  (is (= {:company-by-name company-by-name}
-         (entity-spec-get Company :fetch-ones)))
+  (expect (entity-spec-get Company :fetch-ones)
+          => {:company-by-name company-by-name})
   (let [dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
-    (is (= dell (company-by-name "Dell")))))
+    (expect (company-by-name "Dell") => dell)))
 
 
 (deftest test-find-and-*
