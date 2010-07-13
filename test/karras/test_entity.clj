@@ -59,7 +59,9 @@
   (defscope older-companies [date-str]
     (lte :date-founded date-str))
   (defscope modern-companies []
-    (gt :date-founded "1980")))
+    (gt :date-founded "1980"))
+  (defscope-one company-by-name [name]
+    (eq :name name)))
 
 (defentity Simple
   [:value]
@@ -249,6 +251,13 @@
               (older-companies "1999" :sort [(asc :date-founded)
                                              (asc :name)])))
     (is (=  [dell] (modern-companies)))))
+
+(deftest test-defscope-one
+  (is (= {:company-by-name company-by-name}
+         (entity-spec-get Company :scope-ones)))
+  (let [dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
+        exxon (create Company {:name "Exxon" :date-founded "1911"})]
+    (is (= dell (company-by-name "Dell")))))
 
 
 (deftest test-find-and-*

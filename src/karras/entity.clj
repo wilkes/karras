@@ -333,6 +333,16 @@ Example:
       (fetch target-type (where (in :_id (k entity))))
       (fetch-one target-type (where (eq :_id (k entity)))))))
 
+(defn make-scope
+  [fetch-fn spec-key type fn-name args where-clauses]
+  `(do
+     (defn ~fn-name
+       [~@args & options#]
+       (let [and-clauses# (:and (apply hash-map options#))]
+         (apply ~fetch-fn  ~type
+                (where ~@where-clauses and-clauses#)
+                options#)))
+     (swap-entity-spec-in! ~type [~spec-key] assoc ~(keyword fn-name) ~fn-name)))
 
 (defmacro defscope
   "Defines a fetch function for the given type. 
@@ -352,11 +362,20 @@ Example:
    Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
      (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
   [type fn-name [& args] & where-clauses]
-  `(do
-     (defn ~fn-name
-       [~@args & options#]
-       (let [and-clauses# (:and (apply hash-map options#))]
-         (apply fetch ~type
-                (where ~@where-clauses and-clauses#)
-                options#)))
-     (swap-entity-spec-in! ~type [:scopes] assoc ~(keyword fn-name) ~fn-name)))
+  (make-scope 'fetch :scopes type fn-name args where-clauses))
+
+(defmacro defscope-one
+  "Defines a fetch-one function for the given type. 
+   The function created takes all of the options of fetch-one plus an :and option to append to the where clause.
+
+   Usage:
+     (defentity Person [:first-name :last-name :age]
+        (defscope-one person-by-fullname
+          [first-name last-name]
+          (eq :first-name first-name)
+          (eq :last-name last-name)))
+
+   Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
+     (person-by-name \"John\" \"Smith\")"
+  [type fn-name [& args] & where-clauses]
+  (make-scope 'fetch-one :scope-ones type fn-name args where-clauses))
