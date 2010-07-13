@@ -94,6 +94,8 @@ namespace.
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.entity/fetch-all">fetch-all</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.entity/fetch-by-id">fetch-by-id</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.entity/fetch-map-reduce-values">fetch-map-reduce-values</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#karras.entity/fetch-one">fetch-one</a>
@@ -170,7 +172,7 @@ Example:
 (after-delete [e])
 (after-save [e])
 (after-update [e])</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L62" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L62" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -179,7 +181,7 @@ Example:
   <pre id="var-usage">Usage: (add-reference entity k &amp; vs)
 </pre>
   <pre id="var-docstr">Add one more :_id's to a sequence of the given key</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L312" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L317" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -188,7 +190,7 @@ Example:
   <pre id="var-usage">Usage: (collection-for entity-or-type)
 </pre>
   <pre id="var-docstr">Returns the DBCollection for the supplied entity instance or type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L184" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L184" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -199,7 +201,7 @@ Example:
 Takes in a field-spec and a val and returns the conver
 Dispatches off of :type key of first arg.
 :default returns the value unmodified</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L86" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L86" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -209,7 +211,7 @@ Dispatches off of :type key of first arg.
        (count-instances type where-clause)
 </pre>
   <pre id="var-docstr">Return the number of entities optionally matching a given where clause.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L256" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L261" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -218,7 +220,7 @@ Dispatches off of :type key of first arg.
   <pre id="var-usage">Usage: (create type hmap)
 </pre>
   <pre id="var-docstr">Makes a new instance of type and saves it.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L215" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L215" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -227,7 +229,7 @@ Dispatches off of :type key of first arg.
   <pre id="var-usage">Usage: (defaggregate classname [&amp; fields] &amp; type-fns)
 </pre>
   <pre id="var-docstr">Defines an aggregate type that can be embedded into an entity.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L140" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L140" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -236,7 +238,7 @@ Dispatches off of :type key of first arg.
   <pre id="var-usage">Usage: (defentity classname [&amp; fields] &amp; type-fns)
 </pre>
   <pre id="var-docstr">Defines an entity that corresponds to a collection.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L135" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L135" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -260,7 +262,7 @@ Give me all the teenagers with last names A-J sorted by last name:
 
 Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
   (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L347" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L352" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -280,7 +282,7 @@ Usage:
 
 Fetch a person by name:
   (person-by-name "John" "Smith")</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L367" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L372" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -290,7 +292,7 @@ Fetch a person by name:
        (delete entity &amp; entities)
 </pre>
   <pre id="var-docstr">Deletes one or more entities.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L222" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L222" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -300,7 +302,7 @@ Fetch a person by name:
        (delete-all type where)
 </pre>
   <pre id="var-docstr">Deletes all entitys given an optional where clause.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L234" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L234" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -309,7 +311,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (distinct-values type kw)
 </pre>
   <pre id="var-docstr">Return the distinct values of a given type for a given key.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L263" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L268" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -319,7 +321,7 @@ Fetch a person by name:
        (ensure-indexes type)
 </pre>
   <pre id="var-docstr">Ensure the indexes are built, optionally for a given type. Defaults to all types.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L298" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L303" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -328,7 +330,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (ensure-type type entity)
 </pre>
   <pre id="var-docstr">Force an entity to be of a given type if is not already.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L192" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L192" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -337,7 +339,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (entity-spec type)
 </pre>
   <pre id="var-docstr">Lookup the DocSpec for a given type</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L34" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L34" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -346,7 +348,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (entity-spec-assoc type &amp; kvs)
 </pre>
   <pre id="var-docstr">Associate the suppled keys and values with the entity-spec for the given type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L169" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L169" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -355,7 +357,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (entity-spec-get type key &amp; [default])
 </pre>
   <pre id="var-docstr">Lookup the EntitySpec value for given key of the given type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L39" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L39" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -364,7 +366,7 @@ Fetch a person by name:
   <pre id="var-usage">Usage: (entity-spec-get-in type path)
 </pre>
   <pre id="var-docstr">Lookup the EntitySpec value for given key of the given type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L44" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L44" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -374,7 +376,7 @@ Fetch a person by name:
 </pre>
   <pre id="var-docstr">Given a type and one or more keys,
 lookup of the entity-spec for the :type of the last field supplied.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L157" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L157" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -384,7 +386,7 @@ lookup of the entity-spec for the :type of the last field supplied.</pre>
 </pre>
   <pre id="var-docstr">Given a type and one or more keys,
 lookup of the entity-spec for the :of of the last field supplied.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L163" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L163" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -393,7 +395,7 @@ lookup of the entity-spec for the :of of the last field supplied.</pre>
   <pre id="var-usage">Usage: (fetch type where-clause &amp; options)
 </pre>
   <pre id="var-docstr">Fetch a seq of entities for the given type matching the supplied parameters.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L241" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L241" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -402,7 +404,16 @@ lookup of the entity-spec for the :of of the last field supplied.</pre>
   <pre id="var-usage">Usage: (fetch-all type &amp; options)
 </pre>
   <pre id="var-docstr">Fetch all of the entities for the given type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L246" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L246" id="var-source">Source</a>
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="karras.entity/fetch-by-id">fetch-by-id</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (fetch-by-id type id)
+</pre>
+  <pre id="var-docstr">Fetch an enity by :_id</pre>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L256" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -411,7 +422,7 @@ lookup of the entity-spec for the :of of the last field supplied.</pre>
   <pre id="var-usage">Usage: (fetch-map-reduce-values map-reduce-result &amp; fetch-options)
 </pre>
   <pre id="var-docstr">Takes the result of map-reduce and fetches the values. Takes the same options as fetch.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L283" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L288" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -420,7 +431,7 @@ lookup of the entity-spec for the :of of the last field supplied.</pre>
   <pre id="var-usage">Usage: (fetch-one type where-clause &amp; options)
 </pre>
   <pre id="var-docstr">Fetch the first entity for the given type matching the supplied where-clause and options.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L251" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L251" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -430,7 +441,7 @@ lookup of the entity-spec for the :of of the last field supplied.</pre>
 </pre>
   <pre id="var-docstr">Given a type and one or more keys,
 returns the field spec for the last key.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L145" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L145" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -439,7 +450,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (find-and-modify type query modifier &amp; options)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/findandmodify+Command">http://www.mongodb.org/display/DOCS/findandmodify+Command</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L268" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L273" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -448,7 +459,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (find-and-remove type query &amp; options)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/findandmodify+Command">http://www.mongodb.org/display/DOCS/findandmodify+Command</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L273" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L278" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -457,7 +468,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (get-reference entity k)
 </pre>
   <pre id="var-docstr">Fetch the entity or entities referrenced by the given key.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L326" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L331" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -466,7 +477,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (index type &amp; keys)
 </pre>
   <pre id="var-docstr">Associate an index with a give type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L293" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L298" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -475,7 +486,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (list-indexes type)
 </pre>
   <pre id="var-docstr"></pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L307" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L312" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -484,7 +495,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (make type hmap)
 </pre>
   <pre id="var-docstr">Converts a hashmap to the supplied type.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L101" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L101" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -493,7 +504,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-usage">Usage: (map-reduce type mapfn reducefn &amp; options)
 </pre>
   <pre id="var-docstr">See <a href="http://www.mongodb.org/display/DOCS/MapReduce">http://www.mongodb.org/display/DOCS/MapReduce</a></pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L278" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L283" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -503,7 +514,7 @@ returns the field spec for the last key.</pre>
   <pre id="var-docstr">Composes map-reduce and fetch-map-reduce-values and returns all the results.
 If you need to filter the results use:
   (fetch-map-reduce-values (map-reduce ...) ...your fetch options...</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L288" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L293" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -513,7 +524,7 @@ If you need to filter the results use:
        (save entity &amp; entities)
 </pre>
   <pre id="var-docstr">Inserts or updates one or more entities.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L199" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L199" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -522,7 +533,7 @@ If you need to filter the results use:
   <pre id="var-usage">Usage: (set-reference entity k v)
 </pre>
   <pre id="var-docstr">Set an :_id to the key of the given entity</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L319" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L324" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -531,7 +542,7 @@ If you need to filter the results use:
   <pre id="var-usage">Usage: (swap-entity-spec-in! type attribute-path f &amp; args)
 </pre>
   <pre id="var-docstr">Combines swap! and assoc-in to modify the attribute of a entity-spec.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L174" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L174" id="var-source">Source</a>
 </div><div id="var-entry">
   <br />
   <hr />
@@ -541,7 +552,7 @@ If you need to filter the results use:
        (update entity &amp; entities)
 </pre>
   <pre id="var-docstr">Inserts or updates one or more entities.</pre>
-  <a href="http://github.com/wilkes/karras/blob/cde783e2d69202cf4d1069132c325c75396e2a69/src/karras/entity.clj#L220" id="var-source">Source</a>
+  <a href="http://github.com/wilkes/karras/blob/5f34edb9cc2679f124b6115ba1b824e2340fb14f/src/karras/entity.clj#L220" id="var-source">Source</a>
 </div>
 
 
