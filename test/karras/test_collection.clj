@@ -37,7 +37,9 @@
   (testing "fetching"
     (expect (count (fetch-all people)) => 4)
     (expect (count (fetch people (where (gte :age 18)))) => 2)
-    (expect (fetch-one people (where (eq :first-name "Bill"))) => Bill))
+    (expect (fetch-one people (where (eq :first-name "Bill"))) => Bill)
+    (expect (fetch-by-id people (-> Bill :_id)) => Bill)
+    (expect (fetch-by-id people (-> Bill :_id str)) => Bill))
   (testing "distinct-values"
     (expect (distinct-values people :age) => #{21 18 16})))
 
@@ -181,6 +183,5 @@
   (expect (list-indexes people)
           => [{:key {:_id 1}, :ns "integration-tests.people", :name "_id_"}
               {:key {:first-name 1}, :unique true, :ns "integration-tests.people",
-               :name "unique-first-name"}]
-  ))
+               :name "unique-first-name"}]))
 

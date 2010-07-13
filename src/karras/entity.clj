@@ -16,7 +16,7 @@ Example:
      :address {:type Address}
      :phones {:type :list :of Phone}])
 "}
-    karras.entity
+  karras.entity
   (:require [karras.collection :as c])
   (:use karras.sugar
         [clojure.contrib.def :only [defnk defalias defvar]]
@@ -219,7 +219,7 @@ Example:
 (defn fetch-by-id
   "Fetch an enity by :_id"
   [type id]
-  (fetch-one type (where (eq :_id id))))
+  (c/fetch-by-id (collection-for type) id))
 
 (defn count-instances
   "Return the number of entities optionally matching a given where clause."
