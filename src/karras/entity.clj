@@ -59,30 +59,6 @@ Example:
          (keyword? x)                (recur (cons y zs) (assoc results x {}))
          :else (throw (IllegalArgumentException. (str x " is not a keyword or a map"))))))))
 
-(defprotocol EntityCallbacks
-  "Lifecycle callbacks for Entities.
-   All of these are required to take in an entity and return an entity.
-
-  (before-create [e])
-  (before-delete [e])
-  (before-save [e])
-  (before-update [e])
-  (after-create [e])
-  (after-delete [e])
-  (after-save [e])
-  (after-update [e])"
-  (before-create [e])
-  (before-delete [e])
-  (before-save [e])
-  (before-update [e])
-  (after-create [e])
-  (after-delete [e])
-  (after-save [e])
-  (after-update [e]))
-
-(defonce default-callbacks
-  (reduce #(assoc %1 %2 identity) {} (-> EntityCallbacks :method-map keys)))
-
 (defmulti convert
   "Multimethod used to convert a entity.
    Takes in a field-spec and a val and returns the conver
@@ -127,7 +103,6 @@ Example:
                       ~(if is-entity?
                          (default-collection-name classname)
                          nil)))
-     (extend ~classname EntityCallbacks default-callbacks)
      (defmethod convert ~classname [field-spec# val#]
                 (make (:type field-spec#) val#))
      ~@(map (fn [f] `(-> ~classname ~f)) type-fns)))
@@ -199,16 +174,9 @@ Example:
 (defn save
   "Inserts or updates one or more entities."
   ([entity]
-     (let [update?  (-> entity :_id nil? not)
-           before-cb (if update? before-update before-create)
-           after-cb (if update? after-update after-create)]
-       (->> entity
-            before-cb
-            before-save
-            (c/save (collection-for entity))
-            (ensure-type (class entity))
-            after-save
-            after-cb)))
+     (->> entity
+          (c/save (collection-for entity))
+          (ensure-type (class entity))))
   ([entity & entities]
      (doall (map save (cons entity entities)))))
 
@@ -222,12 +190,7 @@ Example:
 (defn delete
   "Deletes one or more entities."
   ([entity]
-     (let [do-delete #(do (c/delete (collection-for entity) (where (eq :_id (:_id entity))))
-                          %)]
-       (->> entity
-            before-delete
-            do-delete
-            after-delete)))
+     (c/delete (collection-for entity) (where (eq :_id (:_id entity)))))
   ([entity & entities]
      (doall (map delete (cons entity entities)))))
 

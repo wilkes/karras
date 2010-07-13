@@ -178,39 +178,6 @@
     (expect (collection-for (make Person {:last-name "Smith"})) => :people
             (fake (collection "people") => :people))))
 
-(deftest test-callback-protocol
-  (are [callback e] (= e (callback e))
-       before-create (Simple.)
-       before-delete (Simple.)
-       before-save (Simple.)
-       before-update (Simple.)
-       after-create (Simple.)
-       after-delete (Simple.)
-       after-save (Simple.)
-       after-update (Simple.)))
-
-(deftest test-callback-impls
-  (let [add-callback (fn [s]
-                       (fn [e]
-                         (assoc e :called (conj (or (vec (:called e)) []) s))))]
-    (extend Person
-      EntityCallbacks
-      {:before-create (add-callback "before-create")
-       :before-update (add-callback "before-update")
-       :before-save (add-callback "before-save")
-       :after-save (add-callback "after-save")
-       :after-update (add-callback "after-update")
-       :after-create (add-callback "after-create")
-       :before-delete (add-callback "before-delete")
-       :after-delete (add-callback "after-delete")}))
-  (let [person (create Person {:first-name "John" :last-name "Smith"})]
-    (expect (:called person)
-            => ["before-create" "before-save" "after-save" "after-create"])
-    (expect (:called (save (dissoc person :called)))
-            => ["before-update" "before-save" "after-save" "after-update"])
-    (expect (:called (delete (dissoc person :called)))
-            => ["before-delete" "after-delete"])))
-
 (deftest test-ensure-indexes
   (expect (list-indexes Person) => empty?)
   (ensure-indexes)
