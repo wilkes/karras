@@ -131,7 +131,8 @@
       (expect (-> person :address :street class) => Street)
       (expect (-> person :phones first class)=> Phone)
       (expect (-> person :blood-alcohol-level) =>  0.0)
-      (expect (-> person :phones first :country-code) => 1)))
+      (expect (-> person :phones first :country-code) => 1)
+      (expect (-> person save :_id) => not-nil?)))
   (testing "preserves the metadata of original hash")
    (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
      (expect (meta person) => {:meta "data"})))
@@ -198,14 +199,13 @@
 
 (deftest test-references
   (testing "saving"
-    (let [in-charge (create Resposibility {:name "in charge"})
-          john (-> (create Person {:first-name "John" :last-name "Smith"})
-                   (set-reference :responsibity in-charge)
+    (let [john (-> (make Person {:first-name "John" :last-name "Smith"})
+                   (relate :responsibity (make Resposibility {:name "in charge"}))
                    save)
           jane (create Person {:first-name "Jane" :last-name "Doe"})
-          company (-> (create Company {:name "Acme"})
-                      (set-reference :ceo john)
-                      (add-reference :employees jane)
+          company (-> (make Company {:name "Acme"})
+                      (relate :ceo john)
+                      (relate :employees jane)
                       save)]
       (expect (-> company :ceo :_id) => (:_id john))
       (expect (-> company :employees first :_id) => (:_id jane))))

@@ -327,6 +327,27 @@ Example:
       (fetch target-type (where (in :_id (map :_id (k entity)))))
       (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
 
+(defn grab [parent k]
+  (let [field-spec (field-spec-of (class parent) k)
+        val (get parent k)]
+    (if (some #{(:type field-spec)} [:reference :references])
+      (if-let [cached (-> val meta :cache deref)]
+        cached
+        (let [result (get-reference parent k)]
+          (swap! (:cache (meta val)) (fn [_] result))
+          result))
+      val)))
+
+(defn grab-in [parent & ks]
+  (reduce grab parent ks))
+
+(defn relate [parent k & vs]
+  (let [field-spec (field-spec-of (class parent) k)
+        saved-entities (map #(if (:_id %) % (save %)) vs)]
+    (if (= :reference (:type field-spec))
+      (set-reference parent k (first saved-entities))
+      (apply add-reference parent k saved-entities))))
+
 (defn make-fetch
   [fetch-fn spec-key type fn-name args criteria]
   `(do
@@ -373,17 +394,3 @@ Example:
      (person-by-name \"John\" \"Smith\")"
   [type fn-name [& args] & criteria]
   (make-fetch 'fetch-one :fetch-ones type fn-name args criteria))
-
-(defn grab [parent k]
-  (let [field-spec (field-spec-of (class parent) k)
-        val (get parent k)]
-    (if (some #{(:type field-spec)} [:reference :references])
-      (if-let [cached (-> val meta :cache deref)]
-        cached
-        (let [result (get-reference parent k)]
-          (swap! (:cache (meta val)) (fn [_] result))
-          result))
-      val)))
-
-(defn grab-in [parent & ks]
-  (reduce grab parent ks))
