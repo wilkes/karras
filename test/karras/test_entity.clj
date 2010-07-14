@@ -207,8 +207,8 @@
                       (set-reference :ceo john)
                       (add-reference :employees jane)
                       save)]
-      (expect (:ceo company) => (:_id john))
-      (expect (first (:employees company)) => (:_id jane))))
+      (expect (-> company :ceo :_id) => (:_id john))
+      (expect (-> company :employees first :_id) => (:_id jane))))
   (testing "reading"
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (get-reference company :ceo)
@@ -229,6 +229,16 @@
           [jane bill] (get-reference company :employees)]
       (expect (:first-name jane) => "Jane")
       (expect (:first-name bill) => "Bill"))))
+
+(deftest test-grab-caching
+  (let [john (create Person {:first-name "John" :last-name "Smith"})
+        company (-> (create Company {:name "Acme"})
+                    (set-reference :ceo john)
+                    save)]
+    (expect (grab company :ceo) => :fake-result
+            (fake (get-reference company :ceo) => :fake-result))
+    (expect (-> (get company :ceo) meta :cache deref) => :fake-result)
+    (expect (-> (get company :ceo) :_ref) => "people")))
 
 (deftest test-deffetch
   (is (= {:older-companies older-companies

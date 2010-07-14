@@ -69,6 +69,14 @@ Example:
   [field-spec vals]
   (map #(convert (assoc field-spec :type (:of field-spec)) %) vals))
 
+(defmethod convert :reference
+  [field-spec val]
+  (with-meta val {:cache (atom nil)}))
+
+(defmethod convert :references
+  [field-spec vals]
+  (with-meta vals {:cache (atom nil)}))
+
 (defmethod convert :default
   [_ val]
   val)
@@ -291,19 +299,23 @@ Example:
   [type]
   (c/list-indexes (collection-for type)))
 
+(defn- make-reference [entity]
+  (let [coll (collection-for entity)]
+    {:_db (.getName (c/collection-db coll)) :_id (:_id entity) :_ref (.getName coll)}))
+
 (defn add-reference
   "Add one more :_id's to a sequence of the given key"
   [entity k & vs]
   (if-not (remove nil? (map :_id vs))
     (throw (IllegalArgumentException. "All references must have an :_id.")))
-  (assoc entity k (concat (or (k entity) []) (map :_id vs))))
+  (assoc entity k (concat (or (k entity) []) (map make-reference vs))))
 
 (defn set-reference
   "Set an :_id to the key of the given entity"
   [entity k v]
   (if-not (:_id v)
     (throw (IllegalArgumentException. "Reference must have an :_id.")))
-  (assoc entity k (:_id v)))
+  (assoc entity k (make-reference v)))
 
 (defn get-reference
   "Fetch the entity or entities referrenced by the given key."
@@ -312,8 +324,8 @@ Example:
         target-type (:of field-spec)
         list? (= (:type field-spec) :references)]
     (if list?
-      (fetch target-type (where (in :_id (k entity))))
-      (fetch-one target-type (where (eq :_id (k entity)))))))
+      (fetch target-type (where (in :_id (map :_id (k entity)))))
+      (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
 
 (defn make-fetch
   [fetch-fn spec-key type fn-name args criteria]
@@ -363,10 +375,15 @@ Example:
   (make-fetch 'fetch-one :fetch-ones type fn-name args criteria))
 
 (defn grab [parent k]
-  (let [field-spec (field-spec-of (class parent) k)]
+  (let [field-spec (field-spec-of (class parent) k)
+        val (get parent k)]
     (if (some #{(:type field-spec)} [:reference :references])
-      (get-reference parent k)
-      (get parent k))))
+      (if-let [cached (-> val meta :cache deref)]
+        cached
+        (let [result (get-reference parent k)]
+          (swap! (:cache (meta val)) (fn [_] result))
+          result))
+      val)))
 
 (defn grab-in [parent & ks]
   (reduce grab parent ks))
