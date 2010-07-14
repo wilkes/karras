@@ -1,7 +1,7 @@
 (ns karras.test-entity
   (:require [karras.core :as karras])
+  (:use karras.entity :reload-all)
   (:use karras.sugar
-        karras.entity
         [karras.collection :only [drop-collection collection]]
         clojure.test
         midje.semi-sweet))
@@ -29,6 +29,9 @@
     (.format (java.text.SimpleDateFormat. "yyyy-MM-dd") d)
     d))
 
+(defentity Resposibility 
+  [:name])
+
 (defentity Person
   [:first-name
    :middle-initial
@@ -36,7 +39,8 @@
    :birthday {:type ::my-date}
    :blood-alcohol-level {:default 0.0}
    :address {:type Address}
-   :phones {:type :list :of Phone}]
+   :phones {:type :list :of Phone}
+   :responsibity {:type :reference :of Resposibility}]
   (index (desc :last-name) (desc :first-name))
   (index (asc :birthday)))
 
@@ -194,7 +198,10 @@
 
 (deftest test-references
   (testing "saving"
-    (let [john (create Person {:first-name "John" :last-name "Smith"})
+    (let [in-charge (create Resposibility {:name "in charge"})
+          john (-> (create Person {:first-name "John" :last-name "Smith"})
+                   (set-reference :responsibity in-charge)
+                   save)
           jane (create Person {:first-name "Jane" :last-name "Doe"})
           company (-> (create Company {:name "Acme"})
                       (set-reference :ceo john)
@@ -207,7 +214,14 @@
           john (get-reference company :ceo)
           [jane] (get-reference company :employees)]
       (expect (:last-name john) => "Smith")
-      (expect (:last-name jane) => "Doe" )))
+      (expect (:last-name jane) => "Doe" )
+      (testing "grab"
+        (expect (grab company :name) => (:name company))
+        (expect (grab company :ceo) => john)
+        (expect (grab company :employees) => [jane]))
+      (testing "grab-in"
+        (expect (grab-in company :ceo :first-name) => "John")
+        (expect (grab-in company :ceo :responsibity :name) => "in charge"))))
   (testing "updating"
     (let [bill (create Person {:first-name "Bill" :last-name "Jones"})
           company (-> (fetch-one Company (where (eq :name "Acme")))

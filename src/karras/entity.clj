@@ -361,3 +361,12 @@ Example:
      (person-by-name \"John\" \"Smith\")"
   [type fn-name [& args] & criteria]
   (make-fetch 'fetch-one :fetch-ones type fn-name args criteria))
+
+(defn grab [parent k]
+  (let [field-spec (field-spec-of (class parent) k)]
+    (if (some #{(:type field-spec)} [:reference :references])
+      (get-reference parent k)
+      (get parent k))))
+
+(defn grab-in [parent & ks]
+  (reduce grab parent ks))
