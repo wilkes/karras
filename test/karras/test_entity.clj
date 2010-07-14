@@ -220,8 +220,8 @@
         (expect (grab company :ceo) => john)
         (expect (grab company :employees) => [jane]))
       (testing "grab-in"
-        (expect (grab-in company :ceo :first-name) => "John")
-        (expect (grab-in company :ceo :responsibity :name) => "in charge"))))
+        (expect (grab-in company [:ceo :first-name]) => "John")
+        (expect (grab-in company [:ceo :responsibity :name]) => "in charge"))))
   (testing "updating"
     (let [bill (create Person {:first-name "Bill" :last-name "Jones"})
           company (-> (fetch-one Company (where (eq :name "Acme")))
@@ -238,8 +238,11 @@
     (expect (grab company :ceo) => :fake-result
             (fake (get-reference company :ceo) => :fake-result))
     (expect (-> (get company :ceo) meta :cache deref) => :fake-result)
-    (expect (-> (get company :ceo) :_ref) => "people")))
-
+    (expect (-> (get company :ceo) :_ref) => "people")
+    (testing "cache hit"
+      (expect (grab company :ceo) => :fake-result))
+    (testing "cache refresh"
+      (expect (grab company :ceo :refresh) => john))))
 (deftest test-deffetch
   (is (= {:older-companies older-companies
           :modern-companies modern-companies}

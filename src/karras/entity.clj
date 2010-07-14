@@ -327,19 +327,19 @@ Example:
       (fetch target-type (where (in :_id (map :_id (k entity)))))
       (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
 
-(defn grab [parent k]
+(defn grab [parent k & refresh]
   (let [field-spec (field-spec-of (class parent) k)
         val (get parent k)]
     (if (some #{(:type field-spec)} [:reference :references])
-      (if-let [cached (-> val meta :cache deref)]
+      (if-let [cached (and (not refresh) (-> val meta :cache deref))]
         cached
         (let [result (get-reference parent k)]
           (swap! (:cache (meta val)) (fn [_] result))
           result))
       val)))
 
-(defn grab-in [parent & ks]
-  (reduce grab parent ks))
+(defn grab-in [parent ks & refresh]
+  (reduce #(grab %1 %2 refresh) parent ks))
 
 (defn relate [parent k & vs]
   (let [field-spec (field-spec-of (class parent) k)
