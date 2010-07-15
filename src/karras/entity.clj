@@ -327,7 +327,11 @@ Example:
       (fetch target-type (where (in :_id (map :_id (k entity)))))
       (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
 
-(defn grab [parent k & refresh]
+(defn grab
+  "Analogous to clojure.core/get except that it will follow references.
+   References are cached in a :cache atom of the references metadata.
+   Takes an optional refresh flag to force it to fetch the reference."
+  [parent k & refresh]
   (let [field-spec (field-spec-of (class parent) k)
         val (get parent k)]
     (if (some #{(:type field-spec)} [:reference :references])
@@ -338,15 +342,29 @@ Example:
           result))
       val)))
 
-(defn grab-in [parent ks & refresh]
+(defn grab-in
+  "Analogous to clojure.core/get-in except that it will follow references.
+   References are cached in a :cache atom of the references metadata.
+   Takes an optional refresh flag to force it to fetch any references
+   along the path."
+  [parent ks & refresh]
   (reduce #(grab %1 %2 refresh) parent ks))
 
-(defn relate [parent k & vs]
+(defn relate
+  "Relates an entity to another entity as a reference. Returns the parent with
+   the reference associated.  No-op if the target field is not a :reference or 
+   :references. If the the key is a list it will add the reference, otherwise it
+   will set the reference. References are automatically saved if they haven't 
+   been already. References are stored on the entity as:
+     {:_db \"db-name\" :_id ObjectId :_ref \"collection-name\")}"
+  [parent k & vs]
   (let [field-spec (field-spec-of (class parent) k)
         saved-entities (map #(if (:_id %) % (save %)) vs)]
     (if (= :reference (:type field-spec))
       (set-reference parent k (first saved-entities))
-      (apply add-reference parent k saved-entities))))
+      (if (= :references (:type field-spec))
+        (apply add-reference parent k saved-entities)
+        parent))))
 
 (defn make-fetch
   [fetch-fn spec-key type fn-name args criteria]
