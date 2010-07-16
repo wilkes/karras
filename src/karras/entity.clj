@@ -205,14 +205,7 @@ Example:
   ([type obj]
      (update-all type {} obj))
   ([type criteria obj]
-     (c/update-all (collection-for type) criteria obj)))
-
-(defn delete
-  "Deletes one or more entities."
-  ([entity]
-     (c/delete (collection-for entity) (where (eq :_id (:_id entity)))))
-  ([entity & entities]
-     (doall (map delete (cons entity entities)))))
+     (update type criteria obj :multi)))
 
 (defn delete-all
   "Deletes all entitys given an optional where clause."
@@ -220,6 +213,13 @@ Example:
      (delete-all type {}))
   ([type where]
      (c/delete (collection-for type) where)))
+
+(defn delete
+  "Deletes one or more entities."
+  ([entity]
+     (delete-all entity (where (eq :_id (:_id entity)))))
+  ([entity & entities]
+     (doall (map delete (cons entity entities)))))
 
 (defn fetch
   "Fetch a seq of entities for the given type matching the supplied parameters."
@@ -229,12 +229,12 @@ Example:
 (defn fetch-all
   "Fetch all of the entities for the given type."
   [type & options]
-  (map #(make type %) (apply c/fetch-all (collection-for type) options)))
+  (apply fetch type nil options))
 
 (defn fetch-one
   "Fetch the first entity for the given type matching the supplied criteria and options."
   [type criteria & options]
-  (make type (apply c/fetch-one (collection-for type) criteria options)))
+  (first (apply fetch type criteria options)))
 
 (defn fetch-by-id
   "Fetch an enity by :_id"
@@ -248,7 +248,7 @@ Example:
   ([type]
      (count-instances type nil))
   ([type criteria]
-     (c/fetch (collection-for type) criteria :count true)))
+     (c/count-docs (collection-for type) criteria)))
 
 (defn distinct-values
   "Return the distinct values of a given type for a given key."
