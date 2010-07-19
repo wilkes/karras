@@ -72,12 +72,12 @@ Example:
 
 (defmethod convert :reference
   [field-spec val]
-  (with-meta (make (:of field-spec) val)
+  (with-meta (make (:of field-spec) val :no-defaults)
     {:cache (atom nil)}))
 
 (defmethod convert :references
   [field-spec vals]
-  (with-meta (map (partial make (:of field-spec)) vals)
+  (with-meta (map #(make (:of field-spec) % :no-defaults) vals)
     {:cache (atom nil)}))
 
 (defmethod convert :default
@@ -86,15 +86,16 @@ Example:
 
 (defn make
   "Converts a hashmap to the supplied type."
-  [#^Class type hmap]
+  [#^Class type hmap & [no-defaults]]
   (let [fields (-> type entity-spec :fields)
         has-key? (fn [e k]
                    (try (some #{k} (keys e))
-                        (catch Exception _ nil)))]
+                        (catch Exception _ nil)))
+        make-default? #(and (nil? no-defaults) (:default %))]
     (reduce (fn [entity [k field-spec]]
               (cond
                (has-key? entity k)   (assoc entity k (convert field-spec (k hmap)))
-               (:default field-spec) (assoc entity k (:default field-spec))
+               (make-default? field-spec) (assoc entity k (:default field-spec))
                :otherwise            entity))
             (with-meta (merge (.newInstance type) hmap) (meta hmap))
             fields)))
