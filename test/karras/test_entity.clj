@@ -230,7 +230,13 @@
                       (add-reference :employees bill))
           [jane bill] (get-reference company :employees)]
       (expect (:first-name jane) => "Jane")
-      (expect (:first-name bill) => "Bill"))))
+      (expect (:first-name bill) => "Bill")))
+  (testing "reverse look up company from person"
+    (let [company (fetch-one Company (where (eq :name "Acme")))
+          john (fetch-one Person (where (eq :first-name "John")))
+          jane (fetch-one Person (where (eq :first-name "Jane")))]
+      (expect (fetch-refers john Company :ceo) => [company])
+      (expect (fetch-refers jane Company :employees) => [company]))))
 
 (deftest test-grab-caching
   (let [john (create Person {:first-name "John" :last-name "Smith"})
