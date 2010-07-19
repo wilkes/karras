@@ -58,6 +58,7 @@ Example:
          (keyword? x)                (recur (cons y zs) (assoc results x {}))
          :else (throw (IllegalArgumentException. (str x " is not a keyword or a map"))))))))
 
+(declare make)
 (defmulti convert
   "Multimethod used to convert a entity.
    Takes in a field-spec and a val and returns the conver
@@ -71,11 +72,13 @@ Example:
 
 (defmethod convert :reference
   [field-spec val]
-  (with-meta val {:cache (atom nil)}))
+  (with-meta (make (:of field-spec) val)
+    {:cache (atom nil)}))
 
 (defmethod convert :references
   [field-spec vals]
-  (with-meta vals {:cache (atom nil)}))
+  (with-meta (map (partial make (:of field-spec)) vals)
+    {:cache (atom nil)}))
 
 (defmethod convert :default
   [_ val]

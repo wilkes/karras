@@ -213,6 +213,8 @@
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (get-reference company :ceo)
           [jane] (get-reference company :employees)]
+      (expect (class (:ceo company)) => Person)
+      (expect (class (first (:employees company))) => Person)
       (expect (:last-name john) => "Smith")
       (expect (:last-name jane) => "Doe" )
       (testing "grab"
@@ -232,17 +234,30 @@
 
 (deftest test-grab-caching
   (let [john (create Person {:first-name "John" :last-name "Smith"})
+        jane (create Person {:first-name "Jane" :last-name "Doe"})
         company (-> (create Company {:name "Acme"})
-                    (set-reference :ceo john)
+                    (relate :ceo john)
+                    (relate :employees jane)
                     save)]
-    (expect (grab company :ceo) => :fake-result
-            (fake (get-reference company :ceo) => :fake-result))
-    (expect (-> (get company :ceo) meta :cache deref) => :fake-result)
-    (expect (-> (get company :ceo) :_ref) => "people")
-    (testing "cache hit"
-      (expect (grab company :ceo) => :fake-result))
-    (testing "cache refresh"
-      (expect (grab company :ceo :refresh) => john))))
+    (testing "single reference"
+      (expect (grab company :ceo) => :fake-result
+              (fake (get-reference company :ceo) => :fake-result))
+      (expect (-> (get company :ceo) meta :cache deref) => :fake-result)
+      (expect (-> (get company :ceo) :_ref) => "people")
+      (testing "cache hit"
+        (expect (grab company :ceo) => :fake-result))
+      (testing "cache refresh"
+        (expect (grab company :ceo :refresh) => john)))
+    (testing "list of references"
+      (expect (grab company :employees) => :fake-result
+              (fake (get-reference company :employees) => :fake-result))
+      (expect (-> (get company :employees) meta :cache deref) => :fake-result)
+      (expect (-> (get company :employees) first :_ref) => "people")
+      (testing "cache hit"
+        (expect (grab company :employees) => :fake-result))
+      (testing "cache refresh"
+        (expect (grab company :employees :refresh) => [jane])))))
+
 (deftest test-deffetch
   (is (= {:older-companies older-companies
           :modern-companies modern-companies}
