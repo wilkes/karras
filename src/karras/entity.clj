@@ -32,7 +32,7 @@ Example:
 (defonce entity-specs (atom {}))
 
 (defn entity-spec
-  "Lookup the DocSpec for a given type"
+  "Lookup the EntitySpec for a given type"
   [type]
   (get @entity-specs type))
 
@@ -44,7 +44,6 @@ Example:
 (defn entity-spec-get-in
   "Lookup the EntitySpec value for given key of the given type."
   [type path]
-  (prn path)
   (get-in (entity-spec type) path))
 
 (defn parse-fields [ks]
