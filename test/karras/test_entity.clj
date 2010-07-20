@@ -239,8 +239,8 @@
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (fetch-one Person (where (eq :first-name "John")))
           jane (fetch-one Person (where (eq :first-name "Jane")))]
-      (expect (fetch-refers john Company :ceo) => [company])
-      (expect (fetch-refers jane Company :employees) => [company]))))
+      (expect (fetch-refer-to john Company :ceo) => [company])
+      (expect (fetch-refer-to jane Company :employees) => [company]))))
 
 (deftest test-grab-caching
   (let [john (create Person {:first-name "John" :last-name "Smith"})

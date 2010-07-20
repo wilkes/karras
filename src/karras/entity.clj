@@ -370,18 +370,18 @@ Example:
         (apply add-reference parent k saved-entities)
         parent))))
 
-(defn fetch-refers
+(defn fetch-refer-to
   "Given an entity, a type and a field, fetch all the entities of the given type
    that refer to the given entity. Takes the same options as fetch. "
-  [entity refers-type refers-field & options]
-  (let [field-spec (field-spec-of refers-type refers-field)
+  [entity referrer-type referrer-field & options]
+  (let [field-spec (field-spec-of referrer-type referrer-field)
         id (:_id entity)
         criteria (if (= :reference (:type field-spec))
                    (where
-                    (eq (str (name refers-field) "._id") id))
+                    (eq (str (name referrer-field) "._id") id))
                    (where
-                    (element-match refers-field (eq :_id id))))]
-    (apply fetch refers-type criteria options)))
+                    (element-match referrer-field (eq :_id id))))]
+    (apply fetch referrer-type criteria options)))
 
 (defn make-fetch
   [fetch-fn spec-key type fn-name args criteria]
