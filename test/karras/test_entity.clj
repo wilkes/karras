@@ -159,7 +159,11 @@
               => person))
     (testing "fetch"
       (expect (first (fetch Person (where (eq :last-name "Smith"))))
-              => person))
+              => person)
+      (expect (first (fetch Person (where (eq :last-name "Nobody"))))
+              => nil)
+      (expect (fetch-one Person (where (eq :last-name "Nobody")))
+              => nil))
     (testing "save"
       (save (assoc person :was-saved true))
       (expect (:was-saved (fetch-by-id person)) => true))
