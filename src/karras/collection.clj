@@ -156,7 +156,7 @@
   "Fetch a document by :_id"
   [#^DBCollection coll id]
   (let [id (if (= ObjectId (class id)) id (ObjectId. id))]
-    (to-clj (.findOne coll id))))
+    (to-clj (fetch-one coll {:_id id}))))
 
 (defn distinct-values
   "Fetch a seq of the distinct values of a given collection for a key."

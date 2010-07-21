@@ -185,6 +185,12 @@
         (delete-all Person)
         (expect (count-instances Person) => 0)))))
 
+(deftest test-fetch-by-id
+  (let [person (create Person {:first-name "John" :last-name "Smith"})]
+    (expect (fetch-by-id person) => person)
+    (delete person)
+    (expect (fetch-by-id person) => nil)))
+
 (deftest test-collection-for
   (testing "entity type"
     (expect (collection-for Person) => :people
