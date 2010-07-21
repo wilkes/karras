@@ -37,7 +37,7 @@
    :middle-initial
    :last-name
    :birthday {:type ::my-date}
-   :blood-alcohol-level {:default 0.0}
+   :counter {:default 0}
    :address {:type Address}
    :phones {:type :list :of Phone}
    :responsibity {:type :reference :of Resposibility}]
@@ -66,16 +66,15 @@
 
 (use-fixtures :each (fn [t]
                       (mongo
-                        (drop-collection (collection-for Person))
-                        (drop-collection (collection-for Company))
-                        (drop-collection (collection-for Simple))
-                        (t))))
+                       (doseq [t [Person Company Simple]]
+                         (drop-collection (collection-for t)))
+                       (t))))
 
 (deftest test-parse-fields
   (let [parsed? (fn [fields expected-parsed-fields]
                   (expect (parse-fields fields) =>  expected-parsed-fields))]
     (testing "empty fields"
-          (parsed? nil {}))
+      (parsed? nil {}))
     (testing "no type specified"
       (parsed? [:no-type] {:no-type {}}))
     (testing "type specified"
@@ -95,7 +94,7 @@
 
 (deftest test-entity-spec
   (doseq [e [Address Phone Person]]
-    (expect e => not-nil?)))
+    (expect (entity-spec e) => not-nil?)))
 
 (deftest test-entity-spec-in
   (expect (entity-spec-of Person :address) => (entity-spec Address))
@@ -111,7 +110,7 @@
 
 (deftest test-make
   (testing "flat"
-    (expect (class (make Phone {:number "555-555-1212"})) => Phone))
+    (expect (class (make Phone {})) => Phone))
   (testing "nested"
     (let [address (make Address {:city "Nashville"
                                  :street {:number "123"
@@ -130,7 +129,7 @@
       (expect (-> person :address class) => Address)
       (expect (-> person :address :street class) => Street)
       (expect (-> person :phones first class)=> Phone)
-      (expect (-> person :blood-alcohol-level) =>  0.0)
+      (expect (-> person :counter) =>  0.0)
       (expect (-> person :phones first :country-code) => 1)
       (expect (-> person save :_id) => not-nil?)))
   (testing "preserves the metadata of original hash")
@@ -155,13 +154,12 @@
       (expect (fetch-one Person (where (eq :_id (:_id person))))
               => person))
     (testing "fetch-all"
-      (expect (first (fetch-all Person))
-              => person))
+      (expect (fetch-all Person) => [person]))
     (testing "fetch"
-      (expect (first (fetch Person (where (eq :last-name "Smith"))))
-              => person)
-      (expect (first (fetch Person (where (eq :last-name "Nobody"))))
-              => nil)
+      (expect (fetch Person (where (eq :last-name "Smith")))
+              => [person])
+      (expect (fetch Person (where (eq :last-name "Nobody")))
+              => [])
       (expect (fetch-one Person (where (eq :last-name "Nobody")))
               => nil))
     (testing "save"
@@ -175,7 +173,7 @@
     (testing "deletion"
       (dotimes [x 5]
         (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
-      (expect (first (distinct-values Person :first-name)) => "John")
+      (expect (distinct-values Person :first-name) => #{"John"})
       (expect (count-instances Person) => 6)
       (testing "delete"
         (delete person)
@@ -198,19 +196,18 @@
 (deftest test-ensure-indexes
   (expect (list-indexes Person) => empty?)
   (ensure-indexes)
-  ;; 2 + _id index
-  (expect (count (list-indexes Person)) => 3))
+  (expect (count (list-indexes Person)) => 3)) ;; 2 + _id index
 
 (deftest test-references
   (testing "saving"
-    (let [john (-> (make Person {:first-name "John" :last-name "Smith"})
-                   (relate :responsibity (make Resposibility {:name "in charge"}))
-                   save)
+    (let [john (create-with Person
+                            {:first-name "John" :last-name "Smith"}
+                            (relate :responsibity {:name "in charge"}))
           jane (create Person {:first-name "Jane" :last-name "Doe"})
-          company (-> (make Company {:name "Acme"})
-                      (relate :ceo john)
-                      (relate :employees jane)
-                      save)]
+          company (create-with Company
+                               {:name "Acme"}
+                               (relate :ceo john)
+                               (relate :employees jane))]
       (expect (-> company :ceo :_id) => (:_id john))
       (expect (-> company :employees first :_id) => (:_id jane))))
   (testing "reading"
@@ -229,26 +226,27 @@
         (expect (grab-in company [:ceo :first-name]) => "John")
         (expect (grab-in company [:ceo :responsibity :name]) => "in charge"))))
   (testing "updating"
-    (let [bill (create Person {:first-name "Bill" :last-name "Jones"})
-          company (-> (fetch-one Company (where (eq :name "Acme")))
-                      (add-reference :employees bill))
-          [jane bill] (get-reference company :employees)]
+    (let [company (-> (fetch-one Company (where (eq :name "Acme")))
+                      (relate :employees {:first-name "Bill" :last-name "Jones"}))
+          [jane bill] (grab company :employees)]
       (expect (:first-name jane) => "Jane")
       (expect (:first-name bill) => "Bill")))
   (testing "reverse look up company from person"
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (fetch-one Person (where (eq :first-name "John")))
           jane (fetch-one Person (where (eq :first-name "Jane")))]
-      (expect (fetch-refer-to john Company :ceo) => [company])
-      (expect (fetch-refer-to jane Company :employees) => [company]))))
+      (expect (fetch-refers-to john Company :ceo) => [company])
+      (expect (fetch-refers-to jane Company :employees) => [company]))))
 
 (deftest test-grab-caching
-  (let [john (create Person {:first-name "John" :last-name "Smith"})
-        jane (create Person {:first-name "Jane" :last-name "Doe"})
-        company (-> (create Company {:name "Acme"})
-                    (relate :ceo john)
-                    (relate :employees jane)
-                    save)]
+  (let [company (create-with Company
+                             {:name "Acme"}
+                             (relate :ceo
+                                     {:first-name "John" :last-name "Smith"})
+                             (relate :employees
+                                     {:first-name "Jane" :last-name "Doe"}))
+        john (fetch-one Person (where (eq :first-name "John")))
+        jane (fetch-one Person (where (eq :first-name "Jane")))]
     (testing "single reference"
       (expect (grab company :ceo) => :fake-result
               (fake (get-reference company :ceo) => :fake-result))

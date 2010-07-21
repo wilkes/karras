@@ -58,6 +58,9 @@ Example:
          (keyword? x)                (recur (cons y zs) (assoc results x {}))
          :else (throw (IllegalArgumentException. (str x " is not a keyword or a map"))))))))
 
+(defn- assoc-meta-cache [v]
+  (with-meta v (merge {:cache (atom nil)} (meta v))))
+
 (declare make)
 (defmulti convert
   "Multimethod used to convert a entity.
@@ -72,13 +75,11 @@ Example:
 
 (defmethod convert :reference
   [field-spec val]
-  (with-meta (make (:of field-spec) val :no-defaults)
-    {:cache (atom nil)}))
+  (assoc-meta-cache (make (:of field-spec) val :no-defaults)))
 
 (defmethod convert :references
   [field-spec vals]
-  (with-meta (map #(make (:of field-spec) % :no-defaults) vals)
-    {:cache (atom nil)}))
+  (assoc-meta-cache (map #(make (:of field-spec) % :no-defaults) vals)))
 
 (defmethod convert :default
   [_ val]
@@ -312,14 +313,14 @@ Example:
   [entity k & vs]
   (if-not (remove nil? (map :_id vs))
     (throw (IllegalArgumentException. "All references must have an :_id.")))
-  (assoc entity k (concat (or (k entity) []) (map make-reference vs))))
+  (assoc entity k (assoc-meta-cache (concat (or (k entity) []) (map make-reference vs)))))
 
 (defn set-reference
   "Set an :_id to the key of the given entity"
   [entity k v]
   (if-not (:_id v)
     (throw (IllegalArgumentException. "Reference must have an :_id.")))
-  (assoc entity k (make-reference v)))
+  (assoc entity k (assoc-meta-cache (make-reference v))))
 
 (defn get-reference
   "Fetch the entity or entities referrenced by the given key."
@@ -363,14 +364,23 @@ Example:
      {:_db \"db-name\" :_id ObjectId :_ref \"collection-name\")}"
   [parent k & vs]
   (let [field-spec (field-spec-of (class parent) k)
-        saved-entities (map #(if (:_id %) % (save %)) vs)]
+        related-type (:of field-spec)
+        saved-entities (map #(if (:_id %)
+                               %
+                               (create related-type %))
+                            vs)]
     (if (= :reference (:type field-spec))
       (set-reference parent k (first saved-entities))
       (if (= :references (:type field-spec))
         (apply add-reference parent k saved-entities)
         parent))))
 
-(defn fetch-refer-to
+(defmacro create-with [type hmap & relations]
+  `(-> (make ~type ~hmap)
+       ~@relations
+       save))
+
+(defn fetch-refers-to
   "Given an entity, a type and a field, fetch all the entities of the given type
    that refer to the given entity. Takes the same options as fetch. "
   [entity referrer-type referrer-field & options]
