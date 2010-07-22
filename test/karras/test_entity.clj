@@ -2,9 +2,10 @@
   (:require [karras.core :as karras])
   (:use karras.entity :reload-all)
   (:use karras.sugar
-        [karras.collection :only [drop-collection collection]]
+        [karras.collection :only [collection]]
         clojure.test
-        midje.semi-sweet))
+        midje.semi-sweet
+        karras.entity.testing))
 
 (def not-nil? (comp not nil?))
 (defonce db (karras/mongo-db :karras-testing))
@@ -60,15 +61,7 @@
   [:value]
   (entity-spec-assoc :collection-name "simpletons"))
 
-(defmacro mongo [& forms]
-  `(karras/with-mongo-request db
-    ~@forms))
-
-(use-fixtures :each (fn [t]
-                      (mongo
-                       (doseq [t [Person Company Simple]]
-                         (drop-collection (collection-for t)))
-                       (t))))
+(use-fixtures :each (entity-fixture db))
 
 (deftest test-parse-fields
   (let [parsed? (fn [fields expected-parsed-fields]
