@@ -135,6 +135,12 @@ namespace.
       <a href="#karras.entity/update-all">update-all</a>
     </div>
     <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#karras.entity.testing">karras.entity.testing</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#karras.entity.testing/entity-fixture">entity-fixture</a>
+    </div>
+    <br />
   </div>
 </div>
 </div>
@@ -604,6 +610,19 @@ If working with an instance of an entity, use the save function.</pre>
 </pre>
   <pre id="var-docstr">Shortcut for (update type criteria obj :multi)</pre>
   <a href="http://github.com/wilkes/karras/blob/c0df9454c3c19daaa13b15993126f98e63d9d165/src/karras/entity.clj#L208" id="var-source">Source</a>
+</div>
+<h2 id="namespace-name">karras.entity.testing</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<div id="var-entry">
+  <hr />
+  <h2 id="karras.entity.testing/entity-fixture">entity-fixture</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (entity-fixture db)
+</pre>
+  <pre id="var-docstr">creates a test fixture that wraps tests in a with-mongo-request and drops 
+all the colllections for the known entities.</pre>
+  <a href="http://github.com/wilkes/karras/blob/e5f885ef8886684c9ccae1f6f01b5ba9e57a5670/src/karras/entity/testing.clj#L6" id="var-source">Source</a>
 </div>
 
 
