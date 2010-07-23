@@ -5,7 +5,9 @@
         [karras.collection :only [collection]]
         clojure.test
         midje.semi-sweet
-        karras.entity.testing))
+        karras.entity.testing
+        clojure.pprint
+        [com.reasonr.scriptjure :only [js]]))
 
 (def not-nil? (comp not nil?))
 (defonce db (karras/mongo-db :karras-testing))
@@ -309,4 +311,24 @@
                                     for(var i in vals) sum += vals[i];
                                     return sum;
                                  }")
-                  => [{:_id "sum" :value (apply + (range 5))}]))
+          => [{:_id "sum" :value (apply + (range 5))}]))
+
+(deftest test-group
+  (dotimes [n 4]
+    (create Simple {:value n :name (if (odd? n) "odd" "even")}))
+  (let [odds-and-evens (group Simple [:name])]
+    (expect (count odds-and-evens) => 2)
+    (let [[g1 g2] odds-and-evens]
+      (expect (count (:values g1)) => 2)
+      (expect (count (:values g2)) => 2)))
+  (let [[odd-sum] (group Simple
+                         [:name]
+                         (where (eq :name "odd"))
+                         {:sum 0 :count 0}
+                         (js (fn [obj prev]
+                               (set! prev.sum (+ prev.sum obj.value))
+                               (set! prev.count (+ prev.count 1))))
+                         (js (fn [result]
+                               (set! result.avg (/ result.sum result.count)))))]
+    (expect (:sum odd-sum) => 4)
+    (expect (:count odd-sum) => 2)))

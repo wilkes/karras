@@ -260,6 +260,22 @@ Example:
   [type kw]
   (c/distinct-values (collection-for type) kw))
 
+(defn group
+  "Fetch a seq of grouped items.
+     Example:
+       SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
+       Karras: (group MyType
+                      [:a :b] 
+                      {:active 1}
+                      {:csum 0}
+                      \"function(obj,prev) { prev.csum += obj.c; }\")"
+  ([type keys]
+     (c/group (collection-for type) keys))
+  ([type keys cond initial reduce]
+     (group type keys cond initial reduce nil))
+  ([type keys cond initial reduce finalize]
+     (c/group (collection-for type) keys cond initial reduce finalize)))
+
 (defn find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
   [type criteria modifier & options]
