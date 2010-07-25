@@ -332,3 +332,14 @@
                                (set! result.avg (/ result.sum result.count)))))]
     (expect (:sum odd-sum) => 4)
     (expect (:count odd-sum) => 2)))
+
+(deftest test-reference-list-maintain-order
+  (let [employees (doall (map #(create Person {:last-name %})
+                              ["e1" "e2" "e3"]))
+        company (save (reduce (fn [c e] (relate c :employees e))
+                              (make Company {:name "Big Swifty"})
+                              employees))]
+    (expect (grab company :employees) => employees)
+    (let [shuffled (shuffle (grab company :employees))
+          modified-company (save (set-references company :employees shuffled))]
+    (expect (grab modified-company :employees) => shuffled))))

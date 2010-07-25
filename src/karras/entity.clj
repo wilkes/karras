@@ -331,6 +331,10 @@ Example:
     (throw (IllegalArgumentException. "All references must have an :_id.")))
   (assoc entity k (assoc-meta-cache (concat (or (k entity) []) (map make-reference vs)))))
 
+(defn set-references
+  [entity k vs]
+  (apply add-reference (assoc entity k []) k vs))
+
 (defn set-reference
   "Set an :_id to the key of the given entity"
   [entity k v]
@@ -345,7 +349,7 @@ Example:
         target-type (:of field-spec)
         list? (= (:type field-spec) :references)]
     (if list?
-      (fetch target-type (where (in :_id (map :_id (k entity)))))
+      (map #(fetch-one target-type (where (eq :_id (:_id %)))) (k entity))
       (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
 
 (defn grab
