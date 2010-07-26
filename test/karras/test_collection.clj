@@ -109,19 +109,20 @@
   (testing "return unmodified document"
     (expect (find-and-modify people
                              (where (eq :age 18))
-                             (modify (set-fields {:voter true})))
+                             (modify (set-fields {:voter true}))
+                             :return-new false)
             => Sally))
   (testing "return modified document"
     (expect (find-and-modify people
                              (where (eq :age 18))
-                             (modify (set-fields {:voter false}))
-                             :return-new true)
+                             (modify (set-fields {:voter false})))
             => (merge Sally {:voter false})))
   (testing "sorting"
     (expect (find-and-modify people
                              (where (eq :age 16))
                              (modify (set-fields {:driver true}))
-                             :sort [(asc :last-name) (asc :first-name)])
+                             :sort [(asc :last-name) (asc :first-name)]
+                             :return-new false)
             => Jane)))
 
 (deftest find-and-remove-tests

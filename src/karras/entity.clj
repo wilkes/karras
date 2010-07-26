@@ -246,7 +246,8 @@ Example:
   ([entity]
      (fetch-by-id (class entity) (:_id entity)))
   ([type id]
-      (c/fetch-by-id (collection-for type) id)))
+     (if-let [entity (c/fetch-by-id (collection-for type) id)]
+       (make type entity))))
 
 (defn count-instances
   "Return the number of entities optionally matching a given where clause."
@@ -320,7 +321,7 @@ Example:
   [type]
   (c/list-indexes (collection-for type)))
 
-(defn- make-reference [entity]
+(defn make-reference [entity]
   (let [coll (collection-for entity)]
     {:_db (.getName (c/collection-db coll)) :_id (:_id entity) :_ref (.getName coll)}))
 
@@ -356,7 +357,7 @@ Example:
   "Analogous to clojure.core/get except that it will follow references.
    References are cached in a :cache atom of the references metadata.
    Takes an optional refresh flag to force it to fetch the reference."
-  [parent k & refresh]
+  [parent k & [refresh]]
   (let [field-spec (field-spec-of (class parent) k)
         val (get parent k)]
     (if (some #{(:type field-spec)} [:reference :references])

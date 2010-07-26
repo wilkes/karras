@@ -204,7 +204,7 @@
 
 (defnk find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection coll criteria modifier :sort [] :return-new false]
+  [#^DBCollection coll criteria modifier :sort [] :return-new true]
   (find-and-modify* coll criteria modifier false sort return-new))
 
 (defnk find-and-remove
