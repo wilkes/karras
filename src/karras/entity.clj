@@ -321,9 +321,12 @@ Example:
   [type]
   (c/list-indexes (collection-for type)))
 
-(defn make-reference [entity]
-  (let [coll (collection-for entity)]
-    {:_db (.getName (c/collection-db coll)) :_id (:_id entity) :_ref (.getName coll)}))
+(defn make-reference
+  ([type id]
+     (make-reference (make type {:_id id})))
+  ([entity]
+     (let [coll (collection-for entity)]
+       {:_db (.getName (c/collection-db coll)) :_id (:_id entity) :_ref (.getName coll)})))
 
 (defn add-reference
   "Add one more :_id's to a sequence of the given key"

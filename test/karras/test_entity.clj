@@ -200,6 +200,9 @@
   (expect (count (list-indexes Person)) => 3)) ;; 2 + _id index
 
 (deftest test-references
+  (testing "make reference"
+    (let [simple (create Simple {})]
+      (expect (make-reference simple) => (make-reference Simple (:_id simple)))))
   (testing "saving"
     (let [john (create-with Person
                             {:first-name "John" :last-name "Smith"}
