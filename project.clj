@@ -1,4 +1,4 @@
-(defproject karras "0.4.5"
+(defproject karras "0.5.0-SNAPSHOT"
   :description "A clojure entity framework for MongoDB"
   :dependencies [[org.clojure/clojure "1.2.0-master-SNAPSHOT"]
                  [org.clojure/clojure-contrib "1.2.0-SNAPSHOT"]
@@ -8,7 +8,7 @@
                      [lein-clojars "0.5.0"]
                      [autodoc "0.7.1"]
                      [scriptjure "0.1.9"]
-                     [midje "0.2.0"]
+                     [midje "0.3.0"]
                      [lein-difftest "1.2.2"]]
   :namespaces [karras.core karras.collection karras.sugar karras.entity]
   :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
