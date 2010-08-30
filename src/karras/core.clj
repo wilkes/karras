@@ -23,7 +23,7 @@
 (ns karras.core
   (:use [clojure.contrib.def :only [defnk defvar]]
         [clojure.contrib.ns-utils :only [immigrate]])
-  (:import [com.mongodb Mongo DB BasicDBObject]
+  (:import [com.mongodb Mongo DB BasicDBObject BasicDBObjectBuilder]
            [java.util Map Map$Entry List]))
 
 (defn- keyword-str [kw]
@@ -155,3 +155,13 @@
 (defn eval-code
   [#^DB db code-str]
   (to-clj (.eval db code-str (into-array nil))))
+
+(defn build-dbo
+  "Build a DBObject where the key-values order is preserved.
+   Useful for command objects."
+  [& kvs]
+  (let [pairs (partition 2 kvs)
+        builder (BasicDBObjectBuilder/start)]
+    (doseq [[k v] pairs]
+      (.add builder (name k) (to-dbo v)))
+    (.get builder)))
