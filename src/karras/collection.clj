@@ -22,7 +22,7 @@
 
 (ns karras.collection
   (:use [clojure.contrib.def :only [defnk defvar]]
-        [karras.core :only [*mongo-db* to-dbo to-clj]])
+        [karras.core :only [*mongo-db* to-dbo to-clj build-dbo]])
   (:import [com.mongodb Mongo DB DBCollection DBObject]
            [org.bson.types ObjectId]))
 
@@ -96,7 +96,7 @@
   ([coll obj]
      (update-all coll {} obj))
   ([coll criteria obj]
-      (update coll criteria obj :multi)))
+     (update coll criteria obj :multi)))
 
 (defnk fetch
   "Fetch a seq of documents that match a given criteria.
@@ -130,7 +130,7 @@
         cursor (if sort
                  (.sort cursor (to-dbo
                                 (apply merge (reverse sort))))
-                   cursor)]
+                 cursor)]
     (if count
       (.count cursor)
       (map to-clj cursor))))
@@ -178,29 +178,31 @@
   ([#^DBCollection coll keys cond initial reduce]
      (group coll keys cond initial reduce nil))
   ([#^DBCollection coll keys cond initial reduce finalize]
-     (let [cmd {:ns (.getName coll)
+     (let [cmd [:ns (.getName coll)
                 :key (zipmap (map name keys) (repeat true))
                 :cond cond
                 :initial initial
-                :$reduce reduce}
-           cmd (merge cmd (when finalize {:finalize finalize}))
+                :$reduce reduce]
+           cmd  (apply build-dbo (if finalize
+                                   (conj cmd :finalize finalize)
+                                   cmd))
            response (.command (collection-db coll)
                               (to-dbo {:group cmd}))]
        (.throwOnError response)
        (to-clj (.get response "retval")))))
 
 (defn- find-and-modify*   [#^DBCollection coll criteria modifier remove sort return-new]
-    (let [cmd {:query criteria
-               :sort (apply merge {}  (reverse sort))
-               :new return-new}
-          cmd (merge cmd (if remove {:remove true} {:update modifier}))
-          ;; because mongo is picky about the order of the BSON
-          ;; need a more robust way to enforce the key ordering
-          cmd (merge cmd {:findandmodify (.getName coll)})
-          db (collection-db coll)
-          response (.command db (to-dbo cmd))]
-      (.throwOnError response)
-      (to-clj (.get response "value"))))
+  (let [cmd [:findandmodify (.getName coll)
+             :query criteria
+             :sort (apply build-dbo (flatten (apply concat sort)))
+             :new return-new]
+        cmd (apply build-dbo (concat cmd (if remove
+                                           [:remove true]
+                                           [:update modifier])))
+        db (collection-db coll)
+        response (.command db cmd)]
+    (.throwOnError response)
+    (to-clj (.get response "value"))))
 
 (defnk find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
@@ -217,20 +219,24 @@
   [#^DBCollection coll mapfn reducefn :query nil :sort [] :limit nil
    :out nil :keeptemp? false :finalize nil :scope nil  :verbose? true]
   (let [db (collection-db coll)
-        cmd {:map mapfn :reduce reducefn :keeptemp keeptemp? :verbose verbose?}
-        cmd (merge cmd (if query {:query query}))
-        cmd (merge cmd (if sort {:sort (apply merge {} (reverse sort))}))
-        cmd (merge cmd (if limit {:limit limit}))
-        cmd (merge cmd (if out {:out out}))
-        cmd (merge cmd (if finalize {:finalize finalize}))
-        cmd (merge cmd (if scope {:scope scope}))
-        cmd (merge cmd {:mapreduce (.getName coll)})
+        cmd (apply build-dbo
+                   (concat [:mapreduce (.getName coll)]
+                           [:map mapfn]
+                           [:reduce reducefn]
+                           [:keeptemp keeptemp?]
+                           [:verbose verbose?]
+                           (if query [:query query])
+                           (if sort [:sort (apply build-dbo (flatten (apply concat sort)))])
+                           (if limit [:limit limit])
+                           (if out [:out out])
+                           (if finalize [:finalize finalize])
+                           (if scope [:scope scope])))
         response (.command db (to-dbo cmd))
         clj-response (to-clj response)
         results-coll (collection db (:result clj-response))]
     (.throwOnError response)
     (assoc clj-response :fetch-fn (fn [& [criteria & options]]
-                                     (apply fetch results-coll criteria options)))))
+                                    (apply fetch results-coll criteria options)))))
 
 (defn fetch-map-reduce-values
   "Takes the result of map-reduce and fetches the values. Takes the same options as fetch."
