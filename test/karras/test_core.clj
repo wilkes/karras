@@ -1,6 +1,6 @@
 (ns karras.test-core
-  (:use karras.core
-        clojure.test
+  (:use karras.core :reload)
+  (:use clojure.test
         midje.semi-sweet)
   (:import [com.mongodb BasicDBObject]))
 
@@ -31,3 +31,6 @@
   (testing "list"
     (expect (to-clj [1 2]) => [1 2])))
 
+
+(deftest test-db-bulder
+  (expect (str (build-dbo :a 1 :b 2)) => "{ \"a\" : 1 , \"b\" : 2}"))
