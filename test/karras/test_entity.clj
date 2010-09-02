@@ -4,7 +4,7 @@
   (:use karras.sugar
         [karras.collection :only [collection]]
         clojure.test
-        midje.semi-sweet
+        midje.sweet
         karras.entity.testing
         clojure.pprint
         [com.reasonr.scriptjure :only [js]]))
@@ -67,7 +67,7 @@
 
 (deftest test-parse-fields
   (let [parsed? (fn [fields expected-parsed-fields]
-                  (expect (parse-fields fields) =>  expected-parsed-fields))]
+                  (fact (parse-fields fields) =>  expected-parsed-fields))]
     (testing "empty fields"
       (parsed? nil {}))
     (testing "no type specified"
@@ -89,29 +89,28 @@
 
 (deftest test-entity-spec
   (doseq [e [Address Phone Person]]
-    (expect (entity-spec e) => not-nil?)))
+    (fact (entity-spec e) => not-nil?)))
 
 (deftest test-entity-spec-in
-  (expect (entity-spec-of Person :address) => (entity-spec Address))
-  (expect (entity-spec-of Person :phones) => (entity-spec java.util.List))
-  (expect (entity-spec-of-item Person :phones) => (entity-spec Phone))
-  (expect (entity-spec-of Person :address :street) => (entity-spec Street)))
+  (fact (entity-spec-of Person :address) => (entity-spec Address)
+        (entity-spec-of Person :phones) => (entity-spec java.util.List)
+        (entity-spec-of-item Person :phones) => (entity-spec Phone)
+        (entity-spec-of Person :address :street) => (entity-spec Street)))
 
 (deftest test-collection-name
-  (testing "default name"
-    (expect (:collection-name (entity-spec Person)) => "people"))
-  (testing "override name"
-    (expect (:collection-name (entity-spec Simple)) => "simpletons")))
+  (fact "default name"
+        (:collection-name (entity-spec Person)) => "people"
+        "override name"
+        (:collection-name (entity-spec Simple)) => "simpletons"))
 
 (deftest test-make
-  (testing "flat"
-    (expect (class (make Phone {})) => Phone))
-  (testing "nested"
-    (let [address (make Address {:city "Nashville"
-                                 :street {:number "123"
-                                          :name "Main St."}})]
-      (expect (class address) => Address)
-      (expect (class (:street address)) => Street)))
+  (facts "flat"
+         (class (make Phone {})) => Phone)
+  (let [address (make Address {:city "Nashville"
+                               :street {:number "123"
+                                        :name "Main St."}})]
+    (facts (class address) => Address
+           (class (:street address)) => Street))
   (testing "complex nested with defaults"
     (let [person (make Person
                        {:first-name "John"
@@ -121,15 +120,15 @@
                         :address {:city "Nashville"
                                   :street {:number "123"
                                            :name "Main St."}}})]
-      (expect (-> person :address class) => Address)
-      (expect (-> person :address :street class) => Street)
-      (expect (-> person :phones first class)=> Phone)
-      (expect (-> person :counter) =>  0.0)
-      (expect (-> person :phones first :country-code) => 1)
-      (expect (-> person save :_id) => not-nil?)))
+      (facts (-> person :address class) => Address
+             (-> person :address :street class) => Street
+             (-> person :phones first class)=> Phone
+             (-> person :counter) =>  0.0
+             (-> person :phones first :country-code) => 1
+             (-> person save :_id) => not-nil?)))
   (testing "preserves the metadata of original hash")
    (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
-     (expect (meta person) => {:meta "data"})))
+     (facts (meta person) => {:meta "data"})))
 
 (deftest test-crud
   (let [person (create Person
@@ -141,68 +140,69 @@
                                   :street {:number "123"
                                            :name "Main St."}}})]
     (testing "create"
-      (expect (class person) => Person)
-      (expect (:birthday person) => "1976-07-04")
-      (expect (:_id person) => not-nil?)
-      (expect (count-instances Person) => 1))
+      (facts (class person) => Person
+             (:birthday person) => "1976-07-04"
+             (:_id person) => not-nil?
+             (count-instances Person) => 1))
     (testing "fetch-one"
-      (expect (fetch-one Person (where (eq :_id (:_id person))))
+      (fact (fetch-one Person (where (eq :_id (:_id person))))
               => person))
     (testing "fetch-all"
-      (expect (fetch-all Person) => [person]))
+      (fact (fetch-all Person) => [person]))
     (testing "fetch"
-      (expect (fetch Person (where (eq :last-name "Smith")))
+      (fact (fetch Person (where (eq :last-name "Smith")))
               => [person])
-      (expect (fetch Person (where (eq :last-name "Nobody")))
+      (fact (fetch Person (where (eq :last-name "Nobody")))
               => [])
-      (expect (fetch-one Person (where (eq :last-name "Nobody")))
+      (fact (fetch-one Person (where (eq :last-name "Nobody")))
               => nil))
     (testing "save"
       (save (assoc person :was-saved true))
-      (expect (:was-saved (fetch-by-id person)) => true))
+      (fact (:was-saved (fetch-by-id person)) => true))
     (testing "update"
       (update Person (where (eq :last-name "Smith"))
                       (modify (set-fields {:birthday (date 1977 7 4)})))
-      (expect (:birthday (fetch-one Person (where (eq :last-name "Smith"))))
+      (fact (:birthday (fetch-one Person (where (eq :last-name "Smith"))))
               => "1977-07-04"))
     (testing "deletion"
       (dotimes [x 5]
         (create Person {:first-name "John" :last-name (str "Smith" (inc x))}))
-      (expect (distinct-values Person :first-name) => #{"John"})
-      (expect (count-instances Person) => 6)
+      (fact (distinct-values Person :first-name) => #{"John"})
+      (fact (count-instances Person) => 6)
       (testing "delete"
         (delete person)
-        (expect (count-instances Person) => 5))
+        (fact (count-instances Person) => 5))
       (testing "delete-all with where clause"
         (delete-all Person (where (eq :last-name "Smith1")))
-        (expect (count-instances Person) => 4))
+        (fact (count-instances Person) => 4))
       (testing "delete-all"
         (delete-all Person)
-        (expect (count-instances Person) => 0)))))
+        (fact (count-instances Person) => 0)))))
 
 (deftest test-fetch-by-id
   (let [person (create Person {:first-name "John" :last-name "Smith"})]
-    (expect (fetch-by-id person) => person)
+    (fact (fetch-by-id person) => person)
     (delete person)
-    (expect (fetch-by-id person) => nil)))
+    (fact (fetch-by-id person) => nil)))
 
 (deftest test-collection-for
   (testing "entity type"
-    (expect (collection-for Person) => :people
-            (fake (collection "people") => :people)))
+    (fact (collection-for Person) => :people
+            (provided (collection "people") => :people)))
   (testing "entity instance"
-    (expect (collection-for (make Person {:last-name "Smith"})) => :people
-            (fake (collection "people") => :people))))
+    (fact (collection-for (make Person {:last-name "Smith"})) => :people
+          (provided (collection "people") => :people)))
 
-(deftest test-ensure-indexes
-  (expect (list-indexes Person) => empty?)
-  (ensure-indexes)
-  (expect (count (list-indexes Person)) => 3)) ;; 2 + _id index
+;; Breaks in the repl after the first run -- not sure why
+  (deftest test-ensure-indexes
+    (fact (list-indexes Person) => empty?)
+    (ensure-indexes)
+    (fact (count (list-indexes Person)) => 3))) ;; 2 + _id index
 
 (deftest test-references
   (testing "make reference"
     (let [simple (create Simple {})]
-      (expect (make-reference simple) => (make-reference Simple (:_id simple)))))
+      (fact (make-reference simple) => (make-reference Simple (:_id simple)))))
   (testing "saving"
     (let [john (create-with Person
                             {:first-name "John" :last-name "Smith"}
@@ -212,35 +212,35 @@
                                {:name "Acme"}
                                (relate :ceo john)
                                (relate :employees jane))]
-      (expect (-> company :ceo :_id) => (:_id john))
-      (expect (-> company :employees first :_id) => (:_id jane))))
+      (fact (-> company :ceo :_id) => (:_id john))
+      (fact (-> company :employees first :_id) => (:_id jane))))
   (testing "reading"
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (get-reference company :ceo)
           [jane] (get-reference company :employees)]
-      (expect (class (:ceo company)) => Person)
-      (expect (class (first (:employees company))) => Person)
-      (expect (:last-name john) => "Smith")
-      (expect (:last-name jane) => "Doe" )
+      (fact (class (:ceo company)) => Person)
+      (fact (class (first (:employees company))) => Person)
+      (fact (:last-name john) => "Smith")
+      (fact (:last-name jane) => "Doe" )
       (testing "grab"
-        (expect (grab company :name) => (:name company))
-        (expect (grab company :ceo) => john)
-        (expect (grab company :employees) => [jane]))
+        (fact (grab company :name) => (:name company))
+        (fact (grab company :ceo) => john)
+        (fact (grab company :employees) => [jane]))
       (testing "grab-in"
-        (expect (grab-in company [:ceo :first-name]) => "John")
-        (expect (grab-in company [:ceo :responsibity :name]) => "in charge"))))
+        (fact (grab-in company [:ceo :first-name]) => "John")
+        (fact (grab-in company [:ceo :responsibity :name]) => "in charge"))))
   (testing "updating"
     (let [company (-> (fetch-one Company (where (eq :name "Acme")))
                       (relate :employees {:first-name "Bill" :last-name "Jones"}))
           [jane bill] (grab company :employees)]
-      (expect (:first-name jane) => "Jane")
-      (expect (:first-name bill) => "Bill")))
+      (fact (:first-name jane) => "Jane")
+      (fact (:first-name bill) => "Bill")))
   (testing "reverse look up company from person"
     (let [company (fetch-one Company (where (eq :name "Acme")))
           john (fetch-one Person (where (eq :first-name "John")))
           jane (fetch-one Person (where (eq :first-name "Jane")))]
-      (expect (fetch-refers-to john Company :ceo) => [company])
-      (expect (fetch-refers-to jane Company :employees) => [company]))))
+      (fact (fetch-refers-to john Company :ceo) => [company])
+      (fact (fetch-refers-to jane Company :employees) => [company]))))
 
 (deftest test-grab-caching
   (let [company (create-with Company
@@ -252,23 +252,23 @@
         john (fetch-one Person (where (eq :first-name "John")))
         jane (fetch-one Person (where (eq :first-name "Jane")))]
     (testing "single reference"
-      (expect (grab company :ceo) => :fake-result
-              (fake (get-reference company :ceo) => :fake-result))
-      (expect (-> (get company :ceo) meta :cache deref) => :fake-result)
-      (expect (-> (get company :ceo) :_ref) => "people")
+      (fact (grab company :ceo) => :fake-result
+            (provided (get-reference company :ceo) => :fake-result))
+      (fact (-> (get company :ceo) meta :cache deref) => :fake-result)
+      (fact (-> (get company :ceo) :_ref) => "people")
       (testing "cache hit"
-        (expect (grab company :ceo) => :fake-result))
+        (fact (grab company :ceo) => :fake-result))
       (testing "cache refresh"
-        (expect (grab company :ceo :refresh) => john)))
+        (fact (grab company :ceo :refresh) => john)))
     (testing "list of references"
-      (expect (grab company :employees) => :fake-result
-              (fake (get-reference company :employees) => :fake-result))
-      (expect (-> (get company :employees) meta :cache deref) => :fake-result)
-      (expect (-> (get company :employees) first :_ref) => "people")
+      (fact (grab company :employees) => :fake-result
+              (provided (get-reference company :employees) => :fake-result))
+      (fact (-> (get company :employees) meta :cache deref) => :fake-result)
+      (fact (-> (get company :employees) first :_ref) => "people")
       (testing "cache hit"
-        (expect (grab company :employees) => :fake-result))
+        (fact (grab company :employees) => :fake-result))
       (testing "cache refresh"
-        (expect (grab company :employees :refresh) => [jane])))))
+        (fact (grab company :employees :refresh) => [jane])))))
 
 (deftest test-deffetch
   (is (= {:older-companies older-companies
@@ -277,37 +277,37 @@
   (let [jpmorgan (create Company {:name "JPMorgan Chase & Co." :date-founded "1799"})
         dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
-    (expect (older-companies "1800") => [jpmorgan])
-    (expect (older-companies "1913") => (in-any-order [jpmorgan exxon]) )
-    (expect (older-companies "1913" :sort [(asc :name)]) => [exxon jpmorgan])
-    (expect (older-companies "1999" :sort [(asc :date-founded) (asc :name)])
+    (fact (older-companies "1800") => [jpmorgan])
+    (fact (older-companies "1913") => (in-any-order [jpmorgan exxon]) )
+    (fact (older-companies "1913" :sort [(asc :name)]) => [exxon jpmorgan])
+    (fact (older-companies "1999" :sort [(asc :date-founded) (asc :name)])
             => [jpmorgan exxon dell])
-    (expect (modern-companies) => [dell])))
+    (fact (modern-companies) => [dell])))
 
 (deftest test-deffetch-one
-  (expect (entity-spec-get Company :fetch-ones)
+  (fact (entity-spec-get Company :fetch-ones)
           => {:company-by-name company-by-name})
   (let [dell (create Company {:name "Dell" :date-founded (date 1984 11 4)})
         exxon (create Company {:name "Exxon" :date-founded "1911"})]
-    (expect (company-by-name "Dell") => dell)))
+    (fact (company-by-name "Dell") => dell)))
 
 
 (deftest test-find-and-*
   (let [foo (create Simple {:value "Foo"})
         expected (merge foo {:age 21})]
     (testing "find-and-modify"
-      (expect (find-and-modify Simple (where (eq :value "Foo"))
+      (fact (find-and-modify Simple (where (eq :value "Foo"))
                                (modify (set-fields {:age 21}))
                                :return-new true)
               => expected))
     (testing "find-and-remove"
-      (expect (find-and-remove Simple (where (eq :value "Foo")))
+      (fact (find-and-remove Simple (where (eq :value "Foo")))
               => expected))))
 
 (deftest test-map-reduce
   (dotimes [n 5]
     (create Simple {:value n}))
-  (expect (map-reduce-fetch-all Simple
+  (fact (map-reduce-fetch-all Simple
                                 "function() {emit('sum', this.value)}"
                                 "function(k,vals) {
                                     var sum=0;
@@ -320,10 +320,10 @@
   (dotimes [n 4]
     (create Simple {:value n :name (if (odd? n) "odd" "even")}))
   (let [odds-and-evens (group Simple [:name])]
-    (expect (count odds-and-evens) => 2)
+    (fact (count odds-and-evens) => 2)
     (let [[g1 g2] odds-and-evens]
-      (expect (count (:values g1)) => 2)
-      (expect (count (:values g2)) => 2)))
+      (facts (count (:values g1)) => 2
+             (count (:values g2)) => 2)))
   (let [[odd-sum] (group Simple
                          [:name]
                          (where (eq :name "odd"))
@@ -333,8 +333,8 @@
                                (set! prev.count (+ prev.count 1))))
                          (js (fn [result]
                                (set! result.avg (/ result.sum result.count)))))]
-    (expect (:sum odd-sum) => 4)
-    (expect (:count odd-sum) => 2)))
+    (fact (:sum odd-sum) => 4)
+    (fact (:count odd-sum) => 2)))
 
 (deftest test-reference-list-maintain-order
   (let [employees (doall (map #(create Person {:last-name %})
@@ -342,7 +342,7 @@
         company (save (reduce (fn [c e] (relate c :employees e))
                               (make Company {:name "Big Swifty"})
                               employees))]
-    (expect (grab company :employees) => employees)
+    (fact (grab company :employees) => employees)
     (let [shuffled (shuffle (grab company :employees))
           modified-company (save (set-references company :employees shuffled))]
-    (expect (grab modified-company :employees) => shuffled))))
+    (fact (grab modified-company :employees) => shuffled))))
