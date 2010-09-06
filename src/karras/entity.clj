@@ -85,21 +85,26 @@ Example:
   [_ val]
   val)
 
+(defn- convert-field [entity field-key field-spec]
+  (if (contains? entity field-key)
+    (assoc entity field-key (convert field-spec (field-key entity)))
+    entity))
+
+(defn- fill-defaults [entity field-key field-spec disable-defaults]
+  (if (and (not disable-defaults) (:default field-spec))
+    (assoc entity field-key (:default field-spec))
+    entity))
+
 (defn make
   "Converts a hashmap to the supplied type."
   [#^Class type hmap & [no-defaults]]
-  (let [fields (-> type entity-spec :fields)
-        has-key? (fn [e k]
-                   (try (some #{k} (keys e))
-                        (catch Exception _ nil)))
-        make-default? #(and (nil? no-defaults) (:default %))]
-    (reduce (fn [entity [k field-spec]]
-              (cond
-               (has-key? entity k)   (assoc entity k (convert field-spec (k hmap)))
-               (make-default? field-spec) (assoc entity k (:default field-spec))
-               :otherwise            entity))
-            (with-meta (merge (.newInstance type) hmap) (meta hmap))
-            fields)))
+  (let [make-field (fn [entity [field-key field-spec]]
+                     (-> entity
+                         (convert-field field-key field-spec)
+                         (fill-defaults field-key field-spec no-defaults)))
+        initial (with-meta (merge (.newInstance type) hmap) (meta hmap))
+        fields  (-> type entity-spec :fields)]
+    (reduce make-field initial fields)))
 
 (defn- default-collection-name [classname]
   (pluralize (lower-case (last (.split (str classname) "\\.")))))
