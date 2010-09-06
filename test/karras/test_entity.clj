@@ -12,17 +12,17 @@
 (def not-nil? (comp not nil?))
 (defonce db (karras/mongo-db :karras-testing))
 
-(defaggregate Street
+(defembedded Street
   [:name
    :number])
 
-(defaggregate Address
+(defembedded Address
   [:street {:type Street}
    :city
    :state
    :postal-code])
 
-(defaggregate Phone
+(defembedded Phone
   [:country-code {:default 1}
    :number])
 

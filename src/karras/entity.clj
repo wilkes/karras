@@ -1,14 +1,13 @@
 (ns
     #^{:author "Wilkes Joiner"
        :doc "
-A library for defining entities and aggregates.  Entities correspond to a mongo entity.
-Aggregates correspond to a an embedded entity.
+A library for defining entities and embedded types.  Entities correspond to a mongo collection.
 
 Example:
 
-  (defaggregate Address [:street :city :state :zip])
+  (defembedded Address [:street :city :state :zip])
 
-  (defaggregate Phone [:area-code :number]
+  (defembedded Phone [:area-code :number]
 
   (defentity Person
     [:first-name 
@@ -129,8 +128,8 @@ Example:
   [classname [& fields] & type-fns]
   (make-mongo-type classname true fields type-fns))
 
-(defmacro defaggregate
-  "Defines an aggregate type that can be embedded into an entity."
+(defmacro defembedded
+  "Defines a type that can be embedded into an entity."
   [classname [& fields] & type-fns]
   (make-mongo-type classname false fields type-fns))
 
