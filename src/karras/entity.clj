@@ -133,9 +133,14 @@ Example:
   [classname [& fields] & type-fns]
   (make-mongo-type classname false fields type-fns))
 
+(defn get-type [entity-or-type]
+  (if (instance? Class entity-or-type)
+    entity-or-type
+    (class entity-or-type)))
+
 (defn field-spec-of
   "Given a type and one or more keys,
-   returns the field spec for the last key."
+   returns the  field spec for the last key."
   [type & keys]
   (let [field-type (or (reduce (fn [t k]
                                  (-> t entity-spec :fields k :type))
@@ -174,10 +179,8 @@ Example:
 (defn collection-for
   "Returns the DBCollection for the supplied entity instance or type."
   [entity-or-type]
-  (let [type (if (instance? Class entity-or-type)
-               entity-or-type
-               (class entity-or-type))]
-    (c/collection (-> type entity-spec :collection-name))))
+  (let [type (get-type entity-or-type)]
+    (c/collection (entity-spec-get type :collection-name))))
 
 (defn ensure-type
   "Force an entity to be of a given type if is not already."
@@ -186,6 +189,12 @@ Example:
     entity
     (make type entity)))
 
+(defn by-id [entity]
+  (eq :_id (:_id entity)))
+
+(defn collect-ids [entities]
+  (map :_id entities))
+
 (defn save
   "Inserts or updates one or more entities."
   ([entity]
@@ -193,7 +202,8 @@ Example:
           (c/save (collection-for entity))
           (ensure-type (class entity))))
   ([entity & entities]
-     (doall (map save (cons entity entities)))))
+     (let [items (cons entity entities)]
+       (doall (map save items)))))
 
 (defn create
   "Makes a new instance of type and saves it."
@@ -226,14 +236,16 @@ Example:
 (defn delete
   "Deletes one or more entities."
   ([entity]
-     (delete-all entity (where (eq :_id (:_id entity)))))
+     (delete-all entity (by-id entity)))
   ([entity & entities]
      (doall (map delete (cons entity entities)))))
 
 (defn fetch
   "Fetch a seq of entities for the given type matching the supplied parameters."
   [type criteria & options]
-  (map #(make type %) (apply c/fetch (collection-for type) criteria options)))
+  (let [collection (collection-for type)]
+    (map (partial make type)
+         (apply c/fetch collection criteria options))))
 
 (defn fetch-all
   "Fetch all of the entities for the given type."
@@ -248,7 +260,7 @@ Example:
 (defn fetch-by-id
   "Fetch an enity by :_id"
   ([entity]
-     (fetch-by-id (class entity) (:_id entity)))
+     (fetch-by-id (class entity) (get entity :_id)))
   ([type id]
      (if-let [entity (c/fetch-by-id (collection-for type) id)]
        (make type entity))))
@@ -325,17 +337,25 @@ Example:
   [type]
   (c/list-indexes (collection-for type)))
 
+
+(defn entity-db-name [entity]
+  (c/collection-db-name (collection-for entity)))
+
+(defn entity-collection-name [entity]
+  (c/collection-name (collection-for entity)))
+
 (defn make-reference
   ([type id]
      (make-reference (make type {:_id id})))
   ([entity]
-     (let [coll (collection-for entity)]
-       {:_db (.getName (c/collection-db coll)) :_id (:_id entity) :_ref (.getName coll)})))
+     {:_db (entity-db-name entity)
+      :_id (:_id entity)
+      :_ref (entity-collection-name entity)}))
 
 (defn add-reference
   "Add one more :_id's to a sequence of the given key"
   [entity k & vs]
-  (if-not (remove nil? (map :_id vs))
+  (if-not (remove nil? (collect-ids vs))
     (throw (IllegalArgumentException. "All references must have an :_id.")))
   (assoc entity k (assoc-meta-cache (concat (or (k entity) []) (map make-reference vs)))))
 
@@ -353,19 +373,20 @@ Example:
 (defn get-reference
   "Fetch the entity or entities referrenced by the given key."
   [entity k]
-  (let [field-spec (field-spec-of (class entity) k)
+  (let [field-spec (field-spec-of entity k)
         target-type (:of field-spec)
-        list? (= (:type field-spec) :references)]
+        list? (= (:type field-spec) :references)
+        reference (get entity k)]
     (if list?
-      (map #(fetch-one target-type (where (eq :_id (:_id %)))) (k entity))
-      (fetch-one target-type (where (eq :_id (:_id (k entity))))))))
+      (map #(fetch-one target-type (by-id %)) reference)
+      (fetch-one target-type (by-id reference)))))
 
 (defn grab
   "Analogous to clojure.core/get except that it will follow references.
    References are cached in a :cache atom of the references metadata.
    Takes an optional refresh flag to force it to fetch the reference."
   [parent k & [refresh]]
-  (let [field-spec (field-spec-of (class parent) k)
+  (let [field-spec (field-spec-of parent k)
         val (get parent k)]
     (if (some #{(:type field-spec)} [:reference :references])
       (if-let [cached (and (not refresh) (-> val meta :cache deref))]
@@ -383,6 +404,12 @@ Example:
   [parent ks & refresh]
   (reduce #(grab %1 %2 refresh) parent ks))
 
+(defn ensure-saved [type & entities]
+  (map #(if (:_id %)
+          %
+          (create type %))
+       entities))
+
 (defn relate
   "Relates an entity to another entity as a reference. Returns the parent with
    the reference associated.  No-op if the target field is not a :reference or 
@@ -393,10 +420,7 @@ Example:
   [parent k & vs]
   (let [field-spec (field-spec-of (class parent) k)
         related-type (:of field-spec)
-        saved-entities (map #(if (:_id %)
-                               %
-                               (create related-type %))
-                            vs)]
+        saved-entities (ensure-saved related-type vs)]
     (if (= :reference (:type field-spec))
       (set-reference parent k (first saved-entities))
       (if (= :references (:type field-spec))
@@ -426,10 +450,11 @@ Example:
   `(do
      (defn ~fn-name
        [~@args & options#]
-       (let [and-clauses# (:and (apply hash-map options#))]
+       (let [options# (apply hash-map options#)
+             and-clauses# (:and options#)]
          (apply ~fetch-fn  ~type
                 (where ~@criteria and-clauses#)
-                options#)))
+                (-> options# (dissoc :and) seq flatten))))
      (swap-entity-spec-in! ~type [~spec-key] assoc ~(keyword fn-name) ~fn-name)))
 
 (defmacro deffetch

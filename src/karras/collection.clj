@@ -39,6 +39,16 @@
   [#^DBCollection collection]
   (.getDB collection))
 
+(defn collection-db-name
+  "Get the name of the DB that this collection is associated with."
+  [#^DBCollection collection]
+  (.getName (collection-db collection)))
+
+(defn collection-name
+  "Get the name of the collection."
+  [collection]
+  (.getName collection))
+
 (defn collection
   "Returns a DBCollection."
   ([collection-name]

@@ -188,3 +188,10 @@
               {:key {:first-name 1}, :unique true, :ns "integration-tests.people",
                :name "unique-first-name"}]))
 
+(deftest test-collection-db-name
+  (fact
+   (collection-db-name people) => "integration-tests"))
+
+(deftest test-collection-name
+  (fact
+   (collection-name people) => "people"))
