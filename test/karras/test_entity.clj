@@ -132,7 +132,13 @@
    (provided
     (collection-for ...type...) => ...collection...
     (c/fetch-by-id ...collection... ...id...) => ...fetched-entity...
-    (make ...type... ...fetched-entity...) => ...made...)))
+    (make ...type... ...fetched-entity...) => ...made...))
+  (fact
+   (fetch-by-id ...type... ...id...) => nil
+   (provided
+    (collection-for ...type...) => ...collection...
+    (c/fetch-by-id ...collection... ...id...) => nil
+    (not-called make))))
 
 (deftest test-update
   (fact
