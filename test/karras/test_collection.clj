@@ -44,6 +44,17 @@
   (testing "distinct-values"
     (fact (distinct-values people :age) => #{21 18 16})))
 
+(deftest test-build-fields-subset
+  (fact
+   (build-fields-subset [:foo :bar] nil) => {:foo 1 :bar 1}
+   (build-fields-subset nil [:foo :bar]) => {:foo 0 :bar 0}
+   (build-fields-subset [:foo :bar] [:ignored :fields]) => {:foo 1 :bar 1}
+   (build-fields-subset [:foo (slice :bar [0 10])] nil) => {:foo 1
+                                                            :bar {:$slice [0 10]}}
+   (build-fields-subset [:foo (slice :bar [0 10]) :bar._id] nil) => {:foo 1
+                                                                 :bar {:$slice [0 10]}
+                                                                 :bar._id 1}))
+
 (deftest grouping-tests
   (testing "group by a key"
     (fact (group people [:age]) => (in-any-order [{:age 21.0 :values [Bill]}
@@ -51,8 +62,8 @@
                                                     {:age 16.0 :values [Jim Jane]}])))
   (testing "group by multiple keys"
     (fact (group people [:age :last-name]) => (in-any-order [{:age 21.0 :last-name "Smith"   :values [Bill]}
-                                                               {:age 18.0 :last-name "Jones"   :values [Sally]}
-                                                               {:age 16.0 :last-name "Johnson" :values [Jim Jane]}]))))
+                                                             {:age 18.0 :last-name "Jones"   :values [Sally]}
+                                                             {:age 16.0 :last-name "Johnson" :values [Jim Jane]}]))))
   (testing "group and count"
     (fact
      (group people
