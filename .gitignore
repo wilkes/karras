@@ -9,3 +9,4 @@ autodoc
 /karras-*.jar
 *.sw[op]
 tags
+.cake

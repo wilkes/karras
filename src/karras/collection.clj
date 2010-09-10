@@ -39,6 +39,16 @@
   [#^DBCollection collection]
   (.getDB collection))
 
+(defn collection-db-name
+  "Get the name of the DB that this collection is associated with."
+  [#^DBCollection collection]
+  (.getName (collection-db collection)))
+
+(defn collection-name
+  "Get the name of the collection."
+  [collection]
+  (.getName collection))
+
 (defn collection
   "Returns a DBCollection."
   ([collection-name]
@@ -98,6 +108,14 @@
   ([coll criteria obj]
      (update coll criteria obj :multi)))
 
+(defn build-fields-subset [include exclude]
+  (let [make-map #(apply merge
+                   (zipmap (remove map? %1) (repeat %2))
+                   (filter map? %1))]
+    (if include
+      (make-map include 1)
+      (make-map exclude 0))))
+
 (defnk fetch
   "Fetch a seq of documents that match a given criteria.
    Accepts the following keywords:
@@ -111,10 +129,7 @@
    :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
   (let [cursor (if criteria
                  (if (or include exclude)
-                   (let [keys (merge (zipmap (remove nil? include)
-                                             (repeat 1))
-                                     (zipmap (remove nil? exclude)
-                                             (repeat 0)))]
+                   (let [keys (build-fields-subset include exclude)]
                      (.find coll
                             #^DBObject (to-dbo criteria)
                             #^DBObject (to-dbo keys)))

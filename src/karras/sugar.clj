@@ -84,8 +84,16 @@
 (defn element-match "" [field match-query] {field {:$elemMatch match-query}})
 (defn is-type       "" [field type-number] {field {:$type type-number}})
 (defn negate        "" [where-expr]        {:$not where-expr})
-(defn is-nil?       "" [field]             (is-type field null-type)) 
+(defn is-nil?       "" [field]             (is-type field null-type))
+;; mongo 1.6
+(defn slice         "" [field val]         {field {:$slice val}})
+(defn ||          "or" [& clauses]         {:$or clauses})
 
+(defn sort-by-keys [keys maps]
+  (sort (fn [x y]
+          (first (remove #(= 0 %)
+                         (map #(compare (% x) (% y)) keys))))
+        maps))
 (defn modify
   "Sugar to create update documents
      (modify (incr :j) (push :k 3))
