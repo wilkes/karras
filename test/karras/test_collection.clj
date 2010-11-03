@@ -192,6 +192,12 @@
     
   (drop-index people (asc :age))
   (fact (count (list-indexes people)) => 1)
+
+  (ensure-index people (compound-index (asc :age) (asc :name)))
+  (fact (list-indexes people) => [{:key {:_id 1}, :ns "integration-tests.people", :name "_id_"}
+                                    {:key {:age 1 :name 1}, :ns "integration-tests.people", :name "name_1_age_1"}])
+    
+  (drop-index people (compound-index (asc :age) (asc :name)))
   
   (ensure-unique-index people "unique-first-name" (asc :first-name))
   (fact (list-indexes people)
