@@ -1,4 +1,4 @@
-(ns karras.utils
+(ns karras.util
   (:use [karras.core :only [with-mongo-request mongo-db]]
         [karras.entity :only [save ensure-type]]
         [clojure-csv.core :only [parse-csv]]
