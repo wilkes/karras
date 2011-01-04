@@ -6,10 +6,11 @@
                  [inflections "0.4"]]  
   :dev-dependencies [[swank-clojure "1.2.1"]
                      [lein-clojars "0.5.0"]
-                     [autodoc "0.7.1"]
+                     [autodoc "0.7.1" :exclusions [org.clojure/clojure
+                                                  org.clojure/clojure-contrib]]
                      [scriptjure "0.1.9" :exclusions [org.clojure/clojure
                                                       org.clojure/clojure-contrib]]
-                     [midje "0.6.1"]]
-  :namespaces [karras.core karras.collection karras.sugar karras.entity]
+                     [midje "0.8.1"]]
+  :aot [karras.core karras.collection karras.sugar karras.entity]
   :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
             :web-home "http://wilkes.github.com/karras"})
