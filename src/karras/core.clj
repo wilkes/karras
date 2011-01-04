@@ -170,3 +170,9 @@
     (doseq [[k v] pairs]
       (.add builder (name k) (to-dbo v)))
     (.get builder)))
+
+(defn get-last-error
+  ([#^DB db]
+     (to-clj (.getLastError db)))
+  ([#^DB db w wtimeout fsync]
+     (to-clj (.getLastError db w wtimeout fsync))))
