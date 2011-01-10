@@ -93,6 +93,9 @@
     {:$addToSet {field {:$each (cons value values)}}}
     {:$addToSet {field value}}))
 
+(defn matched "" [array-name & [field]]
+  (str (name array-name) ".$" (when field (str "." (name field)))))
+
 (defn sort-by-keys [keys maps]
   (sort (fn [x y]
           (first (remove #(= 0 %)
