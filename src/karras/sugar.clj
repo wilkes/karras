@@ -93,6 +93,8 @@
     {:$addToSet {field {:$each (cons value values)}}}
     {:$addToSet {field value}}))
 
+(def atomic {:$atomic true})
+
 (defn matched "" [array-name & [field]]
   (str (name array-name) ".$" (when field (str "." (name field)))))
 
