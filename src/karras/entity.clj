@@ -331,7 +331,10 @@ Example:
        (ensure-indexes type)))
   ([type]
      (doseq [idx (entity-spec-get type :indexes)]
-       (c/ensure-index (collection-for type) idx))))
+       (c/ensure-index (collection-for type) idx)))
+  ([type options]
+     (doseq [idx (entity-spec-get type :indexes)]
+       (c/ensure-index (collection-for type) idx options))))
 
 (defn list-indexes
   ""
