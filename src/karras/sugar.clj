@@ -88,6 +88,10 @@
 ;; mongo 1.6
 (defn slice         "" [field val]         {field {:$slice val}})
 (defn ||          "or" [& clauses]         {:$or clauses})
+(defn add-to-set    "" [field value & values]
+  (if values
+    {:$addToSet {field {:$each (cons value values)}}}
+    {:$addToSet {field value}}))
 
 (defn sort-by-keys [keys maps]
   (sort (fn [x y]
