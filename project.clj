@@ -10,7 +10,7 @@
                                                   org.clojure/clojure-contrib]]
                      [scriptjure "0.1.9" :exclusions [org.clojure/clojure
                                                       org.clojure/clojure-contrib]]
-                     [midje "0.8.1"]]
+                     [midje "1.0.1"]]
   :aot [karras.core karras.collection karras.sugar karras.entity]
   :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
             :web-home "http://wilkes.github.com/karras"})
