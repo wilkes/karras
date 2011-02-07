@@ -95,7 +95,10 @@
 
 (def atomic {:$atomic true})
 
-(defn matched "" [array-name & [field]]
+(defn matched
+  "The $ operator (by itself) means 'position of the matched array item in the
+   query'. Use this to find an array member and then manipulate it."
+  [array-name & [field]]
   (str (name array-name) ".$" (when field (str "." (name field)))))
 
 (defn sort-by-keys [keys maps]

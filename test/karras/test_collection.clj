@@ -142,7 +142,17 @@
                                       (modify (add-to-set :sample-set 1)))]
       (fact
         (do-update) => (contains {:sample-set [1]})
-        (do-update) => (contains {:sample-set [1]})))))
+        (do-update) => (contains {:sample-set [1]}))))
+  (testing "update 'position of the matched array item in the query'"
+    (find-and-modify people
+                     (where (eq :age 16))
+                     (modify (set-fields {:update-me [1 2 3]})))
+    (fact
+      (find-and-modify people
+                       (where (eq :age 16)
+                              (eq :update-me 3))
+                       (modify (incr (matched :update-me))))
+      => (contains {:update-me [1 2 4]}))))
 
 (deftest find-and-remove-tests
   (testing "return removed  document"
