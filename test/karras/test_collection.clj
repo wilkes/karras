@@ -135,7 +135,14 @@
                              (modify (set-fields {:driver true}))
                              :sort [(asc :last-name) (asc :first-name)]
                              :return-new false)
-            => Jane)))
+      => Jane))
+  (testing "add-to-set"
+    (let [do-update #(find-and-modify people
+                                      (where (eq :age 16))
+                                      (modify (add-to-set :sample-set 1)))]
+      (fact
+        (do-update) => (contains {:sample-set [1]})
+        (do-update) => (contains {:sample-set [1]})))))
 
 (deftest find-and-remove-tests
   (testing "return removed  document"
