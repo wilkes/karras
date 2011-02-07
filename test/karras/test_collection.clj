@@ -135,7 +135,24 @@
                              (modify (set-fields {:driver true}))
                              :sort [(asc :last-name) (asc :first-name)]
                              :return-new false)
-            => Jane)))
+      => Jane))
+  (testing "add-to-set"
+    (let [do-update #(find-and-modify people
+                                      (where (eq :age 16))
+                                      (modify (add-to-set :sample-set 1)))]
+      (fact
+        (do-update) => (contains {:sample-set [1]})
+        (do-update) => (contains {:sample-set [1]}))))
+  (testing "update 'position of the matched array item in the query'"
+    (find-and-modify people
+                     (where (eq :age 16))
+                     (modify (set-fields {:update-me [1 2 3]})))
+    (fact
+      (find-and-modify people
+                       (where (eq :age 16)
+                              (eq :update-me 3))
+                       (modify (incr (matched :update-me))))
+      => (contains {:update-me [1 2 4]}))))
 
 (deftest find-and-remove-tests
   (testing "return removed  document"
@@ -192,6 +209,12 @@
     
   (drop-index people (asc :age))
   (fact (count (list-indexes people)) => 1)
+
+  (ensure-index people (compound-index (asc :age) (asc :name)))
+  (fact (list-indexes people) => [{:key {:_id 1}, :ns "integration-tests.people", :name "_id_"}
+                                    {:key {:age 1 :name 1}, :ns "integration-tests.people", :name "name_1_age_1"}])
+    
+  (drop-index people (compound-index (asc :age) (asc :name)))
   
   (ensure-unique-index people "unique-first-name" (asc :first-name))
   (fact (list-indexes people)

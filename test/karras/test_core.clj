@@ -15,7 +15,9 @@
                                       (.put "a" 1)
                                       (.put "b" 2))))
   (testing "list"
-    (fact (to-dbo [1 2]) => [1 2])))
+    (fact (to-dbo [1 2]) => [1 2]))
+  (testing "lazy seq"
+    (fact (to-dbo (lazy-seq [1 2])) => [1 2])))
 
 (deftest test-to-clj
   (testing "primitives"
@@ -29,7 +31,9 @@
                       (.put "b" 2)))
             => {:a 1 :b 2}))
   (testing "list"
-    (fact (to-clj [1 2]) => [1 2])))
+    (fact (to-clj [1 2]) => [1 2]))
+  (testing "lazy seqs"
+    (fact (to-clj (lazy-seq [1 2])) => [1 2])))
 
 
 (deftest test-db-bulder

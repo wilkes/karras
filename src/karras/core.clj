@@ -63,6 +63,11 @@
  (to-clj [v] (map to-clj v))
  (to-description [v] (vec (set (map to-description v))))
 
+ clojure.lang.LazySeq
+ (to-dbo [v] (to-dbo (vec v)))
+ (to-clj [v] (to-clj (vec v)))
+ (to-description [v] (to-description (vec v)))
+ 
  clojure.lang.Keyword
  (to-dbo [v] (str v))
  (to-clj [v] (str v))
@@ -165,3 +170,9 @@
     (doseq [[k v] pairs]
       (.add builder (name k) (to-dbo v)))
     (.get builder)))
+
+(defn get-last-error
+  ([#^DB db]
+     (to-clj (.getLastError db)))
+  ([#^DB db w wtimeout fsync]
+     (to-clj (.getLastError db w wtimeout fsync))))

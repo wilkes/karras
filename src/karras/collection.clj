@@ -272,8 +272,10 @@
 
 (defn ensure-index
   "Ensure an index exist on a collection."
-  [#^DBCollection coll fields]
-  (.ensureIndex coll (to-dbo fields)))
+  ([#^DBCollection coll fields]
+     (.ensureIndex coll (to-dbo fields)))
+  ([#^DBCollection coll fields options]
+     (.ensureIndex coll (to-dbo fields) (to-dbo options))))
 
 (defn ensure-unique-index
   "Ensure a unique index exist on a collection."

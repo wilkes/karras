@@ -88,6 +88,18 @@
 ;; mongo 1.6
 (defn slice         "" [field val]         {field {:$slice val}})
 (defn ||          "or" [& clauses]         {:$or clauses})
+(defn add-to-set    "" [field value & values]
+  (if values
+    {:$addToSet {field {:$each (cons value values)}}}
+    {:$addToSet {field value}}))
+
+(def atomic {:$atomic true})
+
+(defn matched
+  "The $ operator (by itself) means 'position of the matched array item in the
+   query'. Use this to find an array member and then manipulate it."
+  [array-name & [field]]
+  (str (name array-name) ".$" (when field (str "." (name field)))))
 
 (defn sort-by-keys [keys maps]
   (sort (fn [x y]

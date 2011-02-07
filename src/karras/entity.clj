@@ -139,10 +139,11 @@ Example:
     (class entity-or-type)))
 
 (defn field-spec-of
-  "Given a type and one or more keys,
+  "Given a type or entity  and one or more keys,
    returns the  field spec for the last key."
-  [type & keys]
-  (let [field-type (or (reduce (fn [t k]
+  [entity-or-type & keys]
+  (let [type (get-type entity-or-type)
+        field-type (or (reduce (fn [t k]
                                  (-> t entity-spec :fields k :type))
                                type
                                (butlast keys))
@@ -330,7 +331,10 @@ Example:
        (ensure-indexes type)))
   ([type]
      (doseq [idx (entity-spec-get type :indexes)]
-       (c/ensure-index (collection-for type) idx))))
+       (c/ensure-index (collection-for type) idx)))
+  ([type options]
+     (doseq [idx (entity-spec-get type :indexes)]
+       (c/ensure-index (collection-for type) idx options))))
 
 (defn list-indexes
   ""

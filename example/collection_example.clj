@@ -1,4 +1,4 @@
-(ns karras.example
+(ns collection-example
   (:use karras.core
         karras.collection
         karras.sugar
