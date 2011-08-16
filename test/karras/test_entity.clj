@@ -338,11 +338,12 @@
   (provided
     (fetch-one DefFetch {:key :value}) => .result.))
 
+;; Not sure why these fail, maybe due to Midje magic.
 #_(fact
-  (no-args-fetch :and (in :bar [1,2,3])) => .result.
+  (no-args-fetch :and .and-clauses.) => .result.
   (provided
     (fetch DefFetch (where (eq :key :value)
-                           (in :bar [1,2,3]))) => .result.))
+                           .and-clauses.)) => .result.))
 
 #_(fact
   (no-args-fetch :and (in :bar [1,2,3]) :opt1 :v1) => .result.

@@ -87,7 +87,7 @@
  (to-clj [v] v)
  (to-description [v] v))
 
-(def ^{:tag :dynamic
+(def ^{:dynamic true
        :doc "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request."}
   *mongo-db* nil)
 
