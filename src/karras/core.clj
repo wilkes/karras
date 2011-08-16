@@ -1,17 +1,17 @@
 ;; The MIT License
-;;  
+;;
 ;; Copyright (c) 2010 Wilkes Joiner
-;;  
+;;
 ;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;; of this software and associated documentation files (the "Software"), to deal
 ;; in the Software without restriction, including without limitation the rights
 ;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ;; copies of the Software, and to permit persons to whom the Software is
 ;; furnished to do so, subject to the following conditions:
-;;  
+;;
 ;; The above copyright notice and this permission notice shall be included in
 ;; all copies or substantial portions of the Software.
-;;  
+;;
 ;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,8 +21,7 @@
 ;; THE SOFTWARE.
 
 (ns karras.core
-  (:use [clojure.contrib.def :only [defnk defvar]]
-        [clojure.contrib.ns-utils :only [immigrate]])
+  (:use [clojure.contrib.def :only [defvar]])
   (:import [com.mongodb Mongo DB BasicDBObject BasicDBObjectBuilder]
            [java.util Map Map$Entry List]))
 
@@ -67,7 +66,7 @@
  (to-dbo [v] (to-dbo (vec v)))
  (to-clj [v] (to-clj (vec v)))
  (to-description [v] (to-description (vec v)))
- 
+
  clojure.lang.Keyword
  (to-dbo [v] (str v))
  (to-clj [v] (str v))
@@ -77,7 +76,7 @@
  (to-dbo [v] (str v))
  (to-clj [v] (str v))
  (to-description [v] java.lang.String)
- 
+
  Object
  (to-dbo [v] v)
  (to-clj [v] v)
@@ -88,8 +87,9 @@
  (to-clj [v] v)
  (to-description [v] v))
 
-(defvar *mongo-db* nil
-  "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request.")
+(def ^{:dynamic true
+       :doc "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request."}
+  *mongo-db* nil)
 
 (defmacro with-mongo
   "Macro to bind *mongo-db*"
@@ -130,7 +130,7 @@
      (.requestDone ~db))))
 
 (defn write-concern-none
-  "From the mongo driver javadocs: 
+  "From the mongo driver javadocs:
    Don't check for or report any errors on writes."
   [#^DB db]
   (.setWriteConcern db com.mongodb.DB$WriteConcern/NONE))
