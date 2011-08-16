@@ -21,8 +21,7 @@
 ;; THE SOFTWARE.
 
 (ns karras.core
-  (:use [clojure.contrib.def :only [defnk defvar]]
-        [clojure.contrib.ns-utils :only [immigrate]])
+  (:use [clojure.contrib.def :only [defvar]])
   (:import [com.mongodb Mongo DB BasicDBObject BasicDBObjectBuilder]
            [java.util Map Map$Entry List]))
 
@@ -88,8 +87,9 @@
  (to-clj [v] v)
  (to-description [v] v))
 
-(defvar ^:dynamic *mongo-db* nil
-  "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request.")
+(def ^{:tag :dynamic
+       :doc "Var to bind a com.mongo.DB. Use with with-mongo or with-mongo-request."}
+  *mongo-db* nil)
 
 (defmacro with-mongo
   "Macro to bind *mongo-db*"
