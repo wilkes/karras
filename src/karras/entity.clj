@@ -10,7 +10,7 @@ Example:
   (defembedded Phone [:area-code :number]
 
   (defentity Person
-    [:first-name 
+    [:first-name
      :last-name
      :address {:type Address}
      :phones {:type :list :of Phone}])
@@ -212,7 +212,7 @@ Example:
   (save (make type hmap)))
 
 (defn update
-  "Updates one or more documents in a collection that match the criteria with the document 
+  "Updates one or more documents in a collection that match the criteria with the document
    provided.
      :upsert, performs an insert if the document doesn't have :_id
      :multi, update all documents that match the criteria
@@ -283,7 +283,7 @@ Example:
      Example:
        SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
        Karras: (group MyType
-                      [:a :b] 
+                      [:a :b]
                       {:active 1}
                       {:csum 0}
                       \"function(obj,prev) { prev.csum += obj.c; }\")"
@@ -416,9 +416,9 @@ Example:
 
 (defn relate
   "Relates an entity to another entity as a reference. Returns the parent with
-   the reference associated.  No-op if the target field is not a :reference or 
+   the reference associated.  No-op if the target field is not a :reference or
    :references. If the the key is a list it will add the reference, otherwise it
-   will set the reference. References are automatically saved if they haven't 
+   will set the reference. References are automatically saved if they haven't
    been already. References are stored on the entity as:
      {:_db \"db-name\" :_id ObjectId :_ref \"collection-name\")}"
   [parent k & vs]
@@ -462,7 +462,7 @@ Example:
      (swap-entity-spec-in! ~type [~spec-key] assoc ~(keyword fn-name) ~fn-name)))
 
 (defmacro deffetch
-  "Defines a fetch function for the given type. 
+  "Defines a fetch function for the given type.
    The function created takes all of the options of fetch plus an :and option to append to the where clause.
 
    Usage:
@@ -476,13 +476,13 @@ Example:
    Give me all the teenagers with last names A-J sorted by last name:
      (teenagers :and (within :last-name \"A\" \"J\") :sort [(asc :last-name)])
 
-   Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:      
+   Give me the youngest 10 people between the ages of 21 and 100 sorted by age and last name:
      (peope-in-age-range 21 100 :limit 10 :sort [(asc :age) (asc :last-name)])"
   [type fn-name [& args] & criteria]
   (make-fetch 'fetch :fetchs type fn-name args criteria))
 
 (defmacro deffetch-one
-  "Defines a fetch-one function for the given type. 
+  "Defines a fetch-one function for the given type.
    The function created takes all of the options of fetch-one plus an :and option to append to the where clause.
 
    Usage:
