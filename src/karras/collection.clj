@@ -1,17 +1,17 @@
 ;; The MIT License
-;;  
+;;
 ;; Copyright (c) 2010 Wilkes Joiner
-;;  
+;;
 ;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;; of this software and associated documentation files (the "Software"), to deal
 ;; in the Software without restriction, including without limitation the rights
 ;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ;; copies of the Software, and to permit persons to whom the Software is
 ;; furnished to do so, subject to the following conditions:
-;;  
+;;
 ;; The above copyright notice and this permission notice shall be included in
 ;; all copies or substantial portions of the Software.
-;;  
+;;
 ;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -73,7 +73,7 @@
     (-> dbo to-clj (with-meta (meta obj)))))
 
 (defn insert
-  "Inserts one or more documents into a collection. 
+  "Inserts one or more documents into a collection.
    Returns the inserted object with :_id"
   [#^DBCollection coll & objs]
   (let [inserted (doall (map #(save coll %) objs))]
@@ -82,7 +82,7 @@
       inserted)))
 
 (defn update
-  "Updates one or more documents in a collection that match the criteria with the document 
+  "Updates one or more documents in a collection that match the criteria with the document
    provided.
      :upsert, performs an insert if the document doesn't have :_id
      :multi, update all documents that match the criteria"
@@ -183,7 +183,7 @@
      Example:
        SQL: select a,b,sum(c) csum from coll where active=1 group by a,b
        Karras: (group coll
-                      [:a :b] 
+                      [:a :b]
                       {:active 1}
                       {:csum 0}
                       \"function(obj,prev) { prev.csum += obj.c; }\")"
