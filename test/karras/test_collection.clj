@@ -3,7 +3,6 @@
         karras.collection :reload-all
         karras.sugar
         clojure.test
-        [com.reasonr.scriptjure :only [js]]
         midje.sweet))
 
 (defonce indexing-tests-db (mongo-db :integration-tests))
