@@ -127,6 +127,21 @@
             (update people {:first-name "Jim"}
                     (merge Jim {:weight 180})))))
 
+(fact "upsert-update-test"
+  (count-docs people) => 4
+  (:weight (fetch-one people {:first-name "Jim"})) => 180
+  (against-background
+    (before :facts
+            (upsert people {:first-name "Jim"}
+                    (merge Jim {:weight 180})))))
+
+(fact "upsert-insert-test"
+  (count-docs people) => 5
+  (against-background
+    (before :facts
+            (upsert people {:first-name "Arnold"}
+                    (merge (dissoc Jim :_id) {:first-name "Arnold"})))))
+
 (facts "update-all-tests"
   (doseq [j (fetch people {:last-name "Johnson"})]
     (:age j) => 17)
