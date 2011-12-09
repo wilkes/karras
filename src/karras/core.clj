@@ -131,21 +131,52 @@
 
 (defn write-concern-none
   "From the mongo driver javadocs:
-   Don't check for or report any errors on writes."
+   No exceptions are raised, even for network issues"
   [#^DB db]
-  (.setWriteConcern db com.mongodb.DB$WriteConcern/NONE))
+  (.setWriteConcern db com.mongodb.WriteConcern/NONE))
 
 (defn write-concern-normal
   "From the mongo driver javadocs:
-   Use the default level of error checking on writes."
+   Exceptions are raised for network issues, but not server errors"
   [#^DB db]
-  (.setWriteConcern db com.mongodb.DB$WriteConcern/NORMAL))
+  (.setWriteConcern db com.mongodb.WriteConcern/NORMAL))
+
+(defn write-concern-safe
+  "From the mongo driver javadocs:
+   Exceptions are raised for network issues, and server errors;
+   waits on a server for the write operation"
+  [#^DB db]
+  (.setWriteConcern db com.mongodb.WriteConcern/SAFE))
 
 (defn write-concern-strict
-  "From the mongo driver javadocs:
-   Send a getLastError command following all writes."
+  "for backwards compatability, uses write-concern-safe"
   [#^DB db]
-  (.setWriteConcern db com.mongodb.DB$WriteConcern/STRICT))
+  (write-concern-safe db))
+
+(defn write-concern-fsync-safe
+  "Exceptions are raised for network issues, and server errors;
+   the write operation waits for the server to flush the data to disk"
+  [#^DB db]
+  (.setWriteConcern db com.mongodb.WriteConcern/FSYNC_SAFE))
+
+(defn write-concern-journal-safe
+  "Exceptions are raised for network issues, and server errors;
+   the write operation waits for the server to group commit to
+   the journal file on disk"
+  [#^DB db]
+  (.setWriteConcern db com.mongodb.WriteConcern/JOURNAL_SAFE))
+
+(defn write-concern-majority
+  "Exceptions are raised for network issues, and server errors;
+   waits on a majority of servers for the write operation"
+  [#^DB db]
+  (.setWriteConcern db com.mongodb.WriteConcern/MAJORITY))
+
+(defn write-concern-replicas-safe
+  " Exceptions are raised for network issues, and server errors;
+    waits for at least 2 servers for the write operation"
+  [#^DB db]
+  (.setWriteConcern db com.mongodb.WriteConcern/REPLICAS_SAFE))
 
 (defn drop-db
   ""
