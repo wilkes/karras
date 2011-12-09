@@ -5,8 +5,7 @@
   (:use karras.sugar
         [karras.collection :only [collection]]
         midje.sweet
-        clojure.pprint
-        [com.reasonr.scriptjure :only [js]]))
+        clojure.pprint))
 
 (defmethod convert ::my-date
   [field-spec d]

@@ -1,13 +1,9 @@
-(defproject karras "0.7.0"
+(defproject karras "0.8.0"
   :description "A clojure entity framework for MongoDB"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
-                 [org.mongodb/mongo-java-driver "2.1"]
-                 [inflections "0.4"]]
-  :dev-dependencies [[scriptjure "0.1.9"
-                      :exclusions [org.clojure/clojure
-                                   org.clojure/clojure-contrib]]
-                     [midje "1.2.0"]]
-  :aot [karras.core karras.collection karras.sugar karras.entity]
+                 [org.mongodb/mongo-java-driver "2.7.2"]
+                 [inflections "0.6.3"]]
+  :dev-dependencies [[midje "1.3.0-RC4"]]
   :autodoc {:web-src-dir "http://github.com/wilkes/karras/blob/"
             :web-home "http://wilkes.github.com/karras"})

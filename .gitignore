@@ -10,3 +10,4 @@ autodoc
 *.sw[op]
 tags
 .cake
+/.lein-deps-sum

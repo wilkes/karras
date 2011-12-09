@@ -3,7 +3,6 @@
         karras.collection :reload-all
         karras.sugar
         clojure.test
-        [com.reasonr.scriptjure :only [js]]
         midje.sweet))
 
 (defonce indexing-tests-db (mongo-db :integration-tests))
@@ -128,6 +127,21 @@
             (update people {:first-name "Jim"}
                     (merge Jim {:weight 180})))))
 
+(fact "upsert-update-test"
+  (count-docs people) => 4
+  (:weight (fetch-one people {:first-name "Jim"})) => 180
+  (against-background
+    (before :facts
+            (upsert people {:first-name "Jim"}
+                    (merge Jim {:weight 180})))))
+
+(fact "upsert-insert-test"
+  (count-docs people) => 5
+  (against-background
+    (before :facts
+            (upsert people {:first-name "Arnold"}
+                    (merge (dissoc Jim :_id) {:first-name "Arnold"})))))
+
 (facts "update-all-tests"
   (doseq [j (fetch people {:last-name "Johnson"})]
     (:age j) => 17)
@@ -135,27 +149,62 @@
     (before :facts
             (update-all people {:last-name "Johnson"}
                         (modify (set-fields {:age 17}))))))
+(facts "find-and-modify"
+       (fact  "return unmodified document"
+              (find-and-modify people
+                               (where (eq :age 18))
+                               (modify (set-fields {:voter true}))
+                               :return-new false)
+              => Sally)
 
-(fact  "return unmodified document"
-  (find-and-modify people
-                   (where (eq :age 18))
-                   (modify (set-fields {:voter true}))
-                   :return-new false)
-  => Sally)
+       (fact "return modified document"
+             (find-and-modify people
+                              (where (eq :age 18))
+                              (modify (set-fields {:voter false})))
+             => (merge Sally {:voter false}))
 
-(fact "return modified document"
-  (find-and-modify people
-                   (where (eq :age 18))
-                   (modify (set-fields {:voter false})))
-  => (merge Sally {:voter false}))
+       (fact "can upsert"
+             (find-and-modify people
+                              (where (eq :first-name "Chewbacca"))
+                              (modify (set-fields {:voter false}))
+                              :upsert true)
+             => (contains {:first-name "Chewbacca"
+                           :voter false
+                           :_id (comp not nil?)}))
 
-(fact "sorting"
-  (find-and-modify people
-                   (where (eq :age 16))
-                   (modify (set-fields {:driver true}))
-                   :sort [(asc :last-name) (asc :first-name)]
-                   :return-new false)
-  => Jane)
+       (fact "but doesn't by default"
+             (find-and-modify people
+                              (where (eq :first-name "Han"))
+                              (modify (set-fields {:voter false})))
+             => (throws com.mongodb.CommandResult$CommandFailure))
+
+       (fact "supports the fields argument"
+             (find-and-modify people
+                              (where (eq :age 18))
+                              (modify (set-fields {:voter false}))
+                              :fields [:first-name :voter])
+             => (just {:_id (comp not nil?)
+                       :first-name "Sally"
+                       :voter false}))
+
+       (fact "sorting"
+             (find-and-modify people
+                              (where (eq :age 16))
+                              (modify (set-fields {:driver true}))
+                              :sort [(asc :last-name) (asc :first-name)]
+                              :return-new false)
+             => Jane)
+       (fact "update 'position of the matched array item in the query'"
+             (find-and-modify people
+                              (where (eq :age 16)
+                                     (eq :update-me 3))
+                              (modify (incr (matched :update-me))))
+             => (contains {:update-me [1 2 4]})
+             (against-background
+              (before :checks
+                      (find-and-modify people
+                                       (where (eq :age 16))
+                                       (modify (set-fields {:update-me [1 2 3]})))))))
 
 (let [do-update #(find-and-modify people
                                   (where (eq :age 16))
@@ -163,18 +212,6 @@
   (fact "add-to-set"
     (do-update) => (contains {:sample-set [1]})
     (do-update) => (contains {:sample-set [1]})))
-
-(fact "update 'position of the matched array item in the query'"
-  (find-and-modify people
-                   (where (eq :age 16)
-                          (eq :update-me 3))
-                   (modify (incr (matched :update-me))))
-  => (contains {:update-me [1 2 4]})
-  (against-background
-    (before :checks
-            (find-and-modify people
-                             (where (eq :age 16))
-                             (modify (set-fields {:update-me [1 2 3]}))))))
 
 (fact "return removed  document"
   (find-and-remove people (where (eq :age 18))) => Sally)
