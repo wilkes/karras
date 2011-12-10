@@ -21,7 +21,6 @@
 ;; THE SOFTWARE.
 
 (ns karras.core
-  (:use [clojure.contrib.def :only [defvar]])
   (:import [com.mongodb Mongo DB BasicDBObject BasicDBObjectBuilder]
            [java.util Map Map$Entry List]))
 
