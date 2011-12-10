@@ -21,8 +21,8 @@
 ;; THE SOFTWARE.
 
 (ns karras.collection
-  (:use [clojure.contrib.def :only [defnk defvar]]
-        [karras.core :only [*mongo-db* to-dbo to-clj build-dbo]])
+  (:use [karras.core :only [*mongo-db* to-dbo to-clj build-dbo]]
+        [karras.def :only [defvar]])
   (:import [com.mongodb Mongo DB DBCollection DBObject]
            [org.bson.types ObjectId]))
 
@@ -116,7 +116,7 @@
       (make-map include 1)
       (make-map exclude 0))))
 
-(defnk fetch
+(defn fetch
   "Fetch a seq of documents that match a given criteria.
    Accepts the following keywords:
        :limit, maximum number of documents to return
@@ -126,7 +126,8 @@
        :sort, which keys to order by
        :count, if true return the count of the result set, defaults to false"
   [#^DBCollection coll criteria
-   :limit nil :skip nil :include nil :exclude nil :sort nil :count false]
+   & {:keys [limit skip include exclude sort count]
+      :or {count false}}]
   (let [cursor (if criteria
                  (if (or include exclude)
                    (let [keys (build-fields-subset include exclude)]
@@ -223,20 +224,25 @@
     (.throwOnError response)
     (to-clj (.get response "value"))))
 
-(defnk find-and-modify
+(defn find-and-modify
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection coll criteria modifier :sort [] :return-new true :fields [] :upsert false]
+  [#^DBCollection coll criteria modifier
+   & {:keys [sort return-new fields upsert]
+      :or {sort [] return-new true fields [] upsert false}}]
   (find-and-modify* coll criteria modifier false sort return-new fields upsert))
 
-(defnk find-and-remove
+(defn find-and-remove
   "See http://www.mongodb.org/display/DOCS/findandmodify+Command"
-  [#^DBCollection coll criteria :sort [] :return-new false :fields []]
+  [#^DBCollection coll criteria
+      & {:keys [sort return-new fields]
+         :or {sort [] return-new true fields []}}]
   (find-and-modify* coll criteria nil true sort return-new fields false))
 
-(defnk map-reduce
+(defn map-reduce
   "See http://www.mongodb.org/display/DOCS/MapReduce"
-  [#^DBCollection coll mapfn reducefn :query nil :sort [] :limit nil
-   :out nil :keeptemp? false :finalize nil :scope nil  :verbose? true]
+  [#^DBCollection coll mapfn reducefn
+   & {:keys [query sort limit out keeptemp? finalize scope verbose?]
+      :or {sort [] keeptemp? false verbose? true}}]
   (let [db (collection-db coll)
         cmd (apply build-dbo
                    (concat [:mapreduce (.getName coll)]

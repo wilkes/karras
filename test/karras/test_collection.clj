@@ -19,6 +19,11 @@
 (defn person-by-name [n]
   (fetch-one people {:first-name n}))
 
+(def ^:dynamic Bill  nil)
+(def ^:dynamic Sally nil)
+(def ^:dynamic Jim   nil)
+(def ^:dynamic Jane  nil)
+
 (background
  (around :facts
          (do
@@ -60,15 +65,15 @@
 
 (fact "group by a key"
   (group people [:age])
-  => (in-any-order [{:age 21.0 :values [Bill]}
-                    {:age 18.0 :values [Sally]}
-                    {:age 16.0 :values [Jim Jane]}]))
+  => (in-any-order [{:age 21 :values [Bill]}
+                    {:age 18 :values [Sally]}
+                    {:age 16 :values [Jim Jane]}]))
 
 (fact "group by multiple keys"
   (group people [:age :last-name])
-  => (in-any-order [{:age 21.0 :last-name "Smith"   :values [Bill]}
-                    {:age 18.0 :last-name "Jones"   :values [Sally]}
-                    {:age 16.0 :last-name "Johnson" :values [Jim Jane]}]))
+  => (in-any-order [{:age 21 :last-name "Smith"   :values [Bill]}
+                    {:age 18 :last-name "Jones"   :values [Sally]}
+                    {:age 16 :last-name "Johnson" :values [Jim Jane]}]))
 
 (fact "group and count"
   (group people

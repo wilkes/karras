@@ -18,8 +18,8 @@ Example:
   karras.entity
   (:require [karras.collection :as c])
   (:use karras.sugar
-        [clojure.contrib.def :only [defnk defalias defvar]]
-        [clojure.contrib.str-utils2 :only [lower-case]]
+        [karras.def :only [defvar]]
+        [clojure.string :only [lower-case]]
         inflections.core))
 
 (defrecord EntitySpec

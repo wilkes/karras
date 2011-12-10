@@ -81,7 +81,7 @@
     (-> person :address class) => Address
     (-> person :address :street class) => Street
     (-> person :phones first class)=> Phone
-    (-> person :counter) =>  0.0
+    (-> person :counter) => 0
     (-> person :phones first :country-code) => 1))
 
 (let [person (make Person #^{:meta "data"} {:first-name "Jimmy"})]
